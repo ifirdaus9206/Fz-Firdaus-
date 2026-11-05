@@ -110,3 +110,19 @@ tmp/
 # gitlink menyebabkan "modified" palsu setiap kali; elak daripada disandarkan di sini
 agency-agents/
 agency-agents-app/
+
+# ---------- FAIL TERBITAN / BERAT (dibuang dari index 2026-11-06) ----------
+# terbitan: DB sejarah pelaksanaan cron (berubah setiap larian)
+cron/executions.db
+# berat: backup katalog agen (~4MB setiap satu), bukan sumber
+plugins/agency-agents-router/data/agents.json.bak-*
+# terbitan: arkib curator (tar.gz ~7MB), boleh dijana semula
+skills/.curator_backups/
+# terbitan: status runtime gateway, berubah setiap saat
+gateway_state.json
+# terbitan: backup manual (bukan sumber hidup)
+*.bak-*
+*.bak
+# kecualian: backup persona SOUL.md dikekalkan dalam sandaran (bukan terbitan)
+!SOUL.md.bak
+!SOUL.md.bak-*
