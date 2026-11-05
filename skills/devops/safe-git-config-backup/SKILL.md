@@ -47,10 +47,16 @@ Sanity check before `git add` (cheap, catches the whole class):
 
 ```bash
 for p in .env auth.json config.yaml state.db archive/ tmp/ foo.log; do
-  printf '%s => ' "$p"; git check-ignore -v "$p" || echo "TIDAK"
+  printf '%s => ' "$p"; git check-ignore -v --no-index "$p" || echo "TIDAK"
 done
 ```
 If every probe says `TIDAK`, the file is being parsed as garbage — fix it before adding.
+
+**`--no-index` is mandatory here.** Plain `git check-ignore` refuses to answer for
+already-tracked paths: it prints nothing and exits 1 even when the pattern is perfect. Without
+`--no-index` a cleanup run looks like "all my new rules are broken" when in fact the rules are
+fine and the files are merely still in the index. Diagnose with `--no-index` first; only blame
+the `.gitignore` syntax if the probe still misses.
 
 If you already staged gigabytes, delete `.git` and re-init (nothing committed yet) rather
 than trying to unstage a 1.6 GB object store.
@@ -66,12 +72,58 @@ git rm -r --cached -q pastes skills/.curator_backups
 ```
 Re-check `git ls-files | grep -E '…'` after every round.
 
+## PITFALL #2b — `git gc` will NOT shrink `.git` if the blob is still in history
+
+`git rm --cached` only removes the file from the *index*. The blob stays reachable from every
+old commit, so `git gc --aggressive --prune=now` has nothing to drop and `du -sh .git` is
+unchanged (measured this session: 28M before → 28M after; `size-pack` still 26.19 MiB, largest
+packed object 33.8 MB = the already-removed `bin/tirith`).
+
+Consequences to state honestly in the report:
+- "`.git` mengecil" is a **weak pass criterion** for index-only cleanup — expect it to stay flat.
+- Real shrinkage needs a history rewrite (`git filter-repo --path … --invert-paths`, or
+  `filter-branch`) which **rewrites every commit SHA**. Never run it unprompted; surface it as a
+  decision with the blast radius named (SHAs change, mirror backup + reflog required first).
+- The honest metric after index cleanup is "no longer tracked":
+  `git ls-files | grep -c <pattern>` → 0, plus `git count-objects -vH` for loose/garbage counts.
+- Don't imply the repo got smaller when only the index did.
+
+## PITFALL #2c — a global `*.bak` rule can evict deliberate backups
+
+`*.bak` / `*.bak-*` are the right default for manual backups, but they also match `SOUL.md.bak`,
+`SOUL.md.bak-ketua-<date>` and similar persona/config backups the user *does* want in the repo.
+Add negations after the broad rules and prove them:
+
+```gitignore
+# terbitan: backup manual (bukan sumber hidup)
+*.bak-*
+*.bak
+# kecualian: backup persona SOUL.md dikekalkan dalam sandaran (bukan terbitan)
+!SOUL.md.bak
+!SOUL.md.bak-*
+```
+
+```bash
+git ls-files | grep '^SOUL.md.bak'            # kept backups must still be listed
+git check-ignore -v --no-index SOUL.md.bak    # should name the !SOUL.md.bak line
+```
+
+Negation only works while the parent directory isn't itself excluded — don't hide `*.bak` behind
+an `archive/` or `profiles/` ignore and expect `!` to rescue it.
+
 ## PITFALL #3 — churn files make the nightly commit noisy
 
 Heartbeats and usage counters change every minute, so "silent when nothing changed" never
 holds. Find them from the first real commit (`git log -1 --name-only --oneline`) and exclude:
 `channel_directory.json`, `cron/ticker_heartbeat`, `cron/ticker_last_success`,
 `skills/.usage.json`, `state/gateway.heartbeat`.
+
+Runtime **databases** are the worst offender because their size changes, so every run produces a
+binary diff and a commit even when "nothing" happened — `verification_evidence.db`
+(`Bin 40960 -> 40960 bytes`) did exactly this. The list above is not exhaustive: after a
+supposedly clean run, if HEAD moved, inspect `git log -1 --stat --oneline`, add the offending
+path to `.gitignore`, `git rm --cached` it, then require empty `git status --short` on the next
+run. See "Discovering unknown churn" under Verification.
 
 ## PITFALL #4 — embedded git repos show permanent ` m` status
 
@@ -155,6 +207,87 @@ git ls-tree -r -l HEAD | sort -k4 -nr | head -10     # real largest blobs
 Use `git ls-tree -r -l` for the "biggest tracked files" list — `git ls-files | xargs du`
 expands gitlink directories and reports misleading 91 MB `node_modules` totals that are not
 tracked at all.
+
+### Post-cleanup verification (index removal)
+
+Prove each claim with raw output; keep the "before" numbers from the initial survey so the
+delta is real rather than asserted:
+
+```bash
+git status --short                                  # must be empty
+git log --oneline | head -6
+git ls-files | wc -l                                # compare against the "before" count
+git ls-files | grep -E '^(bin/tirith|cron/executions\.db|…bak-|skills/\.curator_backups/|gateway_state\.json)' || echo '(tiada hasil)'
+git count-objects -vH                               # count/size-pack/packs — honest gc metric
+git ls-tree -r -l HEAD | sort -k4 -nr | head -10    # real largest tracked blobs
+git remote -v                                       # empty when no remote
+tail -5 logs/backup.log
+```
+
+File-count note: the count can move both ways — removals minus new tracked files committed in
+the same run. Say so instead of pretending the delta equals the removed files.
+
+### Prove the secret guard survived the cleanup
+
+`git rm --cached` plus `git gc` is exactly the kind of surgery that can break a wrapper script,
+so re-test the guard afterwards and quote the evidence:
+
+```bash
+B=$(git rev-parse HEAD)
+out=$(bash scripts/backup_github.sh); rc=$?
+printf 'exit=%s\nstdout=[%s]\n' "$rc" "$out"
+[ "$B" = "$(git rev-parse HEAD)" ] && echo 'HEAD SAMA — tiada commit baharu'
+git log --all --oneline -- bocor-uji2.txt | wc -l    # 0 = nothing leaked into history
+```
+
+Expect exit 3, HEAD identical, and the offending path named in stdout. If the guard fires but
+names a *documentation* file instead of your probe, the probe never got staged — a file at
+`~/x.txt` is outside a `~/.hermes20` repo. Write the probe at the repo root and delete it with
+`rm -f` afterwards; confirm with `git log --all --oneline -- <file>` returning nothing.
+
+### Discovering unknown churn (do this once per repo)
+
+Runtime databases not covered by `.gitignore` defeat "silent when nothing changed" — each run
+commits a binary diff (`verification_evidence.db | Bin 40960 -> 40960 bytes` in this session).
+Method: run the script once, then `git log -1 --stat --oneline`; anything that appears there and
+is not source code belongs in `.gitignore` plus `git rm --cached`. Re-run and require empty
+`git status --short`.
+
+## Unblocking the human step: `gh auth login` with no TTY
+
+The closing line "bos cuma `gh auth login`" is *not* one command in an agent session. gh asks
+`? Authenticate Git with your GitHub credentials? (Y/n)` first, and that survey prompt
+re-prompts forever when stdin is a pipe or a pty that has reached EOF — `printf 'Y\n' | gh …`,
+`script -qec …` and a hand-written pty driver all loop on the same line (three attempts, same
+dead end this session).
+
+Pre-answer the question through git config instead of through stdin:
+
+```bash
+git config --global credential.https://github.com.helper '!gh auth git-credential'
+gh auth login --hostname github.com --git-protocol https --web
+```
+
+With the helper already configured the prompt disappears and the code prints immediately:
+
+```
+! First copy your one-time code: XXXX-XXXX
+Open this URL to continue in your web browser: https://github.com/login/device
+```
+
+Rules that make this work:
+
+- Relay **code + URL** to the owner; they authorize in a browser. Nothing else is required.
+- **Never wrap it in `timeout`** — that process *is* the poller, and killing it invalidates the
+  code. Start it as a background process and leave it alive while the owner authorizes.
+- **Every restart mints a new code.** Quote the newest line, never an earlier one, and tell the
+  owner it expires in ~15 minutes.
+- After authorization only `git remote add origin <URL>` is needed — the backup script pushes on
+  its next run, so no script change and no token in the repo.
+- For a private repo, verify visibility afterwards (`gh repo view --json visibility`) rather
+  than assuming it took effect.
+
+Session transcript, including why the pty driver looped: `references/gh-login-without-tty.md`.
 
 ## Reporting
 
