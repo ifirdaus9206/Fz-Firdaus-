@@ -43,6 +43,16 @@ processes.json
 models_dev_cache.json
 # terbitan: snapshot prompt, dijana semula
 .skills_prompt_snapshot.json
+# terbitan: senarai channel runtime, berubah setiap sesi
+channel_directory.json
+# terbitan: penanda masa cron (berdenyut setiap minit)
+cron/ticker_heartbeat
+# terbitan: cap masa cron terakhir berjaya
+cron/ticker_last_success
+# terbitan: statistik penggunaan skill (berubah setiap panggilan)
+skills/.usage.json
+# terbitan: denyutan gateway (berubah setiap minit)
+state/gateway.heartbeat
 
 # ---------- PROFIL (salinan per-profil bagi fail di atas) ----------
 # terbitan: cache model per profil
