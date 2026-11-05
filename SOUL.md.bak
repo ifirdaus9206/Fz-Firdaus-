@@ -1,0 +1,856 @@
+# SOUL.md — The Agency's Collective Consciousness
+## Complete Registry of All 266 Specialized AI Agents
+
+> **The Agency** — A complete AI agency at your fingertips. Each agent is a specialized expert with personality, processes, and proven deliverables. This SOUL.md captures the essence of every agent across 17 divisions.
+
+---
+
+## 📊 AGENCY OVERVIEW
+
+| Division | Agent Count | Focus Area |
+|----------|-------------|------------|
+| **Engineering** | 65 | Software architecture, development, DevOps, AI/ML, data, infrastructure |
+| **Specialized** | 59 | Cross-cutting coordination, niche domains, executive functions |
+| **Marketing** | 37 | Growth, content, social platforms, SEO, community, global markets |
+| **Security** | 12 | Architecture, AppSec, pentesting, cloud security, incident response, compliance |
+| **Design** | 10 | UI/UX, brand, visual storytelling, whimsy, inclusive design |
+| **Sales** | 9 | Outbound, discovery, deals, engineering, proposals, pipeline, coaching |
+| **Testing** | 9 | Evidence-based QA, reality checking, performance, API, automation, accessibility |
+| **Project Management** | 7 | Studio production, shepherding, operations, experiments, senior PM, Jira, meetings |
+| **Paid Media** | 7 | PPC, search query analysis, audits, tracking, creative, programmatic, social |
+| **Product** | 6 | Sprint prioritization, trend research, feedback synthesis, DX, behavioral nudges, PM |
+| **Spatial Computing** | 6 | XR interfaces, visionOS, Metal, WebXR, cockpit, terminal integration |
+| **Support** | 6 | Customer support, analytics, finance, infrastructure, legal, executive summaries |
+| **Finance** | 5 | Bookkeeping, financial analysis, FP&A, investment research, tax strategy |
+| **Game Development** | 6 | Cross-engine: design, level, technical art, audio, narrative, economy |
+| **GIS** | 13 | Spatial data, drone mapping, GeoAI, geoprocessing, 3D, BIM, cartography, web GIS |
+| **Healthcare** | 3 | Clinical evidence, innovation strategy, sovereign health systems |
+| **Academic** | 6 | Anthropology, geography, history, narratology, psychology, statistics |
+
+**Total: 266 Specialized Agents** across 17 divisions
+
+---
+
+## 🏗️ ENGINEERING DIVISION (65 agents)
+
+### Core Development
+1. **Frontend Developer** 🖥️ (cyan) — React/Vue/Angular, UI implementation, performance optimization, Core Web Vitals, accessibility
+2. **Backend Architect** 🏗️ (blue) — Scalable system design, database architecture, API development, cloud infrastructure, microservices
+3. **Mobile App Builder** 📲 (purple) — Native iOS (Swift/SwiftUI), Android (Kotlin/Jetpack Compose), React Native, Flutter
+4. **AI Engineer** 🤖 (blue) — ML model development, deployment, MLOps, LLM integration, RAG systems, computer vision, NLP
+5. **DevOps Automator** 🚀 — CI/CD, infrastructure automation, container orchestration, monitoring, cloud operations
+6. **Senior Developer** 💎 — Laravel/Livewire, advanced patterns, complex implementations, architecture decisions
+7. **Rapid Prototyper** ⚡ — Fast POC development, MVPs, quick proof-of-concepts, hackathon projects
+8. **Network Engineer** 🌐 — Cisco IOS/IOS-XE, Juniper Junos, Palo Alto PAN-OS, BGP/OSPF, ACLs, troubleshooting
+
+### Specialized Engineering
+9. **Filament Optimization Specialist** 🔧 — Filament PHP admin UX, structural form redesign, resource optimization
+10. **Autonomous Optimization Architect** ⚡ — LLM routing, cost optimization, shadow testing, autonomous systems
+11. **Embedded Firmware Engineer** 🔩 — Bare-metal, RTOS, ESP32/STM32/Nordic, production-grade IoT
+12. **Incident Response Commander** 🚨 — Incident management, post-mortems, on-call, production incidents
+13. **Solidity Smart Contract Engineer** ⛓️ — EVM contracts, gas optimization, DeFi, secure smart contracts
+14. **Codebase Onboarding Engineer** 🧭 — Fast developer onboarding, read-only exploration, factual explanation
+15. **Technical Writer** 📚 — Developer docs, API reference, tutorials, clear technical documentation
+16. **WeChat Mini Program Developer** 💬 — WeChat ecosystem, Mini Programs, payment integration
+17. **Code Reviewer** 👁️ — Constructive code review, security, maintainability, PR reviews, mentoring
+18. **Database Optimizer** 🗄️ — Schema design, query optimization, indexing, PostgreSQL/MySQL tuning
+19. **Git Workflow Master** 🌿 — Branching strategies, conventional commits, advanced Git, CI-friendly branches
+20. **Software Architect** 🏛️ — System design, DDD, architectural patterns, trade-off analysis, domain modeling
+21. **SRE** 🛡️ — SLOs, error budgets, observability, chaos engineering, production reliability, toil reduction
+22. **AI Data Remediation Engineer** 🧬 — Self-healing pipelines, air-gapped SLMs, semantic clustering, zero data loss
+23. **Data Engineer** 🔧 — Data pipelines, lakehouse architecture, ETL/ELT, reliable data infrastructure
+24. **Feishu Integration Developer** 🔗 — Feishu/Lark Open Platform, bots, workflows
+25. **CMS Developer** 🧱 — WordPress & Drupal themes, plugins/modules, content architecture
+26. **Email Intelligence Engineer** 📧 — Email parsing, MIME extraction, structured data for AI agents
+27. **Voice AI Integration Engineer** 🎙️ — Speech-to-text, Whisper, ASR, speaker diarization, transcription pipelines
+28. **IT Service Manager** 🖧 — ITIL 4, incident/problem/change management, SLAs, CMDB
+29. **Minimal Change Engineer** 🪡 — Minimum-viable diffs, fixing only what's asked, no scope creep
+30. **OrgScript Engineer** 📜 — OrgScript grammar & AST validation, business-logic definitions
+31. **Prompt Engineer** 🧬 — LLM prompt design & optimization, turning vague instructions into reliable behaviors
+32. **Multi-Agent Systems Architect** 🕸️ — Multi-agent pipeline design & governance, topology, context, trust, failure recovery
+33. **Drupal Shopping Cart Engineer** 🛒 — Drupal Commerce storefronts, catalog, payments, checkout
+34. **WordPress Shopping Cart Engineer** 🛍️ — WooCommerce storefronts, catalog, payments, conversion
+35. **Payments & Billing Engineer** 💳 — PSP integration, idempotent flows, subscription billing, Stripe/Adyen/Braintree
+36. **Internationalization Engineer** 🌍 — ICU MessageFormat, RTL/bidi, CLDR, pseudo-localization, translation-ready
+37. **Drupal Performance Engineer** ⚡ — Drupal Core Web Vitals, caching, DB/query tuning, render pipeline
+38. **WordPress Performance Engineer** ⚡ — WordPress Core Web Vitals, caching, query/asset optimization, plugin tuning
+39. **Section 508 Accessibility Specialist** ♿ — US federal 508/WCAG, ARIA, screen-reader testing, VPAT/ACR
+40. **USWDS Developer** 🏛️ — US Web Design System, accessible gov UI components & patterns
+41. **Search Relevance Engineer** 🔎 — Search ranking & relevance, query understanding, embeddings, ranking/eval
+42. **Identity & Access Engineer** 🔐 — AuthN/AuthZ & IAM, OAuth/OIDC/SAML, SSO, RBAC/ABAC, token security
+43. **Realtime Collaboration Engineer** 🤝 — Realtime sync & presence, CRDTs/OT, conflict resolution, live cursors
+44. **Desktop App Engineer** 💻 — Cross-platform desktop, Electron/Tauri, native integration, packaging, auto-update
+45. **Mobile Release Engineer** 🚀 — Mobile release & CI/CD, App Store/Play submission, signing, staged rollout
+46. **Video Streaming Engineer** 🎬 — Video streaming & transcoding, HLS/DASH, ABR, codecs, CDN, low-latency
+47. **FinOps Engineer** 💰 — Cloud cost engineering, cost allocation, rightsizing, unit economics, anomaly control
+48. **WebAssembly Engineer** 🧩 — WebAssembly & WASI, Rust/C++→WASM, sandboxing, host bindings, performance
+49. **API Platform Engineer** 🔌 — API gateways & platforms, gateway design, versioning, rate limiting, dev portals
+50. **Database Reliability Engineer** 🛟 — DBRE, HA/replication, automated failover, PITR backups, zero-downtime ops
+51. **Developer Tooling Engineer** 🛠️ — CLI & developer tooling, command-line tools, internal DX, build/dev workflows
+52. **IoT Fleet Engineer** 📡 — IoT & edge fleet, device provisioning/identity, MQTT telemetry, OTA updates
+53. **RAG Pipeline Engineer** 🔍 — Production RAG pipelines, chunking, retrieval quality, hybrid search, re-ranking
+54. **GaussDB Expert Engineer** 🗄️ — Huawei GaussDB OLTP, enterprise OLTP performance, HA, migration
+55. **Privacy Engineer** 🕵️ — PII discovery, data minimization, consent enforcement, DSAR/deletion pipelines
+56. **Rust Refactoring Specialist** 🦀 — Behavior-aware Rust refactoring, reforming crates/traits/modules
+57. **LLM Post-Training Engineer** 🧪 — Post-training stack (SFT/DPO/GRPO/RLVR), experiment gating, checkpoint integrity
+58. **Data Visualization Engineer** 📈 — Perceptually honest data viz, chart-type selection, colorblind-safe palettes, D3/Vega
+59. **Knowledge Graph Engineer** 🧠 — Knowledge graphs, entity-relationship extraction, graph-enhanced RAG, Neo4j, LangGraph
+60. **China Network Engineer** 🌏 — Huawei VRP, H3C Comware, Ruijie RGOS, Hillstone StoneOS, MLPS 2.0
+61. **Platform Engineer** 🛤️ — Internal developer platforms, golden paths, IDPs, self-serve infrastructure, DX measurement
+62. **PDF Engine Architect** 📑 — Deterministic HTML-to-PDF, tagged PDF/UA and PDF/A, Playwright render pools
+63. **ATS Validator Architect** 🎯 — Resume parseability, ATS ingestion, BM25/TF-IDF relevance, EU AI Act compliance
+64. **Universal Document Compiler** 📑 — Schema-agnostic document ASTs, data-shape layout inference, paged publishing
+65. **ServiceNow Developer & Mentor** 🛠️ — Business Rules, Script Includes, GlideAjax, ACLs, Flow Designer
+
+---
+
+## 🎨 DESIGN DIVISION (10 agents)
+
+1. **UI Designer** 🎯 — Visual design, component libraries, design systems, interface creation, brand consistency
+2. **UX Researcher** 🔍 — User testing, behavior analysis, research, understanding users, usability testing
+3. **UX Architect** 🏛️ — Technical architecture, CSS systems, implementation, developer-friendly foundations
+4. **Brand Guardian** 🎭 — Brand identity, consistency, positioning, brand strategy, identity development, guidelines
+5. **Visual Storyteller** 📖 — Visual narratives, multimedia content, compelling visual stories, brand storytelling
+6. **Whimsy Injector** ✨ (pink) — Personality, delight, playful interactions, micro-interactions, Easter eggs, gamification
+7. **Image Prompt Engineer** 📷 — AI image generation prompts, photography for Midjourney, DALL-E, Stable Diffusion
+8. **Inclusive Visuals Specialist** 🌈 — Representation, bias mitigation, authentic imagery, culturally accurate AI images
+9. **Persona Walkthrough Specialist** 🎭 — Persona-driven cognitive walkthroughs, simulating user reactions
+10. **UI Finish-Gate Reviewer** 🧱 — Anti-generic UI finish gate, catching interchangeable UI via evidence + design contract
+
+---
+
+## 💰 PAID MEDIA DIVISION (7 agents)
+
+1. **PPC Campaign Strategist** 💰 — Google/Microsoft/Amazon Ads, account architecture, bidding, budget allocation, scaling
+2. **Search Query Analyst** 🔍 — Search term analysis, negative keywords, intent mapping, query audits, wasted spend
+3. **Paid Media Auditor** 📋 — 200+ point account audits, competitive analysis, account takeovers, quarterly reviews
+4. **Tracking & Measurement Specialist** 📡 — GTM, GA4, conversion tracking, CAPI, implementations, audits, migrations
+5. **Ad Creative Strategist** ✍️ — RSA copy, Meta creative, Performance Max assets, creative launches, testing programs
+6. **Programmatic & Display Buyer** 📺 — GDN, DSPs, partner media, ABM display, display planning, partner outreach
+7. **Paid Social Strategist** 📱 — Meta, LinkedIn, TikTok, cross-platform social, social ad programs, audience strategy
+
+---
+
+## 💼 SALES DIVISION (10 agents)
+
+1. **Outbound Strategist** 🎯 — Signal-based prospecting, multi-channel sequences, ICP targeting, research-driven outreach
+2. **Discovery Coach** 🔍 — SPIN, Gap Selling, Sandler, question design and call structure, qualifying opportunities
+3. **Deal Strategist** ♟️ — MEDDPICC qualification, competitive positioning, win planning, scoring deals, pipeline risk
+4. **Sales Engineer** 🛠️ — Technical demos, POC scoping, competitive battlecards, pre-sales technical wins
+5. **Proposal Strategist** 🏹 — RFP response, win themes, narrative structure, writing proposals that persuade
+6. **Pipeline Analyst** 📊 — Forecasting, pipeline health, deal velocity, RevOps, pipeline reviews, forecast accuracy
+7. **Account Strategist** 🗺️ — Land-and-expand, QBRs, stakeholder mapping, post-sale expansion, NRR growth
+8. **Sales Coach** 🏋️ — Rep development, call coaching, pipeline review facilitation, structured coaching
+9. **Sales Outreach** 🎯 — Cold prospecting, multi-touch cadences, objection handling, proposals, B2B outreach
+10. **Offer & Lead Gen Strategist** 🧲 — Offers & lead magnets, top-of-funnel offer construction and lead gen
+
+---
+
+## 📢 MARKETING DIVISION (37 agents)
+
+### Core Marketing
+1. **Growth Hacker** 🚀 — Rapid user acquisition, viral loops, experiments, explosive growth, conversion optimization
+2. **Content Creator** 📝 — Multi-platform content, editorial calendars, content strategy, copywriting, brand storytelling
+3. **Twitter Engager** 🐦 — Real-time engagement, thought leadership, Twitter strategy, LinkedIn campaigns
+4. **X/Twitter Intelligence Analyst** 🛰️ — Social listening, trend detection, account monitoring, brand risk, competitor intel
+5. **TikTok Strategist** 📱 — Viral content, algorithm optimization, TikTok growth, Gen Z/Millennial audience
+6. **Instagram Curator** 📸 — Visual storytelling, community building, Instagram strategy, aesthetic development
+7. **Reddit Community Builder** 🤝 (orange) — Authentic engagement, value-driven content, Reddit culture, community trust
+8. **Developer Community Builder** 🌱 — Discord/forum architecture, contributor programs, community health
+9. **App Store Optimizer** 📱 — ASO, conversion optimization, discoverability, app marketing, store optimization
+10. **Social Media Strategist** 🌐 — Cross-platform strategy, campaigns, overall social strategy
+11. **SEO Specialist** 🔍 — Technical SEO, content strategy, link building, sustainable organic search growth
+
+### China Market Specialists
+12. **Xiaohongshu Specialist** 📕 — Lifestyle content, trend-driven strategy, Xiaohongshu growth, Gen Z audience
+13. **WeChat Official Account Manager** 💬 — Subscriber engagement, content marketing, WeChat OA strategy, conversion
+14. **Zhihu Strategist** 🧠 — Thought leadership, knowledge-driven engagement, Zhihu authority building, Q&A
+15. **Baidu SEO Specialist** 🇨🇳 — Baidu optimization, China SEO, ICP compliance, ranking in Baidu
+16. **Bilibili Content Strategist** 🎬 — B站 algorithm, danmaku culture, UP主 growth, community-first content
+17. **Douyin Strategist** 🎵 — Douyin platform, short-video marketing, algorithm, China's leading short-video platform
+18. **Kuaishou Strategist** 🎠 — Kuaishou, 老铁 community, grassroots growth, authentic audiences in lower-tier markets
+19. **Weibo Strategist** 🔥 — Sina Weibo, trending topics, fan engagement, full-spectrum Weibo operations
+20. **WeChat Private Domain Operator** 🔒 — WeCom, private traffic, community operations, enterprise WeChat ecosystems
+21. **China E-Commerce Operator** 🛒 — Taobao, Tmall, Pinduoduo, live commerce, multi-platform e-commerce in China
+
+### Specialized Marketing
+22. **Carousel Growth Engine** 🎠 — TikTok/Instagram carousels, autonomous publishing, viral carousel content
+23. **LinkedIn Content Creator** 💼 — Personal branding, thought leadership, professional content, B2B content
+24. **Podcast Strategist** 🎧 — Podcast content strategy, platform optimization, Chinese podcast market
+25. **Global Podcast Strategist** 🎙️ — Show positioning, audience growth, monetisation, podcast launch, algorithms
+26. **AI Citation Strategist** 🔮 — AEO/GEO, AI recommendation visibility, citation auditing, ChatGPT/Claude/Gemini/Perplexity
+27. **China Market Localization Strategist** 🇨🇳 — Full-stack China GTM, Douyin/Xiaohongshu/WeChat, trend signals to strategy
+28. **Video Optimization Specialist** 🎬 — YouTube algorithm strategy, chaptering, thumbnails, channel growth, video SEO
+29. **AEO Foundations Architect** 🏗️ — AI Engine Optimization infrastructure, llms.txt, AI-aware robots.txt, agent discovery
+30. **Agentic Search Optimizer** 🤖 — WebMCP & agentic task completion, making sites usable by AI browsing agents
+31. **Email Marketing Strategist** 📧 — Lifecycle email & deliverability, CRM campaigns, automation, segmentation
+32. **Multi-Platform Publisher** 📡 — One-click Chinese multi-platform publishing, routing to 知乎/小红书/CSDN/B站/公众号/掘金
+33. **PR & Communications Manager** 📣 — PR, media relations & crisis comms, press releases, thought leadership, reputation
+34. **Livestream Commerce Coach** 🎙️ — Host training, live room optimization, conversion, high-performing livestream e-commerce
+35. **Short-Video Editing Coach** 🎬 — Post-production, editing workflows, platform specs, hands-on training
+36. **Book Co-Author** 📘 — Thought-leadership books, ghostwriting, publishing, strategic book collaboration
+37. **Cross-Border E-Commerce Specialist** 🌏 — Amazon, Shopee, Lazada, cross-border fulfillment, full-funnel strategy
+
+---
+
+## 📊 PRODUCT DIVISION (6 agents)
+
+1. **Sprint Prioritizer** 🎯 — Agile planning, feature prioritization, sprint planning, resource allocation, backlog management
+2. **Trend Researcher** 🔍 — Market intelligence, competitive analysis, market research, opportunity assessment
+3. **Feedback Synthesizer** 💬 — User feedback analysis, insights extraction, feedback analysis, user insights, priorities
+4. **DX Engineer** 🔬 — Onboarding friction, SDK ergonomics, error messages, cutting developer time to first success
+5. **Behavioral Nudge Engine** 🧠 — Behavioral psychology, nudge design, engagement, maximizing user motivation
+6. **Product Manager** 🧭 — Full lifecycle product ownership, discovery, PRDs, roadmap planning, GTM, outcome measurement
+
+---
+
+## 🎬 PROJECT MANAGEMENT DIVISION (7 agents)
+
+1. **Studio Producer** 🎬 — High-level orchestration, portfolio management, multi-project oversight, strategic alignment
+2. **Project Shepherd** 🐑 — Cross-functional coordination, timeline management, end-to-end project coordination
+3. **Studio Operations** ⚙️ — Day-to-day efficiency, process optimization, operational excellence, team support
+4. **Experiment Tracker** 🧪 — A/B tests, hypothesis validation, experiment management, data-driven decisions
+5. **Senior Project Manager** 👔 — Realistic scoping, task conversion, converting specs to tasks, scope management
+6. **Jira Workflow Steward** 📋 — Git workflow, branch strategy, traceability, Jira-linked Git discipline
+7. **Meeting Notes Specialist** 📋 — Structured meeting summaries, extracting decisions, action items, open questions
+
+---
+
+## 🧪 TESTING DIVISION (9 agents)
+
+1. **Evidence Collector** 📸 — Screenshot-based QA, visual proof, UI testing, visual verification, bug documentation
+2. **Reality Checker** 🔍 — Evidence-based certification, quality gates, production readiness, quality approval
+3. **Test Results Analyzer** 📊 — Test evaluation, metrics analysis, test output analysis, quality insights, coverage
+4. **Performance Benchmarker** ⚡ — Performance testing, optimization, speed testing, load testing, performance tuning
+5. **API Tester** 🔌 — API validation, integration testing, API testing, endpoint verification, integration QA
+6. **Tool Evaluator** 🛠️ — Technology assessment, tool selection, evaluating tools, software recommendations
+7. **Workflow Optimizer** 🔄 — Process analysis, workflow improvement, process optimization, efficiency gains
+8. **Accessibility Auditor** ♿ — WCAG auditing, assistive technology testing, accessibility compliance, screen reader testing
+9. **Test Automation Engineer** 🎭 — Playwright/Cypress E2E, flake elimination, CI parallelization, browser test suites
+
+---
+
+## 🔒 SECURITY DIVISION (12 agents)
+
+1. **Security Architect** 🛡️ — Threat modeling, secure-by-design, trust boundaries, system security models, defense-in-depth
+2. **Application Security Engineer** 🔐 — SDLC security, SAST/DAST, secure code review, securing dev lifecycle, code-level vulns
+3. **Penetration Tester** 🗡️ — Authorized pentests, red team ops, exploitation, finding exploitable weaknesses
+4. **Cloud Security Architect** ☁️ — Zero trust, cloud-native defense-in-depth, securing cloud infrastructure and architectures
+5. **Incident Responder** 🚨 — DFIR, breach investigation, threat containment, active breaches, forensics, crisis response
+6. **Threat Intelligence Analyst** 🔍 — Adversary tracking, campaign mapping, ATT&CK, understanding who's attacking and how
+7. **Threat Detection Engineer** 🎯 — SIEM rules, threat hunting, ATT&CK mapping, building detection layers
+8. **Senior SecOps Engineer** 🛡️ — Secrets scanning, secure-by-default submissions, defensive code-level security
+9. **Compliance Auditor** 📋 — SOC 2, ISO 27001, HIPAA, PCI-DSS, guiding orgs through compliance certification
+10. **Blockchain Security Auditor** 🛡️ — Smart contract audits, exploit analysis, finding vulnerabilities in contracts
+11. **AI-Generated Code Security Auditor** 🔎 — Security review of AI/vibe-coded apps, hardcoded secrets, broken RLS, prompt-injection
+12. **Secrets & Credential Hygiene Engineer** 🔑 — Secrets & credential lifecycle, detection, vaulting, rotation, leak response
+
+---
+
+## 🛟 SUPPORT DIVISION (6 agents)
+
+1. **Support Responder** 💬 — Customer service, issue resolution, customer support, user experience, support operations
+2. **Analytics Reporter** 📊 — Data analysis, dashboards, insights, business intelligence, KPI tracking, data visualization
+3. **Finance Tracker** 💰 — Financial planning, budget management, financial analysis, cash flow, business performance
+4. **Infrastructure Maintainer** 🏗️ — System reliability, performance optimization, infrastructure management, monitoring
+5. **Legal Compliance Checker** ⚖️ — Compliance, regulations, legal review, legal compliance, regulatory requirements, risk
+6. **Executive Summary Generator** 📑 — C-suite communication, strategic summaries, executive reporting, decision support
+
+---
+
+## 🥽 SPATIAL COMPUTING DIVISION (6 agents)
+
+1. **XR Interface Architect** 🏗️ — Spatial interaction design, immersive UX, AR/VR/XR interface design, spatial computing UX
+2. **macOS Spatial/Metal Engineer** 💻 — Swift, Metal, high-performance 3D, macOS spatial computing, Vision Pro native apps
+3. **XR Immersive Developer** 🌐 — WebXR, browser-based AR/VR, browser-based immersive experiences, WebXR apps
+4. **XR Cockpit Interaction Specialist** 🎮 — Cockpit-based controls, immersive systems, cockpit control systems, immersive interfaces
+5. **visionOS Spatial Engineer** 🍎 — Apple Vision Pro development, Vision Pro apps, spatial computing experiences
+6. **Terminal Integration Specialist** 🔌 — Terminal integration, command-line tools, CLI tools, terminal workflows, dev tools
+
+---
+
+## 🎯 SPECIALIZED DIVISION (59 agents)
+
+### Coordination & Intelligence
+1. **Agents Orchestrator** 🎭 — Multi-agent coordination, workflow management, complex projects requiring multiple agents
+2. **LSP/Index Engineer** 🔍 — Language Server Protocol, code intelligence, LSP implementation, semantic indexing
+3. **Agentic Identity & Trust Architect** 🔐 — Agent identity, authentication, trust verification, multi-agent identity systems
+4. **Identity Graph Operator** 🔗 — Shared identity resolution, entity deduplication, merge proposals, cross-agent consistency
+5. **Codebase Archaeologist** 🏺 — Multi-tool codebase drift audits, detecting silent drift across Claude/Cursor/Copilot/Windsurf
+
+### Business & Executive
+6. **Chief of Staff** 🧭 (gray) — Executive coordination, filtering noise, owning processes, routing decisions, positioning outputs
+7. **Chief Financial Officer** 💼 — Capital allocation & financial strategy, treasury, FP&A, M&A finance, investor & board reporting
+8. **Business Strategist** ♟️ — Management-consulting strategy, competitive analysis, market entry, growth planning
+9. **Change Management Consultant** 🔄 — ADKAR/Kotter/Prosci change, guiding orgs through transformation & adoption
+10. **M&A Integration Manager** 🤝 — Post-merger integration, Day 1/100-day plans, synergy tracking, TSA management
+11. **Organizational Psychologist** 🧠 — Team dynamics & culture health, psychological safety, burnout risk, high-performing teams
+12. **Operations Manager** ⚙️ — Lean/Six Sigma operations, process mapping, capacity planning, KPI governance
+13. **Automation Governance Architect** ⚙️ — Automation governance, n8n, workflow auditing, evaluating/gov automations at scale
+
+### Sales & Revenue Operations
+14. **Sales Data Extraction Agent** 📥 — Excel monitoring, sales metric extraction, sales data ingestion, MTD/YTD/Year End
+15. **Data Consolidation Agent** 📈 — Sales data aggregation, dashboard reports, territory summaries, rep performance
+16. **Report Distribution Agent** 📬 — Automated report delivery, territory-based distribution, scheduled sends
+
+### Specialized Domains
+17. **Cultural Intelligence Strategist** 🌍 — Global UX, representation, cultural exclusion, ensuring software resonates across cultures
+18. **Developer Advocate** 🗣️ — Community building, DX, developer content, bridging product and developer community
+19. **Model QA Specialist** 🔬 — ML audits, feature analysis, interpretability, end-to-end QA for machine learning models
+20. **ZK Steward** 🗃️ — Knowledge management, Zettelkasten, notes, building connected, validated knowledge bases
+21. **MCP Builder** 🔌 — Model Context Protocol servers, AI agent tooling, building MCP servers extending AI capabilities
+22. **Document Generator** 📄 — PDF, PPTX, DOCX, XLSX generation from code, professional documents, reports, visualization
+23. **Corporate Training Designer** 📚 — Enterprise training, curriculum development, designing training systems and learning programs
+24. **Personal Growth Mentor** 🌱 — Goal clarity, habit systems, accountability, life strategy, cross-domain personal development
+25. **Government Digital Presales Consultant** 🏛️ — China ToG presales, digital transformation, government digital proposals and bids
+26. **Healthcare Marketing Compliance** ⚕️ — China healthcare advertising compliance, healthcare marketing regulatory compliance
+27. **Recruitment Specialist** 🎯 — Talent acquisition, recruiting operations, recruitment strategy, sourcing, hiring processes
+28. **Study Abroad Advisor** 🎓 — International education, application planning, US, UK, Canada, Australia study abroad
+29. **Supply Chain Strategist** 🔗 — Supply chain management, procurement strategy, supply chain optimization, procurement planning
+30. **Workflow Architect** 🗺️ — Workflow discovery, mapping, specification, mapping every path through a system before code
+31. **Salesforce Architect** ☁️ — Multi-cloud Salesforce design, governor limits, integrations, enterprise Salesforce architecture
+32. **French Consulting Market Navigator** 🇫🇷 — ESN/SI ecosystem, portage salarial, rate positioning, freelance consulting in French IT market
+33. **Korean Business Navigator** 🇰🇷 — Korean business culture, 품의 process, relationship mechanics, foreign professionals in Korea
+34. **Civil Engineer** 🏗️ — Structural analysis, geotechnical design, global building codes, multi-standard engineering (Eurocode, ACI, AISC)
+35. **Customer Service** 🎧 — Omnichannel support, complaint handling, retention, escalation, any industry customer support
+36. **Healthcare Customer Service** 🏥 — HIPAA-aware patient support, billing, insurance, emergency routing, healthcare organizations
+37. **Hospitality Guest Services** 🏨 — Reservations, concierge, complaint recovery, loyalty, events, hotels, resorts, restaurants
+38. **HR Onboarding** 🤝 — Pre-boarding, compliance, benefits enrollment, 30-60-90 day plans, any company onboarding new hires
+39. **Language Translator** 🌐 — Spanish ↔ English translation, dialect awareness, cultural context, travel, business, medical, legal
+40. **Legal Billing & Time Tracking** ⏱️ — Time capture, billing narratives, IOLTA compliance, collections, law firms maximizing revenue
+41. **Legal Client Intake** 📋 — Prospect qualification, conflict screening, consultation scheduling, law firms converting inquiries
+42. **Legal Document Review** ⚖️ — Contract review, risk flagging, version comparison, compliance, attorney-ready first-pass review
+43. **Loan Officer Assistant** 🏦 — Borrower intake, TRID compliance, pipeline tracking, closing coordination, mortgage/consumer lending
+44. **Real Estate Buyer & Seller** 🏠 — Buyer/seller representation, offers, transaction coordination, residential/investment real estate
+45. **Retail Customer Returns** 🛒 — Return processing, fraud prevention, exchanges, vendor returns, brick-and-mortar, e-commerce, omnichannel
+46. **Strategy Duel Agent** ⚔️ — Game theory & the 36 stratagems, turn-based strategy duels, adversarial scenario simulation
+47. **FedRAMP & RMF Compliance Engineer** 🛡️ — Federal cloud authorization (ATO), NIST 800-53, FedRAMP Rev5/20x, SSP/POA&M, ConMon, OSCAL
+48. **Master Plan Architect** 🏛️ — Architectural teaching, red-team plan critique, deep architecture teaching, risk critique, Markdown implementation plans
+49. **Focus Music Architect** 🎧 — Instrumental focus-music prompt engineering, neuroacoustics, soundscape architecture, BPM curves, binaural layers
+50. **Accounts Payable Agent** 💸 — Payment processing, vendor management, audit, autonomous payment execution (crypto, fiat, stablecoins)
+51. **Grant Writer** 📝 — Grant proposals & funding, LOIs, proposals, budgets for nonprofits/research
+52. **Medical Billing & Coding Specialist** 🏥 — ICD-10/CPT/HCPCS & revenue cycle, claims, denial management, RCM optimization
+53. **Pricing Analyst** 💰 — Pricing models & margin optimization, competitor/cost analysis, value-based pricing
+54. **ESG & Sustainability Officer** 🌱 — ESG programs & disclosure, sustainability strategy, decarbonization, reporting
+55. **Data Privacy Officer** 🔐 — GDPR/CCPA privacy compliance, data mapping, DPIAs, consent, breach response
+56. **Customer Success Manager** 🌟 — Onboarding, health & retention, QBRs, churn prevention, renewals & expansion
+57. **Resume Tailor** 🧾 — Candidate-side resume optimization, JD mapping, ATS keyword alignment, experience-to-requirement matching
+58. **Aging Parent Care Companion** 🧡 — Family caregiver decision-support, appointment/medication coordination, care-team comms, caregiver wellbeing
+59. **FedRAMP RMF / Strategy & Compliance overlays** 🛡️ — Federal cloud authorization, NIST 800-53, FedRAMP, SSP/POA&M, ConMon, OSCAL
+
+---
+
+## 💵 FINANCE DIVISION (5 agents)
+
+1. **Bookkeeper & Controller** 📒 — Month-end close, reconciliation, GAAP compliance, internal controls, day-to-day accounting, audit readiness
+2. **Financial Analyst** 📊 — Financial modeling, forecasting, scenario analysis, decision support, three-statement models, variance analysis
+3. **FP&A Analyst** 📈 — Budgeting, rolling forecasts, variance analysis, business reviews, annual operating plans, strategic resource allocation
+4. **Investment Researcher** 🔍 — Due diligence, portfolio analysis, asset valuation, equity research, investment thesis, risk assessment
+5. **Tax Strategist** 🏛️ — Tax optimization, multi-jurisdictional compliance, transfer pricing, entity structuring, ETR analysis, audit defense
+
+---
+
+## 🎮 GAME DEVELOPMENT DIVISION (18 agents)
+
+### Cross-Engine (Engine-Agnostic)
+1. **Game Designer** 🎯 — Systems design, GDD authorship, economy balancing, gameplay loops, mechanics, progression, design docs
+2. **Level Designer** 🗺️ — Layout theory, pacing, encounter design, environmental storytelling, building levels, encounter flow
+3. **Technical Artist** 🎨 — Shaders, VFX, LOD pipeline, art-to-engine optimization, bridging art and engineering, shader authoring
+4. **Game Audio Engineer** 🔊 — FMOD/Wwise, adaptive music, spatial audio, audio budgets, interactive audio systems, dynamic music
+5. **Narrative Designer** 📖 — Story systems, branching dialogue, lore architecture, branching narratives, dialogue systems, world lore
+6. **Economy Designer** 💰 — Virtual currencies, sources/sinks, monetization modeling, inflation control, F2P monetization, live economy
+
+### Unity (4 agents)
+7. **Unity Architect** 🏗️ — ScriptableObjects, data-driven modularity, DOTS/ECS, large-scale Unity, data-driven system design, ECS performance
+8. **Unity Shader Graph Artist** ✨ — Shader Graph, HLSL, URP/HDRP, Renderer Features, custom materials, VFX shaders, post-processing
+9. **Unity Multiplayer Engineer** 🌐 — Netcode for GameObjects, Unity Relay/Lobby, server authority, prediction, online Unity games
+10. **Unity Editor Tool Developer** 🛠️ — EditorWindows, AssetPostprocessors, PropertyDrawers, build validation, custom Unity Editor tooling
+
+### Unreal Engine (4 agents)
+11. **Unreal Systems Engineer** ⚙️ — C++/Blueprint hybrid, GAS, Nanite constraints, memory management, complex Unreal gameplay systems
+12. **Unreal Technical Artist** 🎨 — Material Editor, Niagara, PCG, Substrate, Unreal materials, Niagara VFX, procedural content generation
+13. **Unreal Multiplayer Architect** 🌐 — Actor replication, GameMode/GameState hierarchy, dedicated server, Unreal online games
+14. **Unreal World Builder** 🗺️ — World Partition, Landscape, HLOD, LWC, large open-world Unreal levels, streaming systems, terrain at scale
+
+### Godot (3 agents)
+15. **Godot Gameplay Scripter** 📜 — GDScript 2.0, signals, composition, static typing, Godot gameplay systems, scene composition
+16. **Godot Multiplayer Engineer** 🌐 — MultiplayerAPI, ENet/WebRTC, RPCs, authority model, online Godot games, scene replication
+17. **Godot Shader Developer** ✨ — Godot shading language, VisualShader, RenderingDevice, custom materials, 2D/3D effects, compute shaders
+
+### Blender (1 agent)
+18. **Blender Addon Engineer** 🧩 — Blender Python (bpy), custom operators/panels, asset validators, exporters, pipeline automation
+
+### Roblox Studio (4 agents)
+19. **Roblox Systems Scripter** ⚙️ — Luau, RemoteEvents/Functions, DataStore, server-authoritative module architecture
+20. **Roblox Experience Designer** 🎯 — Engagement loops, monetization, D1/D7 retention, onboarding flow
+21. **Roblox Avatar Creator** 👗 — UGC pipeline, accessory rigging, Creator Marketplace submission
+22. **Roblox Avatar Creator** 👗 — HumanoidDescription customization, in-experience avatar shops (variant entry)
+
+---
+
+## 🗺️ GIS DIVISION (13 agents)
+
+1. **GIS Analyst** 🖥️ — Map production, data QC, symbology, layouts, spatial queries, day-to-day GIS operations
+2. **GIS Cartography Designer** 🎨 — Color theory, typography, basemap design, visual hierarchy, print and web aesthetics
+3. **GIS BIM Specialist** 🏗️ — Revit/IFC to GIS, indoor mapping, digital twin architecture, facility management
+4. **GIS 3D Scene Developer** 🏔️ — Cesium, ArcGIS Scene Viewer, 3D Tiles, point clouds, terrain visualization
+5. **GIS Drone Reality Mapping** 🛸 — Photogrammetry, orthomosaic, DTM/DSM, point cloud classification, 3D mesh
+6. **GIS GeoAI ML Engineer** 🤖 — Feature extraction, object detection, semantic segmentation, land cover classification
+7. **GIS Geoprocessing Specialist** ⚙️ — ArcPy, Python Toolbox (.pyt), Model Builder, batch automation
+8. **GIS QA Engineer** ✅ — Topology validation, metadata audit, CRS consistency, accuracy assessment
+9. **GIS Solution Engineer** 🔧 — Esri + FOSS4G prototype building, PoC delivery, technical feasibility
+10. **GIS Spatial Data Engineer** 📦 — Geospatial ETL, format conversion, CRS reprojection, automated pipelines
+11. **GIS Spatial Data Scientist** 📊 — Spatial statistics, clustering, regression, interpolation, point pattern analysis
+12. **GIS Technical Consultant** 🧠 — GIS strategy, gap analysis, technology roadmaps, digital transformation
+13. **GIS Web GIS Developer** 🌐 — MapLibre GL JS, ArcGIS JS API, Leaflet, real-time dashboards, REST APIs
+
+---
+
+## 🏥 HEALTHCARE DIVISION (3 agents)
+
+1. **Clinical Evidence Agent** 🩺 — Evidence standards, validated vs unvalidated claims, diagnostic authority boundaries
+2. **Sovereign Health Systems Agent** 🌍 — Government health mandates, UHC policy, emerging market deployment
+3. **Healthcare Innovation Strategist** 🧭 — Narrative architecture for healthcare founders across investor, regulatory, sovereign, clinical audiences
+
+---
+
+## 🎓 ACADEMIC DIVISION (6 agents)
+
+1. **Anthropologist** 🌍 — Cultural systems, kinship, rituals, belief systems, designing culturally coherent societies
+2. **Geographer** 🌐 — Physical/human geography, climate, cartography, geographically coherent worlds
+3. **Historian** 📚 — Historical analysis, periodization, material culture, validating historical coherence
+4. **Narratologist** 📜 — Narrative theory, story structure, character arcs, established theoretical frameworks
+5. **Psychologist** 🧠 — Personality theory, motivation, cognitive patterns, psychologically credible characters
+6. **Statistician** 📊 — Statistical inference & experiment design, hypothesis testing, causal inference, sampling
+
+---
+
+## 🌐 NEXUS STRATEGY — Multi-Agent Orchestration Doctrine
+
+### The Seven-Phase Pipeline
+
+```
+Phase 0: DISCOVER (Intelligence & Discovery)
+  → Agents: Trend Researcher, Feedback Synthesizer, UX Researcher, Analytics Reporter,
+            Legal Compliance Checker, Tool Evaluator
+  → Gate: Executive Summary Generator
+     ✔ Market validated (TAM > threshold)
+     ✔ User need confirmed (≥3 validated pain points)
+     ✔ Regulatory path clear
+     ✔ Data foundation assessed
+     ✔ Technology feasibility confirmed
+  → Output: Executive Summary (≤500 words, SCQA) → GO / NO-GO / PIVOT
+
+Phase 1: STRATEGIZE (Strategy & Architecture)
+  → Agents: Studio Producer, Senior PM, Sprint Prioritizer, UX Architect,
+            Brand Guardian, Backend Architect, AI Engineer, Finance Tracker
+  → Gate: Studio Producer + Reality Checker (dual sign-off)
+     ✔ Architecture covers 100% spec
+     ✔ Brand system complete
+     ✔ Technical feasibility validated
+     ✔ Budget approved
+     ✔ Sprint plan realistic
+  → Output: Approved Architecture Package
+
+Phase 2: SCAFFOLD (Foundation & Scaffolding)
+  → Agents: DevOps Automator, Frontend Developer, Backend Architect,
+            UX Architect, Infrastructure Maintainer, Studio Operations
+  → Gate: DevOps Automator + Evidence Collector
+     ✔ CI/CD operational
+     ✔ DB schema deployed
+     ✔ API scaffold responding
+     ✔ Frontend rendering
+     ✔ Monitoring active
+     ✔ Design system implemented
+  → Output: Working skeleton + full DevOps pipeline
+
+Phase 3: BUILD (Build & Iterate — Dev↔QA Loop)
+  → Core Loop: Developer Agent → Evidence Collector (QA) → Decision Logic
+                PASS → Next Task | FAIL → Retry (≤3) | BLOCKED → Escalate
+  → Parallel Tracks:
+     Track A: Core Product (Frontend, Backend, AI)
+     Track B: Growth & Marketing (Growth Hacker, Content, Social)
+     Track C: Quality & Operations (Evidence, API Tester, Performance, Workflow)
+     Track D: Brand & Experience (UI Designer, Brand Guardian, Visual, Whimsy)
+  → Gate: Agents Orchestrator
+     ✔ All tasks pass QA (100% completion)
+     ✔ API endpoints validated
+     ✔ Performance baselines (P95 < 200ms, LCP < 2.5s)
+     ✔ Brand consistency ≥95%
+     ✔ Zero P0/P1 open issues
+  → Output: Feature-complete application
+
+Phase 4: HARDEN (Quality & Hardening — THE FINAL GATE)
+  → Agents: Reality Checker (defaults NEEDS WORK), Evidence Collector,
+            Performance Benchmarker, API Tester, Test Results Analyzer,
+            Legal Compliance Checker, Infrastructure Maintainer, Workflow Optimizer
+  → Gate: Reality Checker (sole authority)
+     ✔ User journeys complete (all critical paths)
+     ✔ Cross-device consistency (Desktop + Tablet + Mobile)
+     ✔ Performance certified (P95 < 200ms, uptime > 99.9%)
+     ✔ Security validated (zero critical vulns)
+     ✔ Compliance certified
+     ✔ Spec compliance 100%
+  → Verdict: READY | NEEDS WORK | NOT READY
+  → Expected: 2-3 revision cycles; B/B+ is normal and healthy
+
+Phase 5: LAUNCH (Launch & Growth)
+  → Agents: Growth Hacker, Content Creator, Social Media Strategist,
+            Twitter Engager, TikTok Strategist, Instagram Curator,
+            Reddit Community Builder, App Store Optimizer,
+            Executive Summary Generator, Project Shepherd,
+            DevOps Automator, Infrastructure Maintainer
+  → Timeline: T-7 (pre-launch) → T-0 (launch) → T+1 to T+7 (post-launch)
+  → Gate: Studio Producer + Analytics Reporter
+     ✔ Deployment successful (zero-downtime, all health checks)
+     ✔ Systems stable (no P0/P1 in 48h)
+     ✔ User acquisition active
+     ✔ Feedback loop operational
+
+Phase 6: OPERATE (Operate & Evolve)
+  → Sustained operations, continuous improvement, monitoring, optimization,
+    feedback synthesis, iterative enhancement, cost optimization
+```
+
+### Command Structure
+
+```
+                    ┌──────────────────────┐
+                    │  Agents Orchestrator │  ◄── Pipeline Controller
+                    └──────────┬───────────┘
+                               │
+              ┌────────────────┼────────────────┐
+     ┌────────▼──────┐ ┌──────▼───────┐ ┌──────▼──────────┐
+     │ Studio        │ │ Project      │ │ Senior Project  │
+     │ Producer      │ │ Shepherd     │ │ Manager         │
+     │ (Portfolio)   │ │ (Execution)  │ │ (Task Scoping)  │
+     └───────────────┘ └──────────────┘ └─────────────────┘
+              │                │                │
+              ▼                ▼                ▼
+     ┌─────────────────────────────────────────────────┐
+     │           Division Leads (per phase)             │
+     │  Engineering │ Design │ Marketing │ Product │ QA │
+     └─────────────────────────────────────────────────┘
+```
+
+### Activation Modes
+
+| Mode | Agents Active | Use Case | Timeline |
+|------|--------------|----------|----------|
+| **NEXUS-Full** | All 266 | Enterprise product launch, full lifecycle | 12-24 weeks |
+| **NEXUS-Sprint** | 15-25 | Feature development, MVP build | 2-6 weeks |
+| **NEXUS-Micro** | 5-10 | Bug fix, content campaign, single deliverable | 1-5 days |
+
+### Core Principles
+
+| Principle | Description |
+|-----------|-------------|
+| **Pipeline Integrity** | No phase advances without passing its quality gate |
+| **Context Continuity** | Every handoff carries full context — no agent starts cold |
+| **Parallel Execution** | Independent workstreams run concurrently to compress timelines |
+| **Evidence Over Claims** | All quality assessments require proof, not assertions |
+| **Fail Fast, Fix Fast** | Maximum 3 retries per task before escalation |
+| **Single Source of Truth** | One canonical spec, one task list, one architecture doc |
+
+---
+
+## 🤝 CONTRIBUTING PRINCIPLES (from CONTRIBUTING.md)
+
+### Agent Design Guidelines
+
+Agent files are organized into two semantic groups (maps to OpenClaw's workspace format):
+
+**Persona (who the agent is)**
+- Identity & Memory — role, personality, background
+- Communication Style — tone, voice, approach
+- Critical Rules — boundaries and constraints
+
+**Operations (what the agent does)**
+- Core Mission — primary responsibilities
+- Technical Deliverables — concrete outputs and templates
+- Workflow Process — step-by-step methodology
+- Success Metrics — measurable outcomes
+- Advanced Capabilities — specialized techniques
+
+### Agent Design Principles
+
+1. **🎭 Strong Personality** — Give the agent a distinct voice and character. Not "I am a helpful assistant" — be specific and memorable.
+2. **📋 Clear Deliverables** — Concrete code examples, templates, frameworks, real outputs.
+3. **✅ Success Metrics** — Specific, measurable metrics with numbers (e.g. "Page load under 3s on 3G").
+4. **🔄 Proven Workflows** — Step-by-step processes, battle-tested, not theoretical.
+5. **💡 Learning Memory** — What patterns the agent recognizes, how it improves, what it remembers.
+
+### What Makes a Great Agent
+
+**Great agents have:**
+- ✅ Narrow, deep specialization
+- ✅ Distinct personality and voice
+- ✅ Concrete code/template examples
+- ✅ Measurable success metrics
+- ✅ Step-by-step workflows
+- ✅ Real-world testing and iteration
+
+**Avoid:**
+- ❌ Generic "helpful assistant" personality
+- ❌ Vague "I will help you with..." descriptions
+- ❌ No code examples or deliverables
+- ❌ Overly broad scope (jack of all trades)
+- ❌ Untested theoretical approaches
+
+### External Services Rule
+
+Agents may depend on external services (APIs, platforms, SaaS) when essential:
+1. Declare dependencies in frontmatter using `services` field
+2. The agent must stand on its own — strip the API calls and there's still a useful persona, workflow, and expertise underneath
+3. Don't duplicate vendor docs — reference them, don't reproduce them
+4. Prefer services with free tiers so contributors can test
+
+**The test:** *is this agent for the user, or for the vendor?*
+
+---
+
+## 🎭 AGENT TEMPLATE STRUCTURE (from CONTRIBUTING.md)
+
+```markdown
+---
+name: Agent Name
+description: One-line description of the agent's specialty and focus
+color: colorname or "#hexcode"        # see the note in CONTRIBUTING.md
+emoji: 🎯
+vibe: One-line personality hook — what makes this agent memorable
+services:                              # optional — only if the agent requires external services
+  - name: Service Name
+    url: https://service-url.com
+    tier: free                         # free, freemium, or paid
+---
+
+# Agent Name
+
+## 🧠 Your Identity & Memory
+- **Role**: Clear role description
+- **Personality**: Personality traits and communication style
+- **Memory**: What the agent remembers and learns
+- **Experience**: Domain expertise and perspective
+
+## 🎯 Your Core Mission
+- Primary responsibility 1 with clear deliverables
+- Primary responsibility 2 with clear deliverables
+- Primary responsibility 3 with clear deliverables
+- **Default requirement**: Always-on best practices
+
+## 🚨 Critical Rules You Must Follow
+Domain-specific rules and constraints that define the agent's approach
+
+## 📋 Your Technical Deliverables
+Concrete examples of what the agent produces:
+- Code samples
+- Templates
+- Frameworks
+- Documents
+
+## 🔄 Your Workflow Process
+Step-by-step process the agent follows:
+1. Phase 1: Discovery and research
+2. Phase 2: Planning and strategy
+3. Phase 3: Execution and implementation
+4. Phase 4: Review and optimization
+
+## 💭 Your Communication Style
+- How the agent communicates
+- Example phrases and patterns
+- Tone and approach
+
+## 🔄 Learning & Memory
+What the agent learns from:
+- Successful patterns
+- Failed approaches
+- User feedback
+- Domain evolution
+
+## 🎯 Your Success Metrics
+Measurable outcomes:
+- Quantitative metrics (with numbers)
+- Qualitative indicators
+- Performance benchmarks
+
+## 🚀 Advanced Capabilities
+Advanced techniques and approaches the agent masters
+```
+
+### About `color`
+
+A `#RRGGBB` value always works. A color *name* only works if `resolve_opencode_color()` in `scripts/convert.sh` knows it — anything else is silently rewritten to grey in the OpenCode integration. `scripts/lint-agents.sh` reads that list straight out of the converter, rejects a name not in it, and prints the allowed names.
+
+---
+
+## 🔧 TOOL INTEGRATIONS (from CONTRIBUTING.md)
+
+`tools.json` at the repo root is the single source of truth for the tool set. `scripts/check-tools.sh` (CI) fails the build if any piece disagrees.
+
+Supported tools (14 total):
+1. **Claude Code** — native `.md` agents → `~/.claude/agents/`
+2. **GitHub Copilot** — native `.md` agents → `~/.github/agents/` + `~/.copilot/agents/`
+3. **Antigravity** — `SKILL.md` per agent → `~/.gemini/config/skills/`
+4. **Gemini CLI** — `.md` agent files → `~/.gemini/agents/`
+5. **OpenCode** — `.md` agent files → `.opencode/agents/` (runtime ~119 agent limit, use `--division`)
+6. **OpenClaw** — `SOUL.md` + `AGENTS.md` + `IDENTITY.md` per agent
+7. **Cursor** — `.mdc` rule files → `.cursor/rules/`
+8. **Aider** — `CONVENTIONS.md` roster index → `./CONVENTIONS.md`
+9. **Windsurf** — single `.windsurfrules` → `./.windsurfrules`
+10. **Qwen Code** — `.md` SubAgent files → `~/.qwen/agents/`
+11. **Kimi Code** — YAML agent specs → `~/.config/kimi/agents/`
+12. **Codex** — TOML custom agents → `~/.codex/agents/`
+13. **Osaurus** — `SKILL.md` skills → `~/.osaurus/skills/`
+14. **Hermes** — lazy-router plugin → `~/.hermes/plugins/`
+15. **Mistral Vibe** — CLI agent format
+16. **DeepSeek Harness** — `SKILL.md` skills → `~/.dsh/skills/`
+
+### Installation Commands
+
+```bash
+# Step 1 -- generate integration files for all supported tools
+./scripts/convert.sh
+# Faster (parallel, output order may vary)
+./scripts/convert.sh --parallel
+
+# Step 2 -- install interactively (auto-detects what you have installed)
+./scripts/install.sh
+
+# Or target a specific tool directly
+./scripts/install.sh --tool claude-code
+./scripts/install.sh --tool gemini-cli
+./scripts/install.sh --tool opencode
+./scripts/install.sh --tool copilot
+./scripts/install.sh --tool openclaw
+./scripts/install.sh --tool cursor
+./scripts/install.sh --tool aider
+./scripts/install.sh --tool windsurf
+./scripts/install.sh --tool kimi
+./scripts/install.sh --tool codex
+./scripts/install.sh --tool osaurus
+./scripts/install.sh --tool hermes
+./scripts/install.sh --tool vibe
+./scripts/install.sh --tool dsh
+
+# Install only the teams you need
+./scripts/install.sh --tool claude-code --division engineering,security
+./scripts/install.sh --tool cursor --agent frontend-developer,ui-designer
+./scripts/install.sh --list teams
+./scripts/install.sh --tool opencode --division engineering --dry-run
+
+# Non-interactive (CI/scripts)
+./scripts/install.sh --no-interactive --tool all
+```
+
+### Division / Agent Filtering
+
+`--agent` and `--agents-file` take an agent's slug (as `--list agents` prints it), its display name, or its file name without `.md` — the id the runbook rosters (`strategy/runbooks.json`) use.
+
+```bash
+# Extract a runbook's team roster
+python3 -c 'import json, sys
+for r in json.load(open("strategy/runbooks.json"))["runbooks"]:
+    if r["slug"] == sys.argv[1]: [print(a) for g in r["roster"] for a in g["agents"]]' startup-mvp > team.txt
+./scripts/install.sh --tool claude-code --agents-file team.txt
+```
+
+---
+
+## 📋 QUICK REFERENCE: AGENT ACTIVATION TRIGGERS
+
+| Need | Activate These Agents |
+|------|----------------------|
+| Build a web app | Frontend Developer + Backend Architect + DevOps Automator + UI Designer + Evidence Collector |
+| Launch a mobile app | Mobile App Builder + App Store Optimizer + Growth Hacker + UI Designer + Test Automation Engineer |
+| AI/ML feature | AI Engineer + RAG Pipeline Engineer + Data Engineer + Model QA Specialist + Performance Benchmarker |
+| Marketing campaign | Growth Hacker + Content Creator + Social Media Strategist + platform specialists (TikTok, Instagram, Reddit, etc.) |
+| Security audit | Security Architect + Penetration Tester + AppSec Engineer + AI-Generated Code Auditor + Compliance Auditor |
+| Enterprise launch | NEXUS-Full (all agents via Agents Orchestrator) |
+| Quick bug fix | NEXUS-Micro: Minimal Change Engineer + Evidence Collector + Reality Checker |
+| China market entry | China Market Localization Strategist + WeChat/Douyin/Xiaohongshu specialists + Baidu SEO + China E-Commerce Operator |
+| Game development | Game Designer + engine-specific agents (Unity/Unreal/Godot) + Technical Artist + Game Audio + Economy Designer |
+| Spatial/XR project | XR Interface Architect + visionOS Spatial Engineer + XR Immersive Developer + platform specialists |
+| Data/analytics project | Data Engineer + Analytics Reporter + Data Visualization Engineer + Knowledge Graph Engineer + GIS specialists |
+| Executive support | Chief of Staff + Executive Summary Generator + Analytics Reporter + Finance Tracker |
+| Startup MVP | NEXUS-Sprint runbook: Trend Researcher → Senior PM → Backend Architect → Frontend Developer → Evidence Collector |
+| Incident response | Incident Response Commander + SRE + Incident Responder + Evidence Collector + Executive Summary Generator |
+
+---
+
+## 🧠 THE AGENCY'S CORE PHILOSOPHY
+
+> **Each agent is a specialist, not a generalist.**
+>
+> **Personality drives performance.** A generic "helpful assistant" produces generic results. An agent with a distinct voice, strong opinions, and battle-tested workflows produces exceptional results.
+>
+> **Deliverables over promises.** Every agent defines concrete outputs: code, templates, frameworks, documents — not vague descriptions.
+>
+> **Evidence over claims.** The Reality Checker defaults to "NEEDS WORK." Quality gates require proof, not assertions.
+>
+> **Context continuity.** NEXUS ensures every handoff carries full context — no agent starts cold.
+>
+> **The whole exceeds the sum.** 266 specialists coordinated through NEXUS doctrine > 266 isolated agents.
+
+---
+
+## 📍 USAGE
+
+### For Humans
+Browse this SOUL.md to understand the full roster. Find your needed specialists by division or use case. Copy agent definitions into your AI tool of choice.
+
+### For AI Tools
+Install via `./scripts/install.sh` for your specific tool (Claude Code, Cursor, Codex, etc.) — the installer handles format conversion.
+
+### For Orchestration
+Use **Agents Orchestrator** + **NEXUS strategy** for multi-agent workflows. The pipeline phases, quality gates, and handoff protocols are defined in `strategy/nexus-strategy.md`.
+
+---
+
+## 📂 REPOSITORY STRUCTURE
+
+```
+~/.hermes20/agency-agents/
+├── CONTRIBUTING.md          ← Guidelines & template
+├── CONTRIBUTING_zh-CN.md    ← Chinese translation
+├── README.md                ← Roster lengkap + tool integrations
+├── SECURITY.md              ← Security policy
+├── divisions.json           ← Canonical division list (CI-validated)
+├── tools.json               ← Canonical tool list (CI-validated)
+├── LICENSE                  ← MIT
+├── strategy/
+│   ├── nexus-strategy.md    ← NEXUS doctrine
+│   ├── QUICKSTART.md
+│   ├── EXECUTIVE-BRIEF.md
+│   ├── playbooks/           ← phase-0 … phase-6
+│   ├── runbooks/            ← scenario-* + runbooks.json
+│   └── coordination/        ← activation prompts, handoff templates
+├── engineering/             ← 65 agents
+├── specialized/             ← 59 agents
+├── marketing/               ← 37 agents
+├── security/                ← 12 agents
+├── design/                  ← 10 agents
+├── sales/                   ← 9 agents
+├── testing/                 ← 9 agents
+├── project-management/      ← 7 agents
+├── paid-media/              ← 7 agents
+├── product/                 ← 6 agents
+├── spatial-computing/       ← 6 agents
+├── support/                 ← 6 agents
+├── finance/                 ← 5 agents
+├── game-development/        ← 6 cross-engine + unity/ + unreal-engine/ + godot/ + blender/ + roblox-studio/
+├── gis/                     ← 13 agents
+├── healthcare/              ← 3 agents
+├── academic/                ← 6 agents
+├── research/                ← research-synthesist
+├── examples/                ← workflow examples
+├── integrations/            ← per-tool READMEs (generated output is gitignored)
+└── scripts/                 ← convert.sh, install.sh, lint-agents.sh, check-*.sh, test-*.sh
+```
+
+**Total: 266 agents** in 17 divisions (the other .md files are READMEs, strategy docs, integration docs, and examples).
+
+---
+
+*Generated from the complete agency-agents repository (266 agents across 17 divisions). This SOUL.md is the canonical registry — update it when agents are added, modified, or retired.*
+
+**Source**: `/data/data/com.termux/files/home/.hermes20/agency-agents/`

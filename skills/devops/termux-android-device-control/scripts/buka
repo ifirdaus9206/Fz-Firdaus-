@@ -1,0 +1,116 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# buka — lancar app / URL / carian Play Store dari terminal (Termux, tanpa root).
+#
+#   buka fdroid                 # alias
+#   buka com.whatsapp           # ikut nama pakej (activity dikesan automatik)
+#   buka url https://f-droid.org
+#   buka play "kalkulator"      # carian Play Store
+#   buka apk <fail.apk>         # buka folder APK dalam app Files (untuk tekan Install)
+#   buka --list [corak]         # senarai pakej kelihatan
+#   buka --aliases              # senarai alias
+#   buka --component <pkg>      # tunjuk activity pelancar sahaja
+set -u
+
+CACHE_DIR="$HOME/.cache/buka"
+CACHE="$CACHE_DIR/components.tsv"
+mkdir -p "$CACHE_DIR"
+
+# Hanya alias untuk app yang benar-benar wujud pada baseline peranti ini.
+# Alias mati (chrome/kalkulator/whatsapp/telegram) dibuang — `buka` akan melaporkan
+# "tidak dipasang" dengan jelas jika app tiada.
+declare -A ALIAS=(
+  [fdroid]="org.fdroid.fdroid" [play]="com.android.vending" [termux]="com.termux"
+  [kamera]="com.android.camera" [camera]="com.android.camera"
+  [galeri]="com.miui.gallery" [gallery]="com.miui.gallery"
+  [seting]="com.android.settings" [settings]="com.android.settings"
+  [nota]="com.miui.notes" [notes]="com.miui.notes"
+  [fail]="com.mi.android.globalFileexplorer" [files]="com.mi.android.globalFileexplorer"
+  [explorer]="com.mi.android.globalFileexplorer"
+  [claude]="com.anthropic.claude" [grok]="ai.x.grok"
+)
+
+# activity pelancar yang diketahui (aapt gagal untuk sesetengah app sistem)
+declare -A KNOWN=(
+  [com.android.settings]="com.android.settings/.Settings"
+  [com.android.vending]="com.android.vending/com.google.android.finsky.activities.MainActivity"
+  [org.fdroid.fdroid]="org.fdroid.fdroid/.views.main.MainActivity"
+  [com.mi.android.globalFileexplorer]="com.mi.android.globalFileexplorer/com.android.fileexplorer.FileExplorerTabActivity"
+)
+
+usage() { sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
+
+component_of() {
+  local pkg="$1" comp=""
+  comp=$(grep -m1 -P "^$pkg\t" "$CACHE" 2>/dev/null | cut -f2)
+  if [ -n "$comp" ]; then echo "$comp"; return 0; fi
+
+  if [ -n "${KNOWN[$pkg]:-}" ]; then
+    comp="${KNOWN[$pkg]}"
+    printf '%s\t%s\n' "$pkg" "$comp" >> "$CACHE"
+    echo "$comp"; return 0
+  fi
+
+  local apk
+  apk=$(pm path "$pkg" 2>/dev/null | head -1 | sed 's/^package://')
+  [ -n "$apk" ] && [ -r "$apk" ] || return 1
+  comp=$(aapt dump badging "$apk" 2>/dev/null | sed -n "s/^launchable-activity: name='\([^']*\)'.*/\1/p" | head -1)
+  if [ -n "$comp" ]; then
+    case "$comp" in
+      "$pkg".*) comp="$pkg/$comp" ;;
+      */*) : ;;
+      *) comp="$pkg/$comp" ;;
+    esac
+    printf '%s\t%s\n' "$pkg" "$comp" >> "$CACHE"
+    echo "$comp"; return 0
+  fi
+  return 1
+}
+
+[ $# -eq 0 ] && usage 1
+
+case "$1" in
+  -h|--help) usage 0 ;;
+  --aliases) for k in "${!ALIAS[@]}"; do printf "%-12s %s\n" "$k" "${ALIAS[$k]}"; done | sort; exit 0 ;;
+  --list)
+    if [ -n "${2:-}" ]; then pm list packages 2>/dev/null | sed 's/^package://' | grep -i -- "$2" | sort
+    else pm list packages 2>/dev/null | sed 's/^package://' | sort; fi
+    exit 0 ;;
+  --component)
+    p="${2:-}"; [ -n "$p" ] || exit 1
+    c=$(component_of "$p") && echo "$c" || { echo "tidak dapat kesan activity: $p"; exit 4; }
+    exit 0 ;;
+  url)
+    [ $# -ge 2 ] || { echo "guna: buka url <https://...>"; exit 1; }
+    am start -a android.intent.action.VIEW -d "$2" >/dev/null 2>&1 && echo "dibuka: $2" || { echo "gagal buka URL"; exit 1; }
+    exit 0 ;;
+  apk)
+    # Termux tidak boleh mencetuskan installer (tiada REQUEST_INSTALL_PACKAGES).
+    # Jadi: buka FOLDER dalam app Files dan suruh manusia tekan APK.
+    [ $# -ge 2 ] || { echo "guna: buka apk <laluan-fail.apk>"; exit 1; }
+    f="$2"; [ -f "$f" ] || { echo "fail tidak wujud: $f"; exit 1; }
+    d=$(cd "$(dirname "$f")" && pwd); rel=${d#"$HOME"/storage/}
+    am start -a android.intent.action.VIEW \
+      -d "content://com.android.externalstorage.documents/document/primary%3A$(printf '%s' "$rel" | sed 's|/|%2F|g')" \
+      -t "vnd.android.document/directory" >/dev/null 2>&1
+    echo "Folder dibuka dalam app Files: $rel"
+    echo "Tekan fail: $(basename "$f") -> Install"
+    echo "Nota: Termux tiada REQUEST_INSTALL_PACKAGES — pemasangan mesti dari app Files/ADB."
+    exit 0 ;;
+  play)
+    [ $# -ge 2 ] || { echo "guna: buka play <kata carian>"; exit 1; }
+    am start -a android.intent.action.VIEW -d "market://search?q=$(printf '%s' "$2" | sed 's/ /%20/g')" >/dev/null 2>&1 \
+      && echo "carian Play Store: $2" || { echo "gagal buka Play Store"; exit 1; }
+    exit 0 ;;
+esac
+
+pkg="${ALIAS[$1]:-$1}"
+if ! pm list packages 2>/dev/null | grep -qx "package:$pkg"; then
+  echo "tidak dipasang: $pkg"; echo "cari: buka --list <corak>"; exit 2
+fi
+
+comp=$(component_of "$pkg") || { echo "tidak dapat kesan activity pelancar: $pkg"; exit 4; }
+out=$(am start -n "$comp" 2>&1)
+if printf '%s' "$out" | grep -qiE "error:|exception|unable to resolve"; then
+  echo "gagal: $out"; exit 3
+fi
+echo "dibuka: $pkg · $comp"

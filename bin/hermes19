@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+HERMES_HOME="$HOME/.hermes19" HERMES_TERMUX_DISABLE_FAST_CLI=1 "$HOME/.hermes_venvs/hermes19/bin/hermes" "$@"

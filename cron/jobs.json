@@ -1,0 +1,143 @@
+{
+  "jobs": [
+    {
+      "id": "8b713f3fd5eb",
+      "name": "Penjaga Hermes Console (8787 + 8790)",
+      "prompt": "Skrip penjaga memastikan dua instance HERMES CONSOLE hidup (8787 hermes20, 8790 hermes19). Senyap bila sihat.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "provider_snapshot": null,
+      "model_snapshot": null,
+      "base_url": null,
+      "script": "console_keeper.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/5 * * * *",
+        "display": "*/5 * * * *"
+      },
+      "schedule_display": "*/5 * * * *",
+      "repeat": {
+        "times": null,
+        "completed": 597
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-11-03T21:00:32.277446+08:00",
+      "next_run_at": "2026-11-06T02:10:00+08:00",
+      "last_run_at": "2026-11-06T02:05:22.205566+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "1312929583",
+        "chat_name": "firdaus ismail",
+        "thread_id": "23483",
+        "user_id": "1312929583"
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "fire_claim": null
+    },
+    {
+      "id": "74c368884642",
+      "name": "Ujian Mingguan Ejen Ketua",
+      "prompt": "Ujian mingguan sistem Ketua: kesihatan API, 282 dashboard ejen, paparan UI, pemulihan LLM, dan 1 kes hujung-ke-hujung. Output ringkas dihantar ke Telegram.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "provider_snapshot": null,
+      "model_snapshot": null,
+      "base_url": null,
+      "script": "ketua_weekly.py",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9 * * 1",
+        "display": "0 9 * * 1"
+      },
+      "schedule_display": "0 9 * * 1",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-11-05T01:57:46.304848+08:00",
+      "next_run_at": "2026-11-09T09:00:00+08:00",
+      "last_run_at": "2026-11-05T02:16:44.653585+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": "delivery error: Telegram send failed: Timed out",
+      "deliver": "origin",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "1312929583",
+        "chat_name": "firdaus ismail",
+        "thread_id": "23594",
+        "user_id": "1312929583"
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "fire_claim": null
+    },
+    {
+      "id": "cb87cb69a212",
+      "name": "radar-kerja-freelance",
+      "prompt": "Kau ejen Radar Kerja untuk firdaus. Output skrip (senarai kerja) sudah ada di atas prompt ini.\n\nLANGKAH:\n1. Baca /data/data/com.termux/files/home/freelance-radar/PROFIL.md\n2. Kalau senarai kerja kosong, balas satu baris: 'Radar kerja: tiada kerja baru lulus tapisan hari ini.' dan berhenti.\n3. Untuk 3 kerja TERATAS sahaja, tulis draf proposal dan simpan ke /data/data/com.termux/files/home/freelance-radar/drafts/<YYYY-MM-DD>-<slug>.md. Setiap fail mesti ada: Tajuk, Pautan, Bajet, Draf proposal (Bahasa Inggeris, maksimum 120 patah perkataan, guna maklumat PROFIL.md, sebut satu masalah klien + satu penyelesaian + satu soalan di hujung), dan 'Checklist sebelum hantar' (semak skop, semak harga, jangan bayar/hantar di luar platform).\n4. Balas dalam Bahasa Melayu, ringkas: tajuk 'Radar Kerja \u2014 <tarikh>', kemudian senarai maksimum 5 kerja bernombor (tajuk | bajet | sumber | skor), kemudian tunjuk draf proposal kerja #1 penuh, kemudian sebut nama fail draf lain yang disimpan.\n5. JANGAN log masuk, JANGAN hantar sebarang proposal, JANGAN ubah profil mana-mana laman.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "provider_snapshot": "openrouter",
+      "model_snapshot": "deepseek/deepseek-v4.1-flash-1017",
+      "base_url": null,
+      "script": "radar_kerja.sh",
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9,21 * * *",
+        "display": "0 9,21 * * *"
+      },
+      "schedule_display": "0 9,21 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-11-05T11:01:10.777993+08:00",
+      "next_run_at": "2026-11-06T09:00:00+08:00",
+      "last_run_at": "2026-11-05T21:01:27.165506+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "1312929583",
+        "chat_name": "firdaus ismail",
+        "thread_id": "23624",
+        "user_id": "1312929583"
+      },
+      "enabled_toolsets": null,
+      "workdir": "/data/data/com.termux/files/home/freelance-radar",
+      "fire_claim": null
+    }
+  ],
+  "updated_at": "2026-11-06T02:05:22.206903+08:00"
+}

@@ -1,0 +1,97 @@
+# .gitignore — sandaran ~/.hermes20
+# Prinsip: JANGAN sandarkan rahsia, JANGAN sandarkan benda terbitan/berat.
+# NOTA: komen mesti pada baris berasingan — git tidak menyokong komen di hujung baris.
+
+# ---------- RAHSIA (jangan sekali-kali masuk repo) ----------
+# rahsia: kelayakan API/model
+.env
+# rahsia: varian .env (contoh .env.local)
+.env.*
+# rahsia: token OAuth/kelayakan akaun
+auth.json
+# terbitan: kunci proses auth, bukan data
+auth.lock
+# rahsia: boleh mengandungi kunci API
+config.yaml
+# rahsia: salinan sandaran config.yaml juga boleh ada kunci API
+config.yaml.bak*
+# risiko rahsia: kandungan tampal pengguna tidak dapat dijangka
+pastes/
+
+# ---------- KUNCI PROSES ----------
+# terbitan: fail kunci proses, tiada nilai sandaran
+*.lock
+# terbitan: PID gateway, tak bermakna selepas reboot
+gateway.pid
+
+# ---------- PANGKALAN DATA / SESI (rahsia + sentiasa berubah) ----------
+# rahsia/terbitan: DB sesi (state.db, -wal, -shm) — 35MB
+state.db*
+# rahsia/terbitan: DB kanban (boleh ada nota peribadi)
+kanban.db*
+# rahsia: transkrip perbualan penuh
+sessions/
+# terbitan: log runtime, besar & tiada nilai sandaran
+logs/
+# terbitan: cache boleh dijana semula
+cache/
+# terbitan: log di mana-mana lokasi
+*.log
+# terbitan: senarai proses runtime
+processes.json
+# terbitan: cache katalog model (~5.7MB)
+models_dev_cache.json
+# terbitan: snapshot prompt, dijana semula
+.skills_prompt_snapshot.json
+
+# ---------- PROFIL (salinan per-profil bagi fail di atas) ----------
+# terbitan: cache model per profil
+profiles/*/models_dev_cache.json
+# rahsia/terbitan: DB sesi per profil
+profiles/*/state.db*
+# rahsia: transkrip per profil
+profiles/*/sessions/
+# terbitan: log per profil
+profiles/*/logs/
+# terbitan: cache per profil
+profiles/*/cache/
+# terbitan: audio TTS dijana semula
+profiles/*/audio_cache/
+# terbitan: imej dijana semula
+profiles/*/image_cache/
+
+# ---------- KOD TERBITAN / PERSEKITARAN ----------
+# berat: dependensi npm, boleh dipasang semula
+node_modules/
+# berat: virtualenv Python
+.venv/
+# berat: virtualenv Python (nama lama)
+venv/
+# terbitan: bytecode Python
+__pycache__/
+# terbitan: bytecode Python
+*.pyc
+# berat: artifact build Rust
+agency-agents-app/src-tauri/target/
+# berat: binari 33MB (tirith), boleh dimuat turun semula
+bin/tirith
+
+# ---------- ARKIB / SUMBER VENDOR (berat, bukan konfigurasi hidup) ----------
+# berat: 8.7GB arkib lama
+archive/
+# berat: 2.1GB projek lama + node_modules
+legacy-ultimate/
+# berat: 2.3GB salinan sumber Hermes (bukan konfigurasi)
+tools/hermes-source/
+# berat: 2.8GB repo/install pihak ketiga (boleh clone semula)
+tools/others/
+
+# ---------- MEDIA / FAIL MUAT TURUN ----------
+# berat: pakej Android, muat turun semula
+*.apk
+# berat: arkib, bukan data hidup
+*.zip
+# berat: video
+*.mp4
+# terbitan: fail sementara
+tmp/

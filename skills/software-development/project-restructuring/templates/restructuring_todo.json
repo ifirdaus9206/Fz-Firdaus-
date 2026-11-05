@@ -1,0 +1,23 @@
+# Restructuring Todo Template
+
+Copy this template when starting a project restructuring task.
+
+```json
+[
+  {"id": "1", "content": "Backup legacy structure to _backup/", "status": "pending"},
+  {"id": "2", "content": "Create new directory structure", "status": "pending"},
+  {"id": "3", "content": "Merge identity/ - consolidate files", "status": "pending"},
+  {"id": "4", "content": "Merge knowledge/ - relocate folders", "status": "pending"},
+  {"id": "5", "content": "Merge agents/ - map N legacy to M new", "status": "pending"},
+  {"id": "6", "content": "Merge skills/ - map N legacy to M new", "status": "pending"},
+  {"id": "7", "content": "Merge workflows/ - map N legacy to M new", "status": "pending"},
+  {"id": "8", "content": "Merge logs/ - add new folders", "status": "pending"},
+  {"id": "9", "content": "Relocate standalone folders (memory, projects, tasks, system, tools)", "status": "pending"},
+  {"id": "10", "content": "Create missing configs (agent.json, models.json, routing.json, permissions.json, capabilities.json)", "status": "pending"},
+  {"id": "11", "content": "Create database schema", "status": "pending"},
+  {"id": "12", "content": "Create deployment files (Dockerfile, docker-compose.yml, deploy.yaml)", "status": "pending"},
+  {"id": "13", "content": "Create documentation (architecture.md, api.md, installation.md, operations.md)", "status": "pending"},
+  {"id": "14", "content": "Create root files (README.md, CHANGELOG.md, LICENSE)", "status": "pending"},
+  {"id": "15", "content": "Run verification script", "status": "pending"}
+]
+```

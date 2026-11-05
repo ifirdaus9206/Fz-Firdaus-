@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+HERMES_HOME="$HOME/.hermes20" hermes "$@"
