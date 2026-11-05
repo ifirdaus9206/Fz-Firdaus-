@@ -7,7 +7,7 @@
 .env
 # rahsia: varian .env (contoh .env.local)
 .env.*
-# rahsia: token OAuth/kelayakan akaun
+# rahsia: kelayakan OAuth akaun
 auth.json
 # terbitan: kunci proses auth, bukan data
 auth.lock
