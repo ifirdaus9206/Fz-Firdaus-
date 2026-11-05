@@ -1,0 +1,35 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# ui — kawalan UI Android melalui ADB (perlu adb-pair dahulu).
+#
+#   ui status                 # senarai peranti
+#   ui shot [nama.png]        # tangkap skrin → ~/storage/downloads/
+#   ui dump [fail.xml]        # hierarki UI (uiautomator)
+#   ui tap <x> <y>
+#   ui swipe <x1> <y1> <x2> <y2> [ms]
+#   ui text "teks"            # taip (spasi jadi %s)
+#   ui key <KEYCODE>          # cth: HOME, BACK, ENTER, APP_SWITCH
+#   ui open <pkg>             # lancar app (monkey, sebagai shell)
+#   ui cur                    # app di depan
+set -u
+command -v adb >/dev/null || { echo "adb tiada — pkg install android-tools"; exit 1; }
+dev=$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device" {print $1; exit}')
+need() { [ -n "${dev:-}" ] || { echo "tiada peranti adb. Jalankan: adb-pair"; exit 2; }; }
+DL="$HOME/storage/downloads"
+
+case "${1:-status}" in
+  status) adb devices | sed '1d'; [ -n "${dev:-}" ] && echo "sedia: $dev" || echo "tiada peranti";;
+  shot)
+    need; f="${2:-ui-$(date +%H%M%S).png}"
+    adb exec-out screencap -p > "$DL/$f" && echo "$DL/$f ($(stat -c%s "$DL/$f" 2>/dev/null) bait)";;
+  dump)
+    need; f="${2:-ui.xml}"
+    adb shell uiautomator dump /sdcard/"$f" >/dev/null 2>&1 && adb pull /sdcard/"$f" "$DL/$f" >/dev/null 2>&1 \
+      && echo "$DL/$f" || echo "dump gagal";;
+  tap) need; adb shell input tap "$2" "$3" && echo "tap $2,$3";;
+  swipe) need; adb shell input swipe "$2" "$3" "$4" "$5" "${6:-300}" && echo "swipe";;
+  text) need; t=$(printf '%s' "$2" | sed 's/ /%s/g'); adb shell input text "$t" && echo "taip: $2";;
+  key) need; adb shell input keyevent "$2" && echo "key $2";;
+  open) need; adb shell monkey -p "$2" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1 && echo "buka $2";;
+  cur) need; adb shell dumpsys window 2>/dev/null | grep -m1 -E "mCurrentFocus|mFocusedApp";;
+  *) sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'; exit 1;;
+esac

@@ -1,0 +1,11 @@
+install_recipe:
+  termux_script:
+    clone: "git clone https://github.com/msitarzewski/agency-agents.git ~/agency-agents"
+    install: "cd ~/agency-agents && ./scripts/install.sh --tool hermes --no-interactive"
+    verify: "grep 'agency-agents-router' ~/.hermes20/config.yaml"
+    restart: "hermes doctor"
+    test: "hermes chat --query \"list agency agents\""
+  homebrew_macos:
+    tap: "brew tap msitarzewski/agency-agents"
+    install: "brew install --cask agency-agents"
+    restart: "hermes doctor"

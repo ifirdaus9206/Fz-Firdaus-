@@ -1,0 +1,44 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# adb-pair — pasangkan ADB Wayarles (Android 11+) dengan kod 6 digit.
+#
+#   adb-pair                      # imbas peranti (mDNS) & tunjuk arahan
+#   adb-pair <ip:port_pair> <kod> [ip:port_connect]
+#
+# Di telefon: Seting → Pilihan pembangun → Nyahpepijat wayarles →
+#             "Pasangkan peranti dengan kod" → beri IP:port + kod 6 digit.
+set -u
+command -v adb >/dev/null || { echo "adb tiada — pkg install android-tools"; exit 1; }
+
+if [ $# -eq 0 ]; then
+  adb start-server >/dev/null 2>&1
+  echo "Peranti tersambung:"; adb devices | sed '1d'
+  echo; echo "Perkhidmatan mDNS dikesan:"
+  adb mdns services 2>/dev/null | sed -n '1,10p' || true
+  echo
+  echo "Guna: adb-pair <ip:port_pair> <kod6> [ip:port_connect]"
+  echo "Contoh: adb-pair 192.168.1.7:37123 483920 192.168.1.7:40001"
+  exit 0
+fi
+
+PAIR="$1"; CODE="${2:-}"; CONN="${3:-}"
+[ -n "$CODE" ] || { echo "kod 6 digit diperlukan"; exit 1; }
+
+echo "→ pair $PAIR"
+printf '%s\n' "$CODE" | timeout 60 adb pair "$PAIR" 2>&1 | tail -3
+
+if [ -z "$CONN" ]; then
+  HOST="${PAIR%%:*}"
+  CONN=$(adb mdns services 2>/dev/null | awk '/_adb-tls-connect/ {print $3}' | head -1)
+  [ -n "$CONN" ] || CONN="$HOST:5555"
+fi
+
+echo "→ connect $CONN"
+timeout 30 adb connect "$CONN" 2>&1 | tail -2
+sleep 2
+adb devices | sed '1d'
+if adb devices | grep -q "device$"; then
+  echo "SIAP — adb bersambung. Cuba: ui shot"
+else
+  echo "Belum bersambung. Pastikan Nyahpepijat wayarles masih aktif, ulang dengan port connect yang betul."
+  exit 2
+fi
