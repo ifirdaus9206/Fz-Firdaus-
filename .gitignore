@@ -105,3 +105,8 @@ tools/others/
 *.mp4
 # terbitan: fail sementara
 tmp/
+
+# ---------- REPO GIT BERASINGAN (sandaran sendiri, bukan kandungan repo ini) ----------
+# gitlink menyebabkan "modified" palsu setiap kali; elak daripada disandarkan di sini
+agency-agents/
+agency-agents-app/
