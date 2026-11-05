@@ -22,15 +22,15 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 597
+        "completed": 599
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-03T21:00:32.277446+08:00",
-      "next_run_at": "2026-11-06T02:10:00+08:00",
-      "last_run_at": "2026-11-06T02:05:22.205566+08:00",
+      "next_run_at": "2026-11-06T02:20:00+08:00",
+      "last_run_at": "2026-11-06T02:15:22.432776+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -137,7 +137,52 @@
       "enabled_toolsets": null,
       "workdir": "/data/data/com.termux/files/home/freelance-radar",
       "fire_claim": null
+    },
+    {
+      "id": "43c3baafa834",
+      "name": "Sandaran malam ~/.hermes20 ke GitHub (02:00)",
+      "prompt": "Jalankan skrip sandaran git untuk ~/.hermes20. Skrip mengurus commit sendiri, menolak commit jika ada rahsia, dan hanya push jika remote origin wujud. Output kosong = sihat (senyap).",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "provider_snapshot": null,
+      "model_snapshot": null,
+      "base_url": null,
+      "script": "backup_github.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 2 * * *",
+        "display": "0 2 * * *"
+      },
+      "schedule_display": "0 2 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-11-06T02:10:20.344219+08:00",
+      "next_run_at": "2026-11-07T02:00:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "1312929583",
+        "chat_name": "firdaus ismail",
+        "thread_id": "23939",
+        "user_id": "1312929583"
+      },
+      "enabled_toolsets": null,
+      "workdir": null
     }
   ],
-  "updated_at": "2026-11-06T02:05:22.206903+08:00"
+  "updated_at": "2026-11-06T02:15:22.433963+08:00"
 }

@@ -382,6 +382,31 @@ to reply: only the inbound round-trip proves two-way operation.
 SOUL.md, keys, skills and a wrapper at `~/.local/bin/<name>`. Steps, verification and the
 scoped identity-rename recipe: `references/named-profile-provisioning.md`.
 
+### Multi-agent roster (rename + N role profiles)
+
+When the ask is "rename profile X to Y and create N runnable agent profiles", treat it as
+one home with N sibling profiles — not N homes. Order that passed review:
+
+1. `hermes profile rename --help`, then `hermes profile rename <old> <new>`. Verify all
+   three surfaces: `hermes profile list`, `ls -1 profiles/`, and `command -v <old>` must be
+   empty while `command -v <new>` resolves. The rename does **not** rewrite SOUL.md — patch
+   only the 3–4 identity lines and assert `grep -c -i <old> SOUL.md` → 0 with the line count
+   unchanged.
+2. `hermes profile create <name>` per profile, then ONE python pass that copies
+   `.env` + `auth.json` + `config.yaml`, `chmod 600` the first two, and drops `plugins` from
+   the copied config. Expected surviving key set: 7 keys
+   (`_config_version, agent, display, fallback_providers, model, onboarding, session_reset`).
+3. Generate role SOULs from a single template dict: identity, 6-item scope, explicit "what
+   this agent does NOT do", workspace path, evidence rules (no invented numbers,
+   SIAP/JALAN/GAGAL/BLOK), prohibitions, home map, report format. 100–110 lines each.
+4. Prove globally: `profile list` (default ◆ + renamed + N roles), `wc -l */SOUL.md`,
+   `--version` per wrapper, ONE `chat -q` (not N), and unchanged mtimes on the parent
+   `SOUL.md` / `config.yaml`.
+
+Full command sequence, template skeleton and the run's pitfalls (no `/tmp` for helpers,
+strip `read_file` line numbers, one chat test only):
+`references/named-profile-provisioning.md` §6.
+
 ## Related Skills
 
 - `hermes-agent` (bundled) — core Hermes usage, config keys, provider setup.
