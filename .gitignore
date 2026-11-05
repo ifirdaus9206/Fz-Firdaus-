@@ -120,6 +120,8 @@ plugins/agency-agents-router/data/agents.json.bak-*
 skills/.curator_backups/
 # terbitan: status runtime gateway, berubah setiap saat
 gateway_state.json
+# terbitan: DB bukti verifikasi runtime, berubah setiap larian
+verification_evidence.db
 # terbitan: backup manual (bukan sumber hidup)
 *.bak-*
 *.bak
