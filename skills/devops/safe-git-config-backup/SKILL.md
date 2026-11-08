@@ -175,6 +175,9 @@ Copy `templates/backup_github.sh` and adapt. Contract that matters:
 - Push only when `git remote get-url origin` succeeds; never `--force`; push failure exits
   nonzero (use a distinct code, e.g. 4) but leaves the local commit intact. No remote ⇒ one
   log line (`tiada remote — commit tempatan sahaja`), not stdout.
+- Push to a **named** ref unless the local branch name equals the remote default branch. Bare
+  `git push origin HEAD` pushes to the branch *of the same name*; local `master` + GitHub default
+  `main` silently strands the whole backup on a branch nobody looks at (PITFALL #5).
 - stdout only on problems.
 
 `templates/backup_github.sh` is the tested implementation (guards, tiers, exit codes) —
@@ -288,6 +291,32 @@ Rules that make this work:
   than assuming it took effect.
 
 Session transcript, including why the pty driver looped: `references/gh-login-without-tty.md`.
+
+## Attaching the repo to a fresh GitHub remote (PITFALL #5)
+
+Full recipe: `references/github-remote-bootstrap.md`. Short form:
+
+- **Does the remote exist?** `gh` unauthenticated cannot tell you (private ⇒ 404 from the API).
+  Probe with the SSH key: `git ls-remote git@github.com:<owner>/<repo>.git` — refs/exit 0 means it
+  exists (an empty repo prints nothing but still exits 0); `ERROR: Repository not found` + exit
+  128 means it does not. Probe a shortlist of candidate names instead of asking the owner again.
+- **Parse pasted URLs.** Strip the `#fragment`, keep trailing punctuation exactly
+  (`Fz-Firdaus-`, not `Fz-Firdaus`). Verify by probe, never by intuition.
+- **Repo created with a README** ⇒ unrelated histories: `git fetch origin main`, then
+  `git merge origin/main --allow-unrelated-histories`. Never `--force` over the owner's commit.
+- **PITFALL #5 — `git push origin HEAD` creates a branch named after the local branch.**
+  Local `master` + GitHub default `main` = the script logs `push berjaya` while
+  `refs/heads/master` holds every file and the repo page still shows the 2-line README. Verify
+  with `git ls-remote origin` against the branch GitHub displays, never against the log line.
+  Fix: `git branch -m master main` → `git push -u origin main` → `git push origin --delete
+  master` → re-run the script and require silence.
+- **Visibility check without a token:**
+  `curl -s -o /dev/null -w '%{http_code}' https://api.github.com/repos/<owner>/<repo>` —
+  200 = public, 404 = private-or-missing. A web-UI repo defaults to **public**, and this backup
+  ships `SOUL.md`, `memories/`, `profiles/`. Report the raw code and offer the Danger Zone path
+  (Settings → General → Change visibility → Private) or a PAT; never quietly ship it public.
+- Final proof is always: one ref in `git ls-remote origin` matching local HEAD, tracked-file
+  count at parity with `git ls-files`, forbidden-path grep empty, owner's README still present.
 
 ## Reporting
 

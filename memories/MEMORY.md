@@ -4,7 +4,7 @@ Config guard: write/patch refuse ~/.hermes/*/config.yaml; guna `hermes config se
 §
 OpenRouter *:free models often fail 'Upstream idle timeout'; use deepseek-v4.1-flash + fallback_providers.
 §
-ATC ~/.hermes19/autonomous_trading_controller: XAUUSD/XAGUSD/EURUSD/GBPUSD/WTI, leverage 100/100/50/50/20, risk 2%/trade 5%/hari. Creds MetaAPI: mt5-backtest/.env demo 1300009388, meta5/.env live 1400073582 — kedua UNDEPLOYED (deploy perlu top-up). Feed market/data_feed.py: metaapi→yahoo GC=F proxy.
+ATC ~/.hermes19/autonomous_trading_controller: XAUUSD/XAGUSD/EURUSD/GBPUSD/WTI, lev 100/100/50/50/20, risk 2%/trade 5%/hari. MetaAPI demo 1300009388 (mt5-backtest/.env), live 1400073582 (meta5/.env) — kedua UNDEPLOYED. Feed: metaapi→yahoo GC=F.
 §
 ~/.hermes20 = home utama (24 folder); ULTIMATE_AI_PROJECT hanya tools/hermes-source ($PREFIX/bin/hermes). Arkib: legacy-ultimate/, archive/ultimate-2026-10/.
 §
@@ -18,4 +18,4 @@ Suka kendalikan dari UI web 127.0.0.1:8787 (butang jelas, langkah bernombor); mu
 §
 Persona ejen ada 3 salinan: agency-agents/*.md, corpus-baseline (sumber build), body agents.json — ubah ketiga-tiga; skill agency-roster-curation.
 §
-GitHub bos: username **ifirdaus9206** (nama Firdaus, id 224862779), e-mel ifirdaus9206@gmail.com; `firdaus<REDACTED-PASSWORD>` = PASSWORD, bukan username.
+GitHub: **ifirdaus9206** (Firdaus, id 224862779), ifirdaus9206@gmail.com; `firdaus<REDACTED-PASSWORD>` = PASSWORD bukan username. Sandaran ~/.hermes20 → repo **Fz-Firdaus-** (branch main) via scripts/backup_github.sh + cron 43c3baafa834 02:00.
