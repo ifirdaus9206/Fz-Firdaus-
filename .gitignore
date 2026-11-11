@@ -128,3 +128,10 @@ verification_evidence.db
 # kecualian: backup persona SOUL.md dikekalkan dalam sandaran (bukan terbitan)
 !SOUL.md.bak
 !SOUL.md.bak-*
+
+# ---------- OUTPUT CRON (terbitan, berubah setiap 5 minit) ----------
+# NOTA 2026-11-12: dua kegagalan sandaran berpunca dari folder ini:
+#   11 Nov — `git add` gagal "unable to stat ...md" (fail dicipta/dipadam semasa staging)
+#   12 Nov — imbasan rahsia tersalah tanda teks iklan kerja ("token: ..." palsu)
+# Kandungannya ialah log output cron, boleh dijana semula; bukan sumber.
+cron/output/
