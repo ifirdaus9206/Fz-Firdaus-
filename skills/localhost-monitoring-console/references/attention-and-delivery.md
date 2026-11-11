@@ -170,6 +170,40 @@ Outbound (reports) can keep using the gateway's token; only polling must be spli
 
 ---
 
+## 3b. "Aku dah bagi imej" — answer with an inventory, never a verdict
+
+Measured 2026-11-11: the user insisted they had sent screenshots, then asked *"semak aku ada bagi
+imej, tunjuk kalau ada"*. The inbox held one **70-byte** `logo.png` from a week earlier, `steps`
+held only the four seeded F-Droid images, and nothing had arrived over chat. Answering "tak sampai"
+from one `ls` would have been wrong twice (something *was* there, and the reason was structural).
+
+Search three places, then print what you actually found — filename, bytes, `created`, `source`:
+
+```bash
+curl -s 127.0.0.1:8787/api/inbox     | head -c 600     # filename, bytes, created, kind
+curl -s 127.0.0.1:8787/api/steps                          # seed vs user upload (source)
+find ~ /sdcard/DCIM /sdcard/Pictures /sdcard/Download -newermt '-12 hours' \
+     \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.webp' \) -printf '%TH:%TM %8s %p\n'
+```
+
+- Chat photos only reach the inbox while `tools/tg_bridge.py` (the second bot, §3) is polling; with
+  the bridge off, absence is expected, not a bug — say that instead of implying the user failed.
+- Stale items make "inbox kosong" look false: quote the row (`logo.png · 70 bait · 2026-11-03`).
+- End with the path that always works, in their words: tab **SISTEM → TAMBAH TANGKAPAN SKRIN →
+  Pilih imej → TAMBAH LANGKAH**. Then offer to re-check once they have tapped it.
+
+## 3c. Delivery rules this user states out loud
+
+- **"Jawab dekat sini saja."** Reply in the same chat/topic. Do not open a new thread or channel,
+  and do not hand off to a file they must go and find.
+- **They ask to be *shown*, not told** ("tunjuk kalau ada imej pada aku"). When something rendered
+  or generated exists, attach the previews — `MEDIA:/abs/path/preview/x.png`, 2–6 per reply is fine
+  — and name the folder in the same breath. A path alone reads as "you go look".
+- Lead with the board (`# · tugas · status · bukti`), then the limits, then 3–4 numbered options;
+  this user answers by number.
+
+---
+
 ## 4. Verification checklist for this layer
 
 - Chart dump during a live run: card visible in the band, connector attached, no node overlap.

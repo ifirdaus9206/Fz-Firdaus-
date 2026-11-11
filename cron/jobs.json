@@ -22,15 +22,15 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 836
+        "completed": 1173
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-03T21:00:32.277446+08:00",
-      "next_run_at": "2026-11-10T15:30:00+08:00",
-      "last_run_at": "2026-11-09T08:55:29.730889+08:00",
+      "next_run_at": "2026-11-12T02:30:00+08:00",
+      "last_run_at": "2026-11-12T02:25:20.981286+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -68,7 +68,7 @@
       "schedule_display": "0 9 * * 1",
       "repeat": {
         "times": null,
-        "completed": 2
+        "completed": 3
       },
       "enabled": true,
       "state": "scheduled",
@@ -76,10 +76,10 @@
       "paused_reason": null,
       "created_at": "2026-11-05T01:57:46.304848+08:00",
       "next_run_at": "2026-11-16T09:00:00+08:00",
-      "last_run_at": "2026-11-05T02:16:44.653585+08:00",
-      "last_status": "ok",
-      "last_error": null,
-      "last_delivery_error": "delivery error: Telegram send failed: Timed out",
+      "last_run_at": "2026-11-10T15:30:22.660486+08:00",
+      "last_status": "error",
+      "last_error": "Script exited with code 1\nstdout:\n\ud83d\udd0e UJIAN MINGGUAN \u2014 SISTEM KETUA\n\n\u274c API console tidak menjawab: URLError: <urlopen error [Errno 111] Connection refused>\n\u274c Dashboard ejen: 0/282 lulus \u00b7 median Nonems \u00b7 isu data 0\n\u274c Paparan (UI): 2 lulus, 15 gagal\n\u2705 Pemulihan respons kosong + baris verdict lulus\n\u2705 E2E 'landing kopi': 2/2 ejen selesai \u00b7 STATUS AKHIR: **NEEDS_WORK**\n\nMasa: 304s \u00b7 laporan penuh: reports/VERIFIKASI.md, data/test_agents_result.json\n\u26a0\ufe0f 3 langkah perlu perhatian",
+      "last_delivery_error": null,
       "deliver": "origin",
       "origin": {
         "platform": "telegram",
@@ -114,15 +114,15 @@
       "schedule_display": "0 9,21 * * *",
       "repeat": {
         "times": null,
-        "completed": 4
+        "completed": 8
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-05T11:01:10.777993+08:00",
-      "next_run_at": "2026-11-10T21:00:00+08:00",
-      "last_run_at": "2026-11-08T21:00:50.551085+08:00",
+      "next_run_at": "2026-11-12T09:00:00+08:00",
+      "last_run_at": "2026-11-11T21:01:28.656163+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -160,17 +160,17 @@
       "schedule_display": "0 2 * * *",
       "repeat": {
         "times": null,
-        "completed": 2
+        "completed": 5
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-06T02:10:20.344219+08:00",
-      "next_run_at": "2026-11-11T02:00:00+08:00",
-      "last_run_at": "2026-11-09T02:00:23.327654+08:00",
-      "last_status": "ok",
-      "last_error": null,
+      "next_run_at": "2026-11-13T02:00:00+08:00",
+      "last_run_at": "2026-11-12T02:00:32.206666+08:00",
+      "last_status": "error",
+      "last_error": "Script exited with code 3\nstdout:\nAMARAN: imbasan rahsia menemui padanan \u2014 commit DIBATALKAN.\n  - cron/output/cb87cb69a212/2026-11-10_15-26-13.md\n  - cron/output/cb87cb69a212/2026-11-10_21-01-18.md\n  - cron/output/cb87cb69a212/2026-11-11_21-01-25.md\nSemak fail di atas, pindahkan rahsia ke .env, dan tambah corak ke .gitignore.",
       "last_delivery_error": null,
       "deliver": "origin",
       "origin": {
@@ -185,5 +185,5 @@
       "fire_claim": null
     }
   ],
-  "updated_at": "2026-11-10T15:25:16.152269+08:00"
+  "updated_at": "2026-11-12T02:25:20.982606+08:00"
 }

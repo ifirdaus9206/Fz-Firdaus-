@@ -19,6 +19,11 @@ user's keywords and budget, and prepares proposal drafts the user sends manually
 
 - "cari kerja", "monitor Upwork/Fiverr/Freelancer", "radar kerja", "auto apply", "cari projek".
 - The user asks whether the agent can watch a job board, or "ambik kerja" for them.
+- **A scheduled cron prompt that starts with "Kau ejen Radar Kerja"** and pastes a pre-run job list.
+  That prompt is a thin wrapper (read `PROFIL.md` → draft top 3 → report); *this* skill holds the
+  draft file shape, the 120-word cap and the report shape. Load it before writing anything — the
+  wrapper does not restate them, and running from the wrapper alone loses the dedupe and word-count
+  checks.
 
 ## Rule 0 — never auto-submit, and say why in one line
 
@@ -90,6 +95,12 @@ rewriting fetch/score logic.
    most 5 jobs (`tajuk | bajet | sumber | skor`) → the full draft for #1 → the filenames of the other
    drafts → a one-line blocker (e.g. `PROFIL.md` still `TODO`) → numbered 3–4 next-step options.
    Do not paste all three drafts into chat; the user reads them from the files.
+10. **The pre-run job list can contain the same job twice.** On 2026-11-10 the prompt listed
+   `WhatsApp-Shopify Automation Setup` as both #7 and #8 with an identical URL — the scanner dedupes
+   on source id, but one project matching two keywords (`automation`, `api integration`) can still
+   surface twice in a single report. Dedupe on **pautan/URL** before picking the top N, then say it in
+   the report (`#7 dan #8 ialah iklan yang sama — dikira sekali sahaja`). Otherwise you write two
+   drafts for one job and the job count in your header is wrong.
 
 ## Draf proposal — the mechanics that keep it honest
 
@@ -105,6 +116,15 @@ Per job, one file `drafts/<YYYY-MM-DD>-<slug>.md` with exactly these blocks (ske
    fill `[NAMA ANDA]`, and the fixed line: no login, no payment, nothing sent off-platform.
 5. Nothing else. Doubt goes in the checklist, never into the pitch body.
 
+Two checklist items that are easy to forget and change the price a lot:
+- **Posting in another language** (French, Spanish, Romanian): ask whether the *deliverable* must be
+  in that language. It is a scope item — more prompt work and QA — not a detail.
+- **Document conversion**: ask whether the source is digital text or scans needing OCR (3–5x the
+  time). Same for scraping: ask records × mandatory fields.
+
+Price anchors per job class (per page / per record / build vs monthly, and what an 8x budget range
+signals): `references/semak-skop-dan-harga.md`. Write the *question*, never "terlalu murah, tolak".
+
 **Verify the word count with a command, never by eye.** First drafts routinely land at 120–125
 because the greeting and signature count too:
 
@@ -114,6 +134,19 @@ python3 ~/.hermes20/skills/job-market-lead-radar/scripts/semak_draf.py drafts/*.
 
 It prints `file | N words | ok/OVER` and exits non-zero if any draft exceeds the cap. Trim the
 closing line, not the problem statement — the problem sentence is what earns the reply.
+
+If the script is not to hand (or you want a check with no Python), the same count in shell — it
+slices out the `## Draf proposal` block, drops the signature placeholder, and counts:
+
+```bash
+cd drafts && for f in <YYYY-MM-DD>-*.md; do
+  n=$(awk '/^## Draf proposal/{p=1;next}/^## Checklist/{p=0}p' "$f" | sed 's/\[NAMA ANDA\]//' | wc -w)
+  echo "$f = $n words"; done
+```
+
+`Hi,` and the blank greeting still count, so aim for ≤115 to leave headroom. On 2026-11-10 the
+chatbot draft measured 128 and was fixed by deleting one trailing sentence (13 words) — never by
+cutting the problem statement.
 
 **Do not silently overwrite an existing draft.** A job re-appears on later runs (it stays in the
 report even when `baharu: false`), and the earlier draft may already carry the owner's hand edits
