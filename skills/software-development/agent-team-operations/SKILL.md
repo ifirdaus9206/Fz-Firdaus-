@@ -1,7 +1,7 @@
 ---
 name: agent-team-operations
 description: Operate a lead/worker AI agent team with briefs and gates.
-version: 1.1.0
+version: 1.2.0
 author: Hermes Agent
 license: MIT
 platforms: [linux, macos, termux, windows]
@@ -181,6 +181,31 @@ rather than take the pen.
 shape survives long Malay contexts, and the goal must be self-contained because the child sees nothing
 of the conversation.
 
+## Parallel children: fix the interface first, split by FILE
+
+When one request decomposes into features that touch the **same** files, the unit of delegation is the
+file set, not the feature. Two children each editing `app.py` + `app.js` overwrite each other — merge
+those features into one child. Parallel dispatch is safe only across disjoint paths: a
+"Markdown → PDF" child owning `~/.hermes20/scripts/*` ran alongside a console child owning
+`~/hermes-console/*` with no conflict.
+
+Before dispatching in parallel, put the contract in **both** briefs:
+
+- **Exact paths and CLI shape** the other child will create — e.g.
+  `uim_pdf.sh <file.md> [--nama NAMA.pdf]`, last line `SIAP-PDF: <path>`, non-zero exit on failure —
+  so the consumer can be written against a script that does not exist yet.
+- **Ownership boundary in the prohibitions field**: "jangan sentuh `~/hermes-console` — pekerja lain
+  sedang edit fail itu". Restating it in both briefs is what keeps the split real.
+- **Each child backs up the critical files it will edit** (`~/backups/<area>-<date>/`), and the lead
+  keeps its own copy of every file about to be touched *before* dispatching.
+
+Then verify yourself, and **do not wait for the consolidated delegation message**: children can be
+finished for minutes while their summaries are still being assembled. Poll the artefacts (tail the
+live transcripts, then `curl` / `ls` / `sha256sum` the outputs) and report once the evidence exists.
+A child's PASS on its own endpoint is a self-report — replay the call yourself, including the CSRF
+header, or the `403` looks like a broken endpoint and the real guards (400 on `/etc/hostname`, 400 on
+a symlink pointing out of `$HOME`) stay untested.
+
 ## When a child dies mid-job — resume, don't restart
 
 A `delegate_task` child can stop mid-run (session ended, provider timeout) *after* writing some
@@ -271,6 +296,10 @@ re-dispatched brief; fix them by re-briefing the child, and log it as P1 so the 
   Then confirm in one line which option that is, dispatch it, and keep the same numbering authority.
   Never guess an option's meaning from the number alone, and never answer "which option do you mean?"
   before searching — the list is on disk in the session DB.
+- **Partial selections are normal and keep their gaps.** `Jalankan 1,2,,4` (note the stray comma) means
+  run 1, 2 and 4: read the digits, ignore the punctuation, and state on the board which numbers were
+  skipped — `3 — tidak dijalankan, ikut arahan bos` — instead of quietly folding it in or silently
+  dropping it. The owner checks the board against the list he gave.
 - When the owner says "masuk bilik bos" / "jangan masuk campur", stop and persist state to a file
   (e.g. `SIMPAN-STATUS.md`: decisions locked, where we stopped, how to resume) before going quiet.
 - **"Dihantar" is not "siap".** When they say *"kalau belum jalankan sampai siap"*, a dispatched

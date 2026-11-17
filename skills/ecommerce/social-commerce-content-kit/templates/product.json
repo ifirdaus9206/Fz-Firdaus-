@@ -1,0 +1,30 @@
+{
+  "slug": "nama-produk-ringkas",
+  "produk": "Serum Vitamin C 30ml",
+  "gambar": "/path/ke/gambar-produk.png",
+  "badge": "BEST SELLER",
+  "hook": "Kulit kusam? Ini ubatnya.",
+  "subhook": "Serum Vitamin C 10% - cerah dalam 2 minggu",
+  "harga": "RM29.90",
+  "harga_asli": "RM59.90",
+  "harga_nota": "harga promosi",
+  "kedai": "NAMA KEDAI ANDA",
+  "cta": "TEKAN UNTUK BELI",
+  "penutup": "Stok terhad - pos hari sama",
+  "link": "https://s.shopee.com.my/XXXX",
+  "benefits": [
+    "Manfaat konkrit 1 (angka/bahan/ukuran)",
+    "Manfaat konkrit 2",
+    "Manfaat konkrit 3",
+    "Manfaat konkrit 4",
+    "Manfaat konkrit 5"
+  ],
+  "tajuk_shopee": "Tajuk 100+ aksara: nama + bahan + masalah yang diselesaikan + kata kunci carian",
+  "tajuk_yt": "Tajuk Shorts <=100 aksara dengan harga",
+  "hashtags": {
+    "tiktok": ["#racunshopee", "#fyp", "#tiktokshop"],
+    "ig": ["#racunshopee", "#shopeemy"],
+    "fb": ["#racunshopee"],
+    "yt": ["#shopeefinds", "#Shorts"]
+  }
+}

@@ -135,3 +135,17 @@ verification_evidence.db
 #   12 Nov — imbasan rahsia tersalah tanda teks iklan kerja ("token: ..." palsu)
 # Kandungannya ialah log output cron, boleh dijana semula; bukan sumber.
 cron/output/
+
+# ---------- E-MEL (kandungan e-mel TIDAK dibenarkan masuk repo) ----------
+# kandungan e-mel tinggal di ~/vault/email-inbox (di luar repo ini)
+vault/
+email-inbox/
+*_SENARAI-KERJA.md
+*.eml
+*.mbox
+
+# ---------- KELAYAKAN / LOG MASUK (jangan sekali-kali ke GitHub) ----------
+# NOTA 2026-11-17: fail ini menyebabkan sandaran dibatalkan pengawal rahsia.
+secrets/
+dashboard_login.txt
+.dash_url_last

@@ -112,8 +112,60 @@ Semasa eskalasi berjalan, status di papan = `blok`, bukan `siap`.
 | `~/.hermes20/docs/LAPORAN-*.md` | Laporan bukti per kerja (contoh: `LAPORAN-WORKSPACE.md`) | Ejen pelaksana |
 | `~/.hermes20/docs/PELAN-AI-TEAM.md` | Pelan induk P1–P8 + status 14 lapisan | Manusia |
 | `~/.hermes20/system/` | 8 modul sistem (constant `SYSTEM_PROMPT` + skema) | Manusia |
+| `/sdcard/Documents/UIM/` | **Gudang & kaunter hantar** — salinan laporan/gambar/zip untuk bos & Telegram/WhatsApp. Bukan tempat kerja. | `uim_hantar.sh` sahaja (sehala) |
+| `~/.hermes20/logs/uim_hantar.log` | Rekod setiap salinan ke telefon (sha256 disahkan) | `uim_hantar.sh` |
 
 Pemisahan wajib: **fakta → `knowledge_base/`**, **pengalaman → `~/vault/`**, **hasil kerja → `workspaces/<ejen>/outbox/`**, **bukti → `docs/LAPORAN-*.md`**. Jangan campur.
+
+### 5a. Aliran sehala ke storan telefon
+
+Kilang = Termux (`$HOME`) — satu-satunya sumber kebenaran. Telefon = gudang salinan sahaja.
+Arah: **Termux → telefon**, tiada dua hala, tiada symlink untuk benda penting.
+
+```bash
+uim_hantar.sh ~/.hermes20/docs/LAPORAN-VAULT.md          # auto 01-LAPORAN
+uim_hantar.sh ~/gambar.png                               # auto 02-GAMBAR
+uim_hantar.sh ~/pakej.zip --ke 05-HANTAR --nama PAKEJ.zip
+uim_pdf.sh ~/.hermes20/docs/KETUA.md --nama KETUA.pdf    # .md → PDF → 01-LAPORAN
+uim_semak.sh                                             # audit: senyap = bersih
+```
+
+Pagar dalam skrip: tolak sumber luar `$HOME` · tolak symlink · tolak tulis balik ke kilang ·
+sha256 + saiz dibandingkan, tak sama → salinan telefon dipadam · tiada timpa tanpa `--ganti`.
+
+Dua pintu masuk, satu pagar:
+1. **Terminal** — `uim_hantar.sh` / `uim_pdf.sh`.
+2. **Konsol web 8787** — tab **GUDANG**: pilih fail → `HANTAR KE TELEFON` atau `HANTAR SEBAGAI PDF`.
+   API: `GET /api/uim/state`, `POST /api/uim/hantar`, `POST /api/uim/pdf`;
+   setiap POST perlu header `X-Console-Token` (nilai `csrf` dari `/api/meta`).
+
+PDF: enjin `fpdf2` + `markdown`, font DejaVu, fail sementara dalam `~/.hermes20/tmp/` dipadam selepas hantar.
+Butiran penuh: `docs/STORAN-UIM.md`. Audit harian 08:00 (cron `8a0f32323c27`, senyap kecuali ada langgaran).
+
+---
+
+---
+
+## 5b. Dashboard web Hermes (UI penuh, di telefon)
+
+Selain konsol 8787, dashboard Hermes penuh (sama seperti di PC bos) dijalankan pada telefon.
+Butiran penuh + bukti ujian: `docs/DASHBOARD.md`.
+
+| Servis runit | Fungsi |
+|---|---|
+| `hermes-dashboard` | web UI `0.0.0.0:9119`, login `dashboard.basic_auth` (plugin `dashboard_auth/basic`) |
+| `hermes-dash-tunnel` | Cloudflare quick tunnel → URL publik dalam `~/.hermes20/dashboard_url.txt` |
+
+Urus dari UI: konsol 8787 → tab **WEB UI** (URL, status servis, UJI PENUH, langkah reboot).
+
+```bash
+sv status hermes-dashboard hermes-dash-tunnel
+cat ~/.hermes20/dashboard_url.txt          # URL publik semasa (bertukar bila tunnel restart)
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:9119/   # 302 = pagar auth hidup
+```
+
+Pagar: bind loopback + tunnel = Hermes tolak Host header (`400`), jadi bind `0.0.0.0` +
+password wajib. Tanpa auth dikonfigurasi Hermes enggan bind awam (fail-closed).
 
 ---
 
@@ -136,6 +188,7 @@ Kalau mana-mana kotak tidak boleh ditanda dengan bukti, hari itu **belum selesai
 ## Kemas kini
 
 - **Tarikh:** 2026-11-06 (semakan: tambah 4 peranan bertingkat, senarai semak 6 → 7 kotak)
+- **Tarikh:** 2026-11-12 (tambah §5a aliran sehala ke `/sdcard/Documents/UIM` + audit harian 08:00)
 - **Penulis:** Ketua (profil `default`)
 - **Status:** dikemas kini supaya sepadan dengan `SOUL.md` versi 4 peranan bertingkat.
 - **Sumber yang dibaca:**

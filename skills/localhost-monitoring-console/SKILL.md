@@ -99,6 +99,32 @@ Record the *real* numbers into PLAN.md's data-source table. Counts that differ f
   canvas height must exceed `header + Σ(stage height + gap)`, and dense label lists need ≥18 px
   line spacing.
 
+## Phase 2b — add a tab to a console that is already running
+
+"Tambah tab X" on the live 2.7k-line `~/hermes-console` is an insertion job, not a rewrite: match
+the neighbouring style, touch six places, prove the old tabs still answer. Full checklist, canonical
+code and the negative-test matrix: `references/adding-a-console-tab.md`.
+
+Six touch points, in order: nav `<button data-tab>`, `<section id="tab-KEY" class="pane">`,
+`if (S.tab === "KEY") await loadKEY();` inside `loadTab()`, the `TABS` array (**required** or
+`?tab=KEY` is rejected at boot), button listeners in the init block, and the render/action functions.
+Existing CSS (`panel`, `ph`, `pbody`, `workbar`, `btn primary`, `btn gold`, `bodytext`, `pre.log`)
+covers the whole pane — inventing a theme for one tab is the tell that it was bolted on.
+
+Endpoint rules for tabs that shell out: `subprocess.run([...], capture_output=True, text=True,
+timeout=120)` with a list (never `shell=True`), `returncode`→`{ok, kod, output, laluan}`, and a
+missing collaborator script is **503 "belum sedia"**, never a fabricated success. Any `path` from the
+request goes through one helper: `os.path.realpath(..., strict=True)`, then
+`real == HOME_REAL or HOME_REAL in real.parents` (component-wise; `str.startswith` accepts
+`/homeX/evil`), then `is_file()` → otherwise 400.
+
+Two verification traps that make a healthy tab look broken:
+- **Every POST needs `X-Console-Token`** from `/api/meta` (`csrf`), else 403. A naive `curl -d …`
+  "fails" against working code; fetch the token in the same test script and separately prove the
+  403-without-token path still holds.
+- **The copy script may rename the file** (`name-YYYYMMDD-HHMMSS.md` when the name exists), so assert
+  the `laluan` the API returns, not a hardcoded destination path.
+
 ## Phase 3 — verification (the part that gets skipped)
 
 1. **Endpoint matrix** — loop and print code/time/size for every route:
@@ -584,6 +610,16 @@ prompts, gates, backups and measured numbers: `references/roster-quality-repair.
   `senior-developer`/`software-architect`/`pdf-engine-architect` became "Pencipta".
   Validate any classifier change offline and read the moved rows; prefer an additive
   secondary label (≥60 % of the top score) over rebalancing the primary distribution.
+- **A silent `no_agent` watchdog is unverified until its alarm branch fires.** Empty stdout means
+  "no delivery", so a healthy run proves only that the script exited — not that the alert works.
+  Copy the script, `sed` the threshold to an impossible value, run the **copy** from `$HOME`
+  (`/tmp` is `noexec`, so it fails as `Permission denied` and looks like a broken script), confirm
+  the message text and exit code, then delete the copy. Measured 2026-11-12 on a disk-space watcher:
+  real run at 84 GB free printed nothing (correct), forced copy printed the full KRITIKAL block with
+  the top consumers. Keep the thresholds as named vars (`WARN_GB`/`CRIT_GB`) so the drill is a
+  one-line `sed`. If the `cronjob` tool call is rejected for a missing field, create the job through
+  the CLI instead: `hermes cron create "0 */6 * * *" --name "…" --script x.sh --no-agent
+  --deliver origin` (script must live in `<hermes home>/scripts/`).
 - **A soft finding in a cron script must not exit non-zero.** A weekly check that exits 1
   because a report lacked a `lulus` key — or because the QA verdict was the default
   `NEEDS_WORK` — makes the job report `error` and alarms the user while the pipeline ran
@@ -688,6 +724,12 @@ prompts, gates, backups and measured numbers: `references/roster-quality-repair.
   0-byte output, and a probe script copied to `/tmp` fails with `Permission denied` — which looks
   like a broken script rather than a mount option. Keep throwaway test scripts **and** their logs in
   `$HOME` (e.g. `~/detach_test.sh`), then delete them; write real temp files inside the project dir.
+- **A home-prefix guard written with `str.startswith` accepts a sibling directory.**
+  `real.startswith(str(Path.home()))` is true for `/data/data/com.termux/files/homeX/evil.md`, so a
+  "must be inside `$HOME`" check lets an attacker-chosen sibling through. Use
+  `real == HOME_REAL or HOME_REAL in real.parents` on a `Path(os.path.realpath(p, strict=True))`
+  result, then `real.is_file()`; `strict=True` also collapses `..` and rejects dangling symlinks
+  before `stat`. Prove it with a symlink inside `$HOME` pointing at `/sdcard/...` → 400.
 - **Duplicate dict keys in one literal**: `{"ideas": computed, ..., "ideas": None}` → `None` wins
   and the panel renders empty. Build once, or assign after construction.
 - **sqlite `messages.tool_calls` nesting**: usually `{"function":{"name":"terminal","arguments":
@@ -878,6 +920,11 @@ prompts, gates, backups and measured numbers: `references/roster-quality-repair.
   `X-Console-Token`, `--data-binary @file` for >9 MB base64 bodies, the lying-extension bug
   (HEIC→`.png`) and its Pillow→JPEG fix (7.2 MB → 734 KB), a dedicated upload panel with a
   `count`-based confirmation, and script-file cleanup of test steps.
+- `references/adding-a-console-tab.md` — adding a tab to the live console without breaking the
+  others: six touch points (nav, pane, `loadTab`, `TABS`, listeners, renderers), subprocess endpoint
+  shape with `timeout`/`kod`, the `realpath(strict=True)` + `Path.parents` + `is_file()` path guard
+  (and why `startswith` is wrong), `X-Console-Token` on every POST test, rename-on-collision
+  assertion, the 400 matrix and per-file line counts for the report.
 - `scripts/verify_svg_text_layout.py` — geometric SVG text checker (estimated bboxes, frame
   clipping, overlaps) so illustrated guides don't depend on a vision pass that may render tofu.
 - `scripts/console-runit-smoke.sh` — generic runit health script: `sv status`, `/api/ping`, promised

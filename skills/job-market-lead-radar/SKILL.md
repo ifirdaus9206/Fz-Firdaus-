@@ -95,12 +95,30 @@ rewriting fetch/score logic.
    most 5 jobs (`tajuk | bajet | sumber | skor`) → the full draft for #1 → the filenames of the other
    drafts → a one-line blocker (e.g. `PROFIL.md` still `TODO`) → numbered 3–4 next-step options.
    Do not paste all three drafts into chat; the user reads them from the files.
+   **In a cron run the wrapper's own step list wins** (title → ≤5 jobs → full draft #1 → other draft
+   filenames → stop): there is nobody to answer numbered options, so end on the blockers instead.
 10. **The pre-run job list can contain the same job twice.** On 2026-11-10 the prompt listed
    `WhatsApp-Shopify Automation Setup` as both #7 and #8 with an identical URL — the scanner dedupes
    on source id, but one project matching two keywords (`automation`, `api integration`) can still
    surface twice in a single report. Dedupe on **pautan/URL** before picking the top N, then say it in
    the report (`#7 dan #8 ialah iklan yang sama — dikira sekali sahaja`). Otherwise you write two
-   drafts for one job and the job count in your header is wrong.
+   drafts for one job and the job count in your header is wrong. On 2026-11-12 it recurred (#2/#3 and
+   #4/#5, same URLs) — always URL-dedupe first, then count, then draft. On 2026-11-16 the twins
+   differed *only* in `kata_kunci_asal` (`python` vs `automation`) while `id` (`fl-40816064`) and URL
+   were identical: the authoritative key is `id` in `data/<stamp>.json`, so key on that (URL second)
+   and say it in the header (`#1 dan #2 ialah iklan yang sama (fl-40816064) — didedup`).
+11. **Fetching the project page can hand you a competitor's bid, not the brief.** The report truncates
+   `penerangan` at ~100 chars, so for the top 3 it is worth reading the full ad — but selectors like
+   `class="project-description"` / `id="project-description"` / `"description":"..."` return *bid text*
+   (2026-11-12: "Hi, I run A2Z Research Consultant, a small team of certified penetration testers...").
+   Any block starting `Hi,` / `Dear` or ending `Best regards` is a rival's proposal — drop it. Safe
+   extraction (meta description + client-voice anchor), the tested script, and the gating requirements
+   it surfaced: `references/fetch-deskripsi-kerja.md`.
+12. **Gated requirements decide whether to bid at all — put them in the checklist.** Ads hide hard
+   gates in the body: "5 WhatsApp numbers you control", "verifiable CEH/OSCP/CREST required". Put a
+   bracketed placeholder in the pitch (`**[X] Malaysian WhatsApp numbers**`, `**[CERT + VERIFICATION
+   LINK]**`) plus a hard checklist line: fill the real number, or **do not bid** if you lack the
+   credential. A placeholder must never read as a claim.
 
 ## Draf proposal — the mechanics that keep it honest
 
@@ -116,11 +134,14 @@ Per job, one file `drafts/<YYYY-MM-DD>-<slug>.md` with exactly these blocks (ske
    fill `[NAMA ANDA]`, and the fixed line: no login, no payment, nothing sent off-platform.
 5. Nothing else. Doubt goes in the checklist, never into the pitch body.
 
-Two checklist items that are easy to forget and change the price a lot:
+Checklist items that are easy to forget and change the price — or kill the bid — a lot:
 - **Posting in another language** (French, Spanish, Romanian): ask whether the *deliverable* must be
   in that language. It is a scope item — more prompt work and QA — not a detail.
 - **Document conversion**: ask whether the source is digital text or scans needing OCR (3–5x the
   time). Same for scraping: ask records × mandatory fields.
+- **A gated requirement** (own 5 phone numbers, hold a verifiable CEH/OSCP/CREST, on-site in a given
+  city): this is a go/no-go, not a price item. Bracket the placeholder in the body and write
+  `JANGAN hantar` in the checklist when the owner cannot meet it.
 
 Price anchors per job class (per page / per record / build vs monthly, and what an 8x budget range
 signals): `references/semak-skop-dan-harga.md`. Write the *question*, never "terlalu murah, tolak".
@@ -146,12 +167,37 @@ cd drafts && for f in <YYYY-MM-DD>-*.md; do
 
 `Hi,` and the blank greeting still count, so aim for ≤115 to leave headroom. On 2026-11-10 the
 chatbot draft measured 128 and was fixed by deleting one trailing sentence (13 words) — never by
-cutting the problem statement.
+cutting the problem statement. On 2026-11-16 a draft landed at 122 and was trimmed to 118 by two
+small edits (`output quality swings` → `quality swings`, `Google Docs, Word, or straight into your
+CMS?` → `Docs, Word, or your CMS?`); the header's `NNN patah perkataan` must be updated to the
+measured number in the same patch, or the file contradicts itself.
+
+**The question must be the LAST line — verify, don't assume.** Writing "With that I can split the
+work into phases" *after* the question leaves the pitch ending on a statement, which kills the reply.
+Check it with the same run that counts words:
+
+```bash
+python3 - <<'EOF'
+import re, glob
+for f in sorted(glob.glob('drafts/<YYYY-MM-DD>-*.md')):
+    body = re.search(r'## Draf proposal.*?\n(.*?)\n## ', open(f).read(), re.S).group(1).strip()
+    print(f, len(body.split()), 'words | akhir:', body.split('\n')[-1][-70:])
+EOF
+```
+
+Read the `akhir:` column: it must end in `?`. Fix by moving the stray sentence *before* the question,
+not by deleting the question.
 
 **Do not silently overwrite an existing draft.** A job re-appears on later runs (it stays in the
 report even when `baharu: false`), and the earlier draft may already carry the owner's hand edits
 (name, real experience, price). If `drafts/<date>-<slug>.md` exists, either skip it and say
 "sudah ada draf" in the report, or write `<slug>-v2.md` and state the old file was kept.
+
+**When the wrapper says "top 3" and a top job is already drafted, skip it and take the next unique
+undrafted lead** — then say which one was skipped and why (`#1 sudah ada draf 2026-11-15 — diganti
+dengan #5`). Do not re-draft yesterday's gig under today's date just to satisfy the count: it burns
+the run, creates near-duplicate files, and the owner may already have edited the old one. Only
+re-draft it as `<slug>-v2.md` when the ad itself changed (budget, scope, deadline) — state that.
 
 ## Deliverable rules for this user
 

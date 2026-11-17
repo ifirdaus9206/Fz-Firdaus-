@@ -111,6 +111,53 @@ git check-ignore -v --no-index SOUL.md.bak    # should name the !SOUL.md.bak lin
 Negation only works while the parent directory isn't itself excluded — don't hide `*.bak` behind
 an `archive/` or `profiles/` ignore and expect `!` to rescue it.
 
+## INCIDENT — a real secret is already pushed (do this, don't just `git rm --cached`)
+
+Trigger: owner says "jangan simpan password di GitHub" / you find a literal credential in
+`git grep -l <secret> HEAD`. Check visibility first — the answer changes the urgency:
+
+```bash
+curl -s -o /dev/null -w 'HTTP %{http_code}\n' https://api.github.com/repos/<owner>/<repo>
+# 200 = PUBLIC → treat as leaked now; 404 = private/missing
+```
+
+Order that worked (public backup repo, password in 3 tracked files):
+
+1. **Redact the working files** (memory files + skill docs count — `memories/*.md` are tracked).
+   Replace the literal with a marker (`<password-akaun>`, `<REDACTED-PASSWORD>`) and keep the
+   *lesson* while dropping the value. If the value lives in Hermes memory, use the `memory` tool's
+   `replace` so the injected copy is cleaned too — patching the file alone leaves it in memory.
+2. **Purge history** (SHAs change — a backup repo tolerates this; a shared repo does not):
+
+   ```bash
+   pip install git-filter-repo            # Termux: fine, installs to $PREFIX/bin
+   printf '<secret>==><REDACTED>\n' > ~/tmp/redact.txt
+   git filter-repo --replace-text ~/tmp/redact.txt --force
+   ```
+   `--replace-text` is substring-based, so it also rewrites any longer string containing the
+   secret — good. `filter-repo` **removes `origin`** by design; re-add it:
+   `git remote add origin git@github.com:<owner>/<repo>.git`. SSH-only push avoids storing a PAT.
+3. **Commit the redaction, then force push**: `git add -A && git commit -m 'selamat: buang
+   password' && git push --force origin main`.
+4. **Verify from GitHub, not from local git** — see `references/purge-pushed-secret.md` for the
+   exact curl probes (raw file grep count, API tree scan, dangling-commit probe).
+
+**Residual exposure you must report, not hide:** after a force push the old commits stay
+fetchable by SHA (`GET /repos/<o>/<r>/commits/<old-sha>` → 200) until GitHub garbage-collects.
+So "sudah tiada di GitHub" is false; the honest statement is "branch bersih, commit lama masih
+boleh dibuka melalui SHA". Offer, in numbered form: (1) rotate the credential now, (2) delete and
+recreate the repo (only guaranteed removal), (3) GitHub Support cache purge, (4) nothing further.
+
+Also verify images/binaries were never tracked at all — `git log --all --diff-filter=A
+--name-only | grep -Ei '\.(png|jpg|jpeg|webp)$'` and the API tree scan; report "0 imej, tiada
+dalam sejarah" rather than "aku dah buang" when nothing was ever there.
+
+**The repo is only half the leak.** The same literal also sits in `logs/gateway.log`,
+`logs/agent.log`, `state.db` (+ `-wal`, FTS shadow tables) and any `tmp/` helper script that wrote
+it. After the git purge, run the local scrub in `credential-secret-hygiene`
+(`scripts/scrub_secret.py --literal '<value>'`) before telling the owner the secret is contained —
+and remember the account password vs App-Password distinction before recommending a rotation.
+
 ## PITFALL #3 — churn files make the nightly commit noisy
 
 Heartbeats and usage counters change every minute, so "silent when nothing changed" never
@@ -163,6 +210,34 @@ Malay: "kelayakan", "rahsia") so the guard never flags its own rule file.
 Guard defensively even with .gitignore: if `git ls-files --cached` still lists a forbidden
 path (`.env`, `auth.json`, `config.yaml`, `state.db*`, `sessions/`, `logs/`, `pastes/`),
 `git reset` and refuse — belt and braces.
+
+### Tier 0 — the three tiers cannot see a *short* secret written as prose (real leak)
+
+All three tiers above are shape-based, so a plain password sitting in normal sentences passes
+cleanly. Measured case: a **6-digit account password** inside the tracked
+`memories/MEMORY.md` prose (`… = PASSWORD bukan username`) and two skill docs shipped to a
+**public** backup repo across several nightly commits. Why each tier missed it:
+
+- tier 1 — no `sk_/ghp_/AIza…` shape;
+- tier 2 — `ASSIGN_RE` needs `keyword [:=] value` **and ≥12 chars**, and a bare 6-digit run has
+  neither;
+- tier 3 — the line is prose, not a lone 32+ token.
+
+Fix: keep a **denylist of known secret literals outside the repo** (`~/.secrets-denylist`, one
+value per line, never committed) and grep the staged tree for those exact values before commit:
+
+```bash
+while IFS= read -r v; do
+  [ -n "$v" ] || continue
+  git grep -lF -- "$v" -- . ':!*.lock' 2>/dev/null | sed 's/^/  - /'
+done < ~/.secrets-denylist | sort -u
+```
+
+Treat these paths as high-risk regardless of shape: `memories/*.md`, `skills/**/*.md`,
+`knowledge_base/sop/*.md`, `PROFIL.md`. Anything that reads like a credential lesson
+("… itu password, bukan username") belongs in prose **without the value** from the start — the
+lesson is what matters, and `git grep` on a phrase like `password` is how you find such lines
+during review.
 
 ## The backup script contract
 
