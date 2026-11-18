@@ -1,7 +1,7 @@
 ---
 name: localhost-monitoring-console
 description: Build read-only localhost dashboards over app state and agent-dispatch control panels.
-version: 1.10.0
+version: 1.11.0
 author: Hermes Agent
 license: MIT
 platforms: [linux, macos, termux, windows]
@@ -124,6 +124,41 @@ Two verification traps that make a healthy tab look broken:
   403-without-token path still holds.
 - **The copy script may rename the file** (`name-YYYYMMDD-HHMMSS.md` when the name exists), so assert
   the `laluan` the API returns, not a hardcoded destination path.
+
+### Phase 2b-ii — "ruang baharu yang berasingan": tab + data + endpoint of its own
+
+When the brief says the new room must **not** mix with earlier tabs, the isolation is the
+deliverable, not the tab. Do not paste a 140-line renderer into `app.js`: put everything in
+`static/tab-<KEY>.js` (IIFE, own `xEsc/xNum/xCard` helpers, one `window.loadX` export) and touch
+`app.js` twice — `if (S.tab === "KEY") await window.loadX();` inside `loadTab()` and one `TABS`
+entry (that array also drives `?tab=`, the Ctrl-K palette and typing work). `index.html` gets a nav
+button, a `<section id="tab-KEY" class="pane">` and one `<script src="/static/tab-KEY.js">`
+**before** `app.js`; no CSS at all if the existing `.cards/.panel/.ph/.pbody/.tbl/.btn` classes cover
+it (an untouched `style.css` with an unchanged mtime and byte size is the cleanest proof the other
+tabs weren't restyled).
+
+Data lives in its own folder with its own exporter (`~/.hermesNN/scripts/export_<key>.py` →
+`~/.hermesNN/reports/<key>/`), one `GET /api/<key>` that combines the files, and one
+`GET /api/<key>/fail/{nama}` guarded by a **tuple membership test** against the five allowed names
+(400 otherwise; `is_file()` → 404). Hard rules learned the hard way:
+
+- **Refresh on a TTL, not only when the file is missing.** `status.json` older than ~300 s → re-run
+  the exporter (subprocess, `timeout=60`); otherwise a hash captured in the brief turns into the
+  frozen answer and the tab certifies last week's commit. Measured: the real HEAD moved `cf40661 →
+  ee11426` within ten minutes of the first export.
+- **Every exporter section is its own `try/except`.** `git ls-remote` failing (SSH/network) must
+  write `"remote_tidak_dapat_disemak"` + `"segerak": null`, not kill the other four files.
+- **Test traversal with `--path-as-is`.** Plain curl squashes `../` client-side, so
+  `…/fail/../../.env → 404` proves nothing; the path-param route misses because `/` isn't matched by
+  `{nama}`. Also assert `fail/.env → 400` so the whitelist itself is shown to have fired.
+- **Reports written inside `~/.hermesNN` get committed by that home's backup cron**, so the exporter
+  dirties the tree nightly and adds a commit per run. Flag it in the report and propose
+  `reports/<key>/` in `.gitignore` rather than silently editing a file outside the allowed write
+  scope.
+
+Full recipe, exporter/endpoint code, curl matrix, browserless render proof for the standalone file
+and the mtime-based "nothing else changed" evidence:
+`references/isolated-tab-and-data-exporter.md`.
 
 ## Phase 3 — verification (the part that gets skipped)
 
@@ -969,6 +1004,12 @@ Full build recipe, Windows stat methods, cron-db column trap and the handoff pac
   shape with `timeout`/`kod`, the `realpath(strict=True)` + `Path.parents` + `is_file()` path guard
   (and why `startswith` is wrong), `X-Console-Token` on every POST test, rename-on-collision
   assertion, the 400 matrix and per-file line counts for the report.
+- `references/isolated-tab-and-data-exporter.md` — "ruang baharu yang berasingan": standalone
+  `static/tab-<key>.js` + 2-line `app.js` registration, own `reports/<key>/` folder and tolerant
+  exporter (per-section try/except, `remote_tidak_dapat_disemak`, closed log-line vocabulary),
+  `GET /api/<key>` with mtime TTL refresh, whitelisted `…/fail/{nama}` download route, the
+  `--path-as-is` traversal trap, browserless render proof and mtime+size evidence for untouched
+  files.
 - `references/multi-machine-agent-relay.md` — a second agent on another machine in the same console:
   CGNAT reachability proof before designing, Tailscale-vs-relay-vs-second-bot table, GitHub Contents
   API relay with a whitelisted `status.json` (and the secret exclusions), `GET /api/remote/<key>` with

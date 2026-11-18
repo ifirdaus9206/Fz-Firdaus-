@@ -172,35 +172,32 @@ INSIDEN = """# Insiden Sandaran GitHub — 18 November 2026
 
 ## Apa yang berlaku
 Sandaran malam 2:00 pagi pada 18 November berhenti sendiri (kod keluar 3).
-Tiada data hilang dan tiada fail dihantar ke GitHub. Commit dibatalkan
-sebelum sempat dibuat, jadi repo kekal seperti sebelumnya.
+Tiada data hilang dan tiada fail dihantar ke GitHub: commit dibatalkan
+sebelum dibuat, jadi repo kekal seperti sebelumnya.
 
 ## Punca sebenar
 Pengawal rahsia membaca dua fail dokumentasi sebagai "kunci sebenar":
-- `docs/INSIDEN-2026-11-17.md` — mengandungi contoh seperti `GMAIL_APP_PASSWORD=xxxx`
+- `docs/INSIDEN-2026-11-17.md` — contoh seperti `GMAIL_APP_PASSWORD=xxxx`
 - `skills/devops/safe-git-config-backup/SKILL.md` — ayat penerangan, bukan kunci
 
-Kedua-duanya contoh/prosa. **Tiada kebocoran berlaku** — tiada kunci sebenar
-tertulis dalam repo dan tiada push berlaku pada larian itu.
+Kedua-duanya contoh/prosa — tiada kebocoran, tiada push pada larian itu.
 
-## Pembetulan
-Pengawal kini dua peringkat:
-1. **Corak keras** (bentuk kunci sebenar: `sk-...`, `ghp_...`, kunci peribadi,
+## Pembetulan — pengawal dua peringkat
+1. Corak keras (bentuk kunci sebenar: `sk-...`, `ghp_...`, kunci peribadi,
    token JWT) — dipindai pada SEMUA fail, termasuk `.md` dan `docs/`.
-   Padanan peringkat ini sentiasa membatalkan commit.
-2. **`nama=nilai` sensitif** — hanya pada fail BUKAN dokumentasi. Fail `.md`,
+2. `nama=nilai` sensitif — HANYA pada fail bukan dokumentasi. Fail `.md`,
    `docs/`, `references/`, `templates/` dikecualikan di peringkat ini sahaja.
    Nilai pendek, placeholder dan `<...>` diabaikan.
 
 ## Bukti ujian
-- Kunci sebenar ditulis dalam fail ujian → **exit 3**, commit HEAD tidak berubah.
-- Fail bersih → **exit 0**, commit dan push berjaya.
+- Kunci sebenar dalam fail ujian → exit 3, commit HEAD tidak berubah.
+- Fail bersih → exit 0, commit dan push berjaya.
 - Larian berulang tanpa perubahan → senyap, tiada commit berganda.
 
 ## Selepas pembetulan
 Commit `cf40661` berjaya dipush ke `github.com/ifirdaus9206/Fz-Firdaus-`.
-Laporan insiden dihantar melalui emel ke ifirdaus9206@gmail.com dan disahkan
-masuk inbox. Jadual 2:00 pagi kekal seperti biasa.
+Laporan insiden dihantar ke ifirdaus9206@gmail.com dan disahkan masuk inbox.
+Jadual 2:00 pagi kekal seperti biasa.
 """
 
 

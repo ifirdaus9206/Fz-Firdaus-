@@ -227,6 +227,20 @@ repo (`git init`, tiada remote ⇒ tiada push) dan memadamkannya melalui `trap`.
 `KUNCI_SK="${PFX_SK}${PJG}"`, begitu juga ghp_/github_pat_/AIza/AKIA/xox/JWT/tajuk PRIVATE KEY)
 supaya fail harness itu sendiri tidak mencetuskan pengawal peringkat 1 dan selamat di-commit.
 
+Dua perangkap yang hanya muncul apabila harness duduk **di dalam** repo:
+
+- **Peringkat 2 juga menembak fail harness sendiri.** Fixture `db_password=Qz7…` /
+  `client_secret: "Rk4…"` ialah tugasan sah dengan nilai 16 aksara, jadi guard menamakan
+  `scan_matrix_test.sh (peringkat 2)` dan backup exit 3. Bina nilai melalui pemboleh ubah dan
+  tulis `"db_password=${N1}"` dalam sumber: shell mengembangkan ke fail ujian, tetapi baris
+  sumber hanya mengandungi `${…}` yang ditapis `REAL_VALUE`. Bukti akhir mesti
+  `bash scripts/backup_github.sh` → exit 0 **dengan harness di-stage**; exit 3 yang menamakan
+  harness = masih ada literal.
+- **Reset setiap kes mesti `reset --hard "$BASE"` + `clean -fd`.** `git reset` sahaja
+  meninggalkan fail kes "diterima" yang telah di-commit, jadi `git add -A` kes berikutnya
+  mengesan semula fail itu dan memberi 3 palsu pada kes yang sepatutnya 0. Simpan
+  `BASE=$(git rev-parse HEAD)` selepas commit asas sandbox.
+
 Scan **added lines of staged files**, not `git diff --cached` as a blob, so you can print
 offending paths; and keep `.gitignore` prose free of the trigger words (write the reason in
 Malay: "kelayakan", "rahsia") so the guard never flags its own rule file.
