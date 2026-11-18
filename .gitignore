@@ -55,6 +55,8 @@ skills/.usage.json
 state/gateway.heartbeat
 # status kitaran hayat gateway — berubah setiap tick, bukan sumber
 state/gateway.lifecycle.json
+# data terbitan tab SANDARAN — dijana semula oleh scripts/export_sandaran.py
+reports/sandaran/*.json
 
 # ---------- PROFIL (salinan per-profil bagi fail di atas) ----------
 # terbitan: cache model per profil
