@@ -53,6 +53,8 @@ cron/ticker_last_success
 skills/.usage.json
 # terbitan: denyutan gateway (berubah setiap minit)
 state/gateway.heartbeat
+# status kitaran hayat gateway — berubah setiap tick, bukan sumber
+state/gateway.lifecycle.json
 
 # ---------- PROFIL (salinan per-profil bagi fail di atas) ----------
 # terbitan: cache model per profil

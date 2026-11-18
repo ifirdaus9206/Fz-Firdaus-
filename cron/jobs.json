@@ -22,15 +22,15 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 2303
+        "completed": 2304
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-03T21:00:32.277446+08:00",
-      "next_run_at": "2026-11-18T10:55:00+08:00",
-      "last_run_at": "2026-11-18T10:50:40.172965+08:00",
+      "next_run_at": "2026-11-18T11:00:00+08:00",
+      "last_run_at": "2026-11-18T10:55:19.632136+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -483,15 +483,15 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 6
+        "completed": 7
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-18T10:24:38.919382+08:00",
-      "next_run_at": "2026-11-18T10:55:00+08:00",
-      "last_run_at": "2026-11-18T10:50:41.717517+08:00",
+      "next_run_at": "2026-11-18T11:00:00+08:00",
+      "last_run_at": "2026-11-18T10:55:21.102090+08:00",
       "last_status": "error",
       "last_error": "Script not found: /data/data/com.termux/files/home/.hermes20/scripts/sofia-tarik.sh",
       "last_delivery_error": null,
@@ -508,5 +508,5 @@
       "fire_claim": null
     }
   ],
-  "updated_at": "2026-11-18T10:50:47.665289+08:00"
+  "updated_at": "2026-11-18T10:55:21.103405+08:00"
 }
