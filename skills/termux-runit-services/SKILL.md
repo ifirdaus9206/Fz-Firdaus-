@@ -205,6 +205,46 @@ Then prove it: run the keeper by hand while everything is healthy and re-read th
 must still print `HELD`. Also keep `wake_ctl.sh auto` in `~/.termux/boot/*.sh` so a reboot
 restores the lock.
 
+### Never call `wake_ctl.sh` from a service `run` script (notification storm)
+
+Symptom the user reports: Termux notification **`3 sessions (wake lock held)` keeps popping up
+non-stop**. Android re-posts that notification on *every* `termux-wake-lock` invocation, so the
+question is always "who calls it repeatedly?", not "why is the lock held".
+
+Found on this device: `$PREFIX/var/service/hermes-gateway/run` had
+`wake_ctl.sh auto` **before** `exec hermes gateway run`. Because an orphan gateway still held
+`gateway.lock`, runsv's child exited in ~1 s (`✗ Another gateway instance is already running
+(PID N)`), so runsv re-ran the script every ~2 s → one `termux-wake-lock` per attempt → the
+notification re-appeared every couple of seconds. Diagnostic order:
+
+```bash
+sv status hermes-gateway          # pid uptime resetting to 0–3s = crash loop
+pgrep -af "hermes gateway run"    # >1 process, oldest is the orphan holding the lock
+hermes gateway run 2>&1 | tail -3 # run by hand: "Another gateway instance is already running"
+cat "$PREFIX/var/service/hermes-gateway/run"   # the wake_ctl line lives here
+```
+
+Two rules that fix it for good:
+
+1. **Wake lock is acquired once, at boot/keeper level — never inside `run`.** A supervised
+   service restarts by design; anything in `run` runs again on every restart.
+2. **A `run` script must never exit instantly when a peer already holds the lock.** Make it wait,
+   otherwise runsv turns one conflict into a hot loop:
+
+```sh
+i=0
+while pgrep -f "hermes gateway run" >/dev/null 2>&1 && [ "$i" -lt 360 ]; do
+  sleep 5; i=$((i + 1))
+done
+exec hermes gateway run
+```
+
+Verify with the same pid across ~60 s (`sv status` elapsed keeps growing) and
+`pgrep -af termux-wake-lock` empty. The notification that remains is a single *persistent* one —
+that is correct and required while the lock is held; only the repeated popping is the bug. The
+"N sessions" count is the number of open Termux terminal sessions, not a leak.
+
+
 ## Restarting the gateway from inside a gateway session
 
 The terminal tool refuses any command that could restart or stop the gateway while the agent

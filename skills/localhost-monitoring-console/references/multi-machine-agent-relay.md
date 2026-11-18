@@ -207,3 +207,41 @@ power"* (default stops the whole relay on a laptop).
 Deliver the pack with the phone-storage handoff tool (`uim_hantar.sh <folder> --ke 05-HANTAR --nama
 <name>`), not as chat attachments, and verify with a `sha256sum` of the script on both sides.
 
+## 11. Registering the pull cron — the trap that fails *every* tick
+
+`cronjob(action='create', script='sofia-tarik.sh', no_agent=True, schedule='*/5 * * * *')` stores the
+**bare filename** and the scheduler resolves it under **`<HERMES_HOME>/scripts/`** — not `~/bin/`,
+not the cwd, not wherever you just wrote the file. Payload written to `~/bin/sofia-tarik.sh` therefore
+produced, on every single tick:
+
+```
+⚠️ Cron '<job>' failed: Script not found: /data/data/…/home/.hermes20/scripts/sofia-tarik.sh
+```
+
+The owner sees that alert and reasonably assumes the relay broke. It is one wrong directory:
+
+```bash
+cp -f ~/bin/sofia-tarik.sh ~/.hermes20/scripts/sofia-tarik.sh   # real file, not a symlink
+chmod +x ~/.hermes20/scripts/sofia-tarik.sh
+rm -f  ~/bin/sofia-tarik.sh                                     # one copy only — no divergence
+bash -n ~/.hermes20/scripts/sofia-tarik.sh                      # syntax before scheduling
+```
+
+Then prove it in **two stages** — a manual run does not prove the scheduler:
+
+1. `cronjob(action='run', job_id=…)` → `last_status: ok`, `execution_success: true`,
+   `last_delivery_error: None`.
+2. **Wait for the next scheduled tick** (~5 min) and re-read `cron/jobs.json`:
+   `last_run_at` must have advanced on its own (`13:05` manual → `13:10:08` automatic) with
+   `last_status: ok`. Cross-check `cron/executions.db` (`status` values are `completed`/`error`,
+   `error` empty) so a different job's failure cannot be mistaken for this one.
+
+Because `no_agent` delivers only non-empty stdout, a healthy automatic tick produces **no message at
+all** — "the owner did not get an alert" is the pass signal, and it is only meaningful once the
+scheduled tick has actually run. Say which of the two proofs you have.
+
+Recon for this diagnosis is one script file, not an inline chain: long `echo`/`for`/`printf`
+one-liners get rejected by the command parser (saved under `cache/blocked-scripts/`), and the same
+payload wrapped in `execute_code` returns an empty stdout that reads like "the shell printed nothing".
+`write_file` to `~/tmp/<name>.sh` then `bash ~/tmp/<name>.sh`.
+

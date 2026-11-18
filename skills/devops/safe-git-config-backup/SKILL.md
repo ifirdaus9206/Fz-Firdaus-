@@ -88,6 +88,25 @@ Consequences to state honestly in the report:
   `git ls-files | grep -c <pattern>` → 0, plus `git count-objects -vH` for loose/garbage counts.
 - Don't imply the repo got smaller when only the index did.
 
+### Once the owner approves the rewrite
+
+PITFALL #2b says never run it unprompted — it does **not** say never run it. When the owner answers
+"buat" after seeing the blast radius, follow `references/history-rewrite-approved.md`. The shape:
+
+1. **Bundle first** (`git bundle create … --all` + `git bundle verify`) and record a baseline triple:
+   `HEAD`, `HEAD^{tree}`, `git ls-files | wc -l`, and one aggregate `sha256sum` of every tracked file.
+2. `git filter-repo --invert-paths --path …` over the **already-untracked** heavy paths only, then
+   `reflog expire` + `gc --prune=now`; re-add `origin` (filter-repo deletes it).
+3. **Three gates before any push:** tree hash, file count, aggregate hash. If the tip tree moved
+   because files were committed after the baseline, reconcile against the bundle with `comm -23`
+   and require "nothing lost, N added" — never just abandon the run.
+4. `push --force`, then prove it from the remote with a `--depth 1` clone whose tree hash and file
+   count match local. A local "push berjaya" line is not evidence.
+5. **If the delegated run dies mid-rewrite** (`Delegation owner exited before recording a terminal
+   result`), do **not** re-run it. Verify read-only: `.git` size, blob absence, `ls-remote` == HEAD,
+   `git status`, bundle present — then run the gates. Measured: 27.5 MB → 5.4 MB, 26 commits, all
+   SHAs new, 0 files lost.
+
 ## PITFALL #2c — a global `*.bak` rule can evict deliberate backups
 
 `*.bak` / `*.bak-*` are the right default for manual backups, but they also match `SOUL.md.bak`,

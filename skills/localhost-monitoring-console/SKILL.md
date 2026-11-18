@@ -49,6 +49,13 @@ extend it into a **control panel** that dispatches agents from a large roster.
    `grep -ril x`), then session history; if it does not exist, say so with the paths searched, run
    the nearest existing equivalent instead, and offer to run theirs once they send it. Narrating a
    run of something you never executed invalidates every other piece of evidence in the report.
+9. **Deliver links and credentials on the channel the user names.** "Hantar pada aku melalui emel"
+   means a real email, not a chat paste: `GMAIL_USER` + `GMAIL_APP_PASSWORD` from `.env`, smtplib SSL
+   465, and report `refused == {}` as the proof. Spell passwords out character by character when they
+   contain a space (`ketua Hermes20` → "one space between ketua and Hermes20") and offer the
+   no-space variant, otherwise the login fails on a typo you caused. Mirror the same values into the
+   0600 secrets file they will open later, and answer their numbered choices by number — they reply
+   with a digit, not a sentence.
 
 ## Phase 0 — discover, don't assume
 
@@ -155,6 +162,15 @@ Data lives in its own folder with its own exporter (`~/.hermesNN/scripts/export_
   dirties the tree nightly and adds a commit per run. Flag it in the report and propose
   `reports/<key>/` in `.gitignore` rather than silently editing a file outside the allowed write
   scope.
+- **A status file that records HEAD can never match HEAD.** If the exporter writes
+  `commit_tempatan: git rev-parse HEAD` into a tracked file, committing that file moves HEAD — so
+  the tab permanently shows "commit X, HEAD X+1" (`padan: False`) and every export/commit cycle adds
+  another commit. Measured: `status.json` said `3911057` while HEAD was `f2d3d5c`, and the fix
+  attempt (export → backup → export) just walked the gap forward. Resolution: **ignore the derived
+  JSON** (`reports/<key>/*.json` in `.gitignore`, `git rm --cached`), keep the human-readable `.md`
+  tracked, and let the exporter rewrite JSON freely — the tab then reads live numbers with no churn
+  and no lag. Verify with `python3 -c` comparing `status['commit_tempatan']` to `git rev-parse HEAD`
+  → `padan: True`, then `git status --short` empty after an export.
 
 Full recipe, exporter/endpoint code, curl matrix, browserless render proof for the standalone file
 and the mtime-based "nothing else changed" evidence:
@@ -638,7 +654,11 @@ serve `GET /api/<key>` off that local file. Repo creation itself **cannot** be d
 owner exactly one step (Private repo + fine-grained PAT, Contents: Read and write). PC-side collector
 with no `psutil`/git: `templates/remote_status_push.py` (`--print-config` → `--dry-run` → real PUT).
 Full build recipe, Windows stat methods, cron-db column trap and the handoff pack:
-`references/multi-machine-agent-relay.md` §7–§10.
+`references/multi-machine-agent-relay.md` §7–§11. **Keep the pull script in `<HERMES_HOME>/scripts/`**
+— a bare `script=` name is resolved there, so a copy in `~/bin/` fails *every* tick with
+`Script not found: …/scripts/<name>` and the owner gets a false alarm; prove a manual
+`cronjob(action='run')` **and** the next automatic tick (`last_run_at` advances, `last_status: ok`,
+no delivered message) before calling the relay done (§11).
 
 
 ## Pitfalls (each cost real time)
@@ -692,6 +712,13 @@ Full build recipe, Windows stat methods, cron-db column trap and the handoff pac
   one-line `sed`. If the `cronjob` tool call is rejected for a missing field, create the job through
   the CLI instead: `hermes cron create "0 */6 * * *" --name "…" --script x.sh --no-agent
   --deliver origin` (script must live in `<hermes home>/scripts/`).
+- **A `no_agent` cron whose script lives outside `<HERMES_HOME>/scripts/` fails on every tick and
+  looks like a broken feature.** `script='x.sh'` is resolved as `<HERMES_HOME>/scripts/x.sh`; a file
+  written to `~/bin/x.sh` produced `Script not found: …/.hermes20/scripts/x.sh` every 5 minutes and the
+  owner read it as "the relay is broken". Fix is a `cp` into `<HERMES_HOME>/scripts/` + `chmod +x` +
+  delete the stray copy (one copy only), then **two** proofs: `cronjob(action='run')` → `last_status:
+  ok` *and* the next scheduled tick in `cron/jobs.json` (`last_run_at` advanced on its own,
+  `last_status: ok`, `last_delivery_error: None`). Manual-run-only is not proof of the scheduler.
 - **A soft finding in a cron script must not exit non-zero.** A weekly check that exits 1
   because a report lacked a `lulus` key — or because the QA verdict was the default
   `NEEDS_WORK` — makes the job report `error` and alarms the user while the pipeline ran
@@ -753,6 +780,37 @@ Full build recipe, Windows stat methods, cron-db column trap and the handoff pac
 - **Run `app.py` under runit, not as an orphan.** `ppid=1` means nothing restarts the console; it
   only survived the 15:25 event because it sat in its own `setsid` session. A `console` service
   gives `sv status` one-line health plus automatic restart — cheaper than any watcher.
+- **A saved public link that "works at home but not on mobile data" is usually a dead hostname, not a
+  network fault.** Cloudflare quick tunnels (`cloudflared tunnel --url …`) print a **new random
+  `*.trycloudflare.com` name on every process start**, so a runit restart after an Android kill
+  silently orphans the URL the user saved. Split it in one call —
+  `curl -w '%{http_code} %{time_namelookup} %{time_total}'`: `000` with `dns=0.000` and ~0.01 s total
+  = the name no longer exists; `502` = tunnel up, origin down; `302 → /login` or `401` = tunnel fine,
+  it is an auth question. Keep exactly one source of truth (`~/.hermes20/dashboard_url.txt`, written
+  by the tunnel wrapper) and read that instead of a URL from chat history. Never promise "kekal" on a
+  quick tunnel — offer a named tunnel + domain, an ngrok free static domain, or Tailscale.
+- **Tailscale's Linux binary cannot execute in Termux.** The official arm64 build is `Type: EXEC`
+  (non-PIE) and Android only runs PIE: `error: "…/tailscaled" has unexpected e_type: 2`; there is no
+  `tailscale` package in the Termux repos and `tailscaled` wants `/dev/net/tun` (root). Use the
+  **Android app** on the host phone instead — anything already bound to `0.0.0.0:<port>` becomes
+  reachable at the stable `100.x.y.z` tailnet IP, no domain and no expiring link. Termux cannot see
+  the VPN interface, so the IP has to come from the app's screen; set that app's battery mode to
+  unrestricted too, or the VPN freezes exactly like Termux did.
+- **The Hermes dashboard's password provider is a form POST, so HTTP Basic "fails" with the *correct*
+  password.** `curl --user user:pass http://127.0.0.1:9119/` answers `302` (and `/api/meta` `401`)
+  whatever the credentials are — the real endpoint is
+  `POST /auth/password-login` with JSON `{"provider":"basic","username":…,"password":…}` →
+  `200 {"ok":true,"next":"/"}` + `hermes_session_at`/`hermes_session_rt` cookies, or
+  `401 {"detail":"Invalid credentials"}`. **`provider` is required**: omitting it returns
+  `422 missing Field required`, which reads like a bad password and sends you hunting the hash.
+  Rotate the password by generating the hash yourself (format `scrypt$16384$8$1$<salt_b64>$<dk_b64>`,
+  `hashlib.scrypt(n=2**14, r=8, p=1, dklen=32, salt=16B)` — same params as
+  `plugins/dashboard_auth/basic`), then `hermes config set dashboard.basic_auth.password_hash "$h"`
+  and `sv restart hermes-dashboard`; never hand-edit config.yaml, and keep `password` (plaintext) out
+  of it. Verify **three** ways and quote the codes: new password `200`, old `401`, and the same POST
+  **through the public tunnel URL** `200` — the last one is the only one the user experiences.
+  Write url/username/password/updated-at into `~/.hermes20/secrets/dashboard_login.txt` (0600) because
+  that is the file they open later.
 - **Kill keeper shells by pid, never by pattern.** `kill -TERM <keeper_pid>` after
   `ps -o pid,args -p <pid>` leaves the `app.py` children serving (they reparent to `PPID 1`);
   `pkill -f app.py` would take the console down with the caller's own shell.
@@ -976,6 +1034,17 @@ Full build recipe, Windows stat methods, cron-db column trap and the handoff pac
 - `references/cost-and-agent-tracking.md` — `usage.cost` capture, per-agent/per-stage roll-up,
   `running_since`, server-side `/api/bot` commands, history snapshots.
 - `references/lan-access-and-tls.md` — token→cookie handshake, `?t=` redirect, `/api/ping`, SAN.
+- `references/remote-access-tailnet-and-tunnels.md` — reaching the console from outside the LAN:
+  DNS-vs-tunnel-vs-origin-vs-auth triage in one `curl -w`, quick-tunnel hostname rotation (and why a
+  saved link dies silently), durable options table (named tunnel / ngrok static domain / Tailscale),
+  Tailscale-on-Android design with the non-PIE `e_type: 2` failure, and emailing the link via
+  `GMAIL_USER` + `GMAIL_APP_PASSWORD` with smtplib SSL 465.
+- `references/dashboard-remote-access-and-auth.md` — the auth half of remote access: quick-tunnel
+  hostname rotation triage in one `curl -w` (dns=0.000 vs 302), Hermes dashboard
+  `POST /auth/password-login` with the mandatory `provider` field, scrypt hash rotation via
+  `hermes config set` + `sv restart hermes-dashboard`, the three-way verification (new 200 / old 401 /
+  public URL 200), Tailscale non-PIE `e_type: 2` evidence and the Android-app alternative, and
+  emailing link + credentials with `refused == {}` as the delivery proof.
 - `references/attention-and-delivery.md` — active-agent cards band, daily report + Telegram document,
   base64 inbox, attachments in plans, mid-run notes, two-bot Telegram bridge.
 - `references/hermes-desktop-integration.md` — desktop-plugin contract, embed mode, CSP frame rules,

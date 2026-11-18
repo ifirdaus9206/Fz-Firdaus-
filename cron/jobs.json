@@ -22,15 +22,15 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 2304
+        "completed": 2455
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-03T21:00:32.277446+08:00",
-      "next_run_at": "2026-11-18T11:00:00+08:00",
-      "last_run_at": "2026-11-18T10:55:19.632136+08:00",
+      "next_run_at": "2026-11-19T02:05:00+08:00",
+      "last_run_at": "2026-11-19T02:00:31.426609+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -114,15 +114,15 @@
       "schedule_display": "0 9,21 * * *",
       "repeat": {
         "times": null,
-        "completed": 18
+        "completed": 19
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-05T11:01:10.777993+08:00",
-      "next_run_at": "2026-11-18T21:00:00+08:00",
-      "last_run_at": "2026-11-18T09:01:49.753513+08:00",
+      "next_run_at": "2026-11-19T09:00:00+08:00",
+      "last_run_at": "2026-11-18T21:01:23.914003+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -167,7 +167,7 @@
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-06T02:10:20.344219+08:00",
-      "next_run_at": "2026-11-19T02:00:00+08:00",
+      "next_run_at": "2026-11-20T02:00:00+08:00",
       "last_run_at": "2026-11-18T02:00:19.097177+08:00",
       "last_status": "error",
       "last_error": "Script exited with code 3\nstdout:\nAMARAN: imbasan rahsia menemui padanan \u2014 commit DIBATALKAN.\n  - docs/INSIDEN-2026-11-17.md\n  - skills/devops/safe-git-config-backup/SKILL.md\nSemak fail di atas, pindahkan rahsia ke .env, dan tambah corak ke .gitignore.",
@@ -206,15 +206,15 @@
       "schedule_display": "*/15 * * * *",
       "repeat": {
         "times": null,
-        "completed": 62
+        "completed": 112
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T05:17:20.325319+08:00",
-      "next_run_at": "2026-11-18T11:00:00+08:00",
-      "last_run_at": "2026-11-18T10:45:42.359255+08:00",
+      "next_run_at": "2026-11-19T02:15:00+08:00",
+      "last_run_at": "2026-11-19T01:45:33.526402+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -252,15 +252,15 @@
       "schedule_display": "*/10 * * * *",
       "repeat": {
         "times": null,
-        "completed": 550
+        "completed": 625
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T05:31:08.418161+08:00",
-      "next_run_at": "2026-11-18T11:00:00+08:00",
-      "last_run_at": "2026-11-18T10:50:47.662662+08:00",
+      "next_run_at": "2026-11-19T02:10:00+08:00",
+      "last_run_at": "2026-11-19T01:50:39.702436+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -344,15 +344,15 @@
       "schedule_display": "0 */6 * * *",
       "repeat": {
         "times": null,
-        "completed": 16
+        "completed": 19
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T16:28:49.170357+08:00",
-      "next_run_at": "2026-11-18T12:00:00+08:00",
-      "last_run_at": "2026-11-18T06:01:46.818155+08:00",
+      "next_run_at": "2026-11-19T06:00:00+08:00",
+      "last_run_at": "2026-11-19T00:00:59.888741+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -390,15 +390,15 @@
       "schedule_display": "*/15 * * * *",
       "repeat": {
         "times": null,
-        "completed": 63
+        "completed": 115
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-17T19:29:45.619482+08:00",
-      "next_run_at": "2026-11-18T11:00:00+08:00",
-      "last_run_at": "2026-11-18T10:45:39.722223+08:00",
+      "next_run_at": "2026-11-19T02:15:00+08:00",
+      "last_run_at": "2026-11-19T02:00:31.401447+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -483,17 +483,17 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 7
+        "completed": 158
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-18T10:24:38.919382+08:00",
-      "next_run_at": "2026-11-18T11:00:00+08:00",
-      "last_run_at": "2026-11-18T10:55:21.102090+08:00",
-      "last_status": "error",
-      "last_error": "Script not found: /data/data/com.termux/files/home/.hermes20/scripts/sofia-tarik.sh",
+      "next_run_at": "2026-11-19T02:05:00+08:00",
+      "last_run_at": "2026-11-19T02:00:31.362708+08:00",
+      "last_status": "ok",
+      "last_error": null,
       "last_delivery_error": null,
       "deliver": "origin",
       "origin": {
@@ -508,5 +508,5 @@
       "fire_claim": null
     }
   ],
-  "updated_at": "2026-11-18T10:55:21.103405+08:00"
+  "updated_at": "2026-11-19T02:00:31.427923+08:00"
 }
