@@ -1,8 +1,20 @@
 {
   "ok": true,
-  "dijana_pada": "2026-11-18T10:53:10",
+  "dijana_pada": "2026-11-18T10:55:31",
   "bilangan": 20,
   "commits": [
+    {
+      "hash": "6033d8d33ef9795572f8422e3ebc39d48d78823b",
+      "pendek": "6033d8d",
+      "tarikh": "2026-11-18 10:55",
+      "subjek": "sandaran auto 2026-11-18 10:55"
+    },
+    {
+      "hash": "be198582c9ed850fc4b7930f075da99270e8072f",
+      "pendek": "be19858",
+      "tarikh": "2026-11-18 10:53",
+      "subjek": "sandaran auto 2026-11-18 10:53"
+    },
     {
       "hash": "d639bcb16e18fdd4dd66eda831ccbec53f8cba4c",
       "pendek": "d639bcb",
@@ -110,18 +122,6 @@
       "pendek": "8903246",
       "tarikh": "2026-11-06 02:12",
       "subjek": "kemas repo — buang fail terbitan dan berat daripada index"
-    },
-    {
-      "hash": "a3e9c3000eb9c0ad6b0474c722166cc3f58845f4",
-      "pendek": "a3e9c30",
-      "tarikh": "2026-11-06 02:09",
-      "subjek": "sandaran auto 2026-11-06 02:09"
-    },
-    {
-      "hash": "2f2358f4f6e980b0d04b4bd448cf4d85608855ad",
-      "pendek": "2f2358f",
-      "tarikh": "2026-11-06 02:08",
-      "subjek": "sandaran auto 2026-11-06 02:08"
     }
   ]
 }
