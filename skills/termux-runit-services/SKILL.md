@@ -87,6 +87,58 @@ script must live in `<hermes home>/scripts/`. Prove **both** branches (message, 
 watcher seen only in its silent state is unverified — and never announce a URL you have not curled
 in the same run.
 
+### "URL lama dah tak boleh buka" — diagnose before touching the app
+
+A released quick-tunnel hostname answers **`000`** (no response at all), while the app still answers
+`200` on `127.0.0.1:<port>` and the new URL answers `302 → /login`. That combination means **the app
+is healthy and only the bookmark is stale** — lead with that, because a `302` reads as breakage to
+the user. Probe order: `ps | grep cloudflared` (how many tunnels, to which port) → `curl` old URL →
+`curl` new URL → `curl` local port → `grep -c "Registered tunnel connection"` in the tunnel log.
+One `cloudflared` = one web app; two on the same port is the real "dua web" bug.
+
+Two durable traps: (a) `: > "$LOG"` in the publisher erases every previous hostname, so append the
+outgoing URL to a `*_url_history.txt` before truncating or a stale bookmark can never be dated;
+(b) reconnects *inside* one process keep the same hostname, so repeated `Registered tunnel
+connection` lines are not URL churn.
+
+**Multi-device is not a second deployment.** Phone and PC can open the same URL at the same time with
+the same login. Offer, in order: LAN `http://<192.168.x.x>:<port>` (needs the app bound `0.0.0.0`),
+the public tunnel URL when away, and SSH on 8022 only if the user wants to *work* (files/terminal)
+rather than view. Never hand out a `100.x.y.z` address — carrier-grade NAT, reachable from nowhere.
+Full probe table, Android IP-reading commands and reply shape:
+`references/tunnel-url-lifecycle-and-multi-device-access.md`.
+
+## SSH on 8022: "PC nak kerja fail/terminal pada telefon"
+
+SSH is a runit service like any other, and on Termux it ships **disabled**: the package drops a
+`down` file into `$PREFIX/var/service/sshd/`, so `sv status sshd` reads `down:` and nothing listens.
+
+```bash
+rm -f "$PREFIX/var/service/sshd/down"; sv up sshd; sv status sshd
+sv up "$PREFIX/var/service/sshd" 2>/dev/null || true   # add to ~/.termux/boot/*.sh too
+```
+
+Then verify the port **without** `ss`/`netstat` (they print nothing useful here): a Python
+`socket.connect(("127.0.0.1",8022))` plus the daemon log line
+`Server listening on 0.0.0.0 port 8022.` Port 22 is closed — Termux's compiled default is 8022, bound
+to all interfaces, so the same WiFi can reach it directly (`ssh -p 8022 <user>@192.168.x.x`).
+
+One command also tells you whether credentials are the blocker:
+
+```bash
+ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+    -p 8022 "$(whoami)"@127.0.0.1 true
+# "Permission denied (publickey,password,keyboard-interactive)" = daemon fine, no credential yet
+```
+
+Prefer **key auth** — ask only for the PC's *public* key and append it to `~/.ssh/authorized_keys`.
+Password auth is on by default but the Termux account starts with **no password** (`/etc/shadow`
+entry absent), and `passwd` has no non-interactive mode: it must be driven over a **pty**
+(`terminal(pty=true, background=true)` → `process(action="submit")`), with the generated password
+written straight into a `chmod 600` secrets file, never into the chat. Send the user to the file or
+the mail channel for the value. Full recipe, security posture and IP-reading commands:
+`references/termux-sshd-8022-provisioning.md`.
+
 ## Pitfalls
 
 1. **svlogd refuses to start for newly created services** on this device: `sv status` prints
@@ -111,6 +163,73 @@ in the same run.
    `sv down <name>; sleep 2; sv up <name>` after changing the script.
 6. **One writer per endpoint file.** If a service rewrites an endpoint file (URL, port), have it
    write on start and log it, so consumers never read a stale value after a restart.
+7. **`ss -ltn` / `netstat -ltn` are not evidence on Termux.** They can print nothing at all while
+   the daemon is healthy, which reads as "port closed". Confirm with a real TCP connect
+   (`python3` socket to `127.0.0.1:<port>`) plus the auth-method refusal from
+   `ssh -o BatchMode=yes … true`, or the daemon's own `Server listening on … port N` log line.
+8. **Interactive `passwd` mid-turn will eat the turn.** A `passwd` prompt blocks, and the login
+   banner (\`Created By HTR-TECH … Welcome\`) is printed **before** `New password:`, so a blind
+   two-submit sequence races it. Start it as a background pty, `process(action="poll")` until the
+   real prompt appears, submit, poll again — and finish that flow before starting any other work,
+   otherwise the deliverable ends half-done with a live process still waiting for input.
+
+## Wake lock: runit keeps the service alive, only the wake lock keeps the *phone* awake
+
+runit restarts a killed daemon, but it cannot stop Android from killing the whole Termux
+process. Symptom in the log: `Previous gateway life (pid=…) exited UNCLEANLY (no exit path ran —
+SIGKILL / OOM / VM death)` repeating roughly daily, clustered around screen-off hours. Each
+unclean death costs a restart, and Hermes-side "auto-resume restart-interrupted sessions" then
+replays the interrupted turn — the user sees an unprompted new message mid-conversation.
+
+**The trap is a well-meaning health-keeper.** A keeper script (cron `*/5`, "acquire the lock
+only when something is broken, release it when everything is healthy") releases the lock on the
+first healthy tick, so the lock is held for ~5 minutes out of every day. Check the *held* state,
+not the intent flag:
+
+```bash
+grep -q . ~/.hermes20/wake_lock.enabled && echo "auto-mode ON"
+[ -f ~/.hermes20/.wake_held ] && echo HELD || echo RELEASED     # this is the one that matters
+bash ~/hermes-console/tools/wake_ctl.sh status
+```
+
+Rule: **two states, one owner.** If `wake_lock.enabled` exists, the keeper may *re-acquire* a
+missing lock but must never release it; release only when the owner explicitly turns auto-mode
+off (`wake_ctl.sh off`). Patch the release branch to be conditional:
+
+```bash
+[ "$ACTIVE" -eq 0 ] && [ -f "$WL_STATE" ] && [ ! -f "$WL_FLAG" ] && release
+[ "$ACTIVE" -eq 0 ] && [ -f "$WL_FLAG" ] && [ ! -f "$WL_STATE" ] && reacquire
+```
+
+Then prove it: run the keeper by hand while everything is healthy and re-read the status — it
+must still print `HELD`. Also keep `wake_ctl.sh auto` in `~/.termux/boot/*.sh` so a reboot
+restores the lock.
+
+## Restarting the gateway from inside a gateway session
+
+The terminal tool refuses any command that could restart or stop the gateway while the agent
+runs inside it (`Blocked: … cannot restart or stop the gateway from inside the gateway process`).
+`sv restart hermes-gateway`, `sv status`, and anything matching those patterns are rejected —
+this is a guard, not a missing tool.
+
+Two working paths, both external to the agent process:
+
+1. **The console's service API** (same thing the UI button calls):
+   `curl -s -X POST http://127.0.0.1:8787/api/svc/hermes-gateway -H 'Content-Type: application/json' -d '{"action":"restart"}'`
+   Allowed names: `hermes-console`, `hermes-gateway`, `hermes-dashboard`, `hermes-dash-tunnel`,
+   `web-server`; actions `up|down|restart|status`.
+2. **A one-shot `no_agent` cron** that curls that API a few minutes out — the right pattern when
+   a code patch must be loaded but the current turn still has to deliver its answer. Empty stdout
+   keeps it silent; log the API response to a file for evidence:
+
+```bash
+OUT=$(curl -s -m 20 -X POST http://127.0.0.1:8787/api/svc/hermes-gateway \
+      -H 'Content-Type: application/json' -d '{"action":"restart"}' 2>&1)
+echo "$(date '+%F %T') restart-diminta: $(printf '%s' "$OUT" | head -c 300)" >> "$HOME/.hermes20/logs/gw_restart_once.log"
+```
+
+Never call that API mid-turn: the gateway dies before the reply is delivered and the user sees
+nothing. Tell the user when it will happen and confirm the new PID/uptime afterwards.
 
 ## Deliverables that make a service auditable
 
@@ -126,3 +245,9 @@ in the same run.
   current public URL into one file.
 - `templates/url_change_notify.sh` — `no_agent` cron reporter for a URL that changes: probes
   `/login` before announcing, silent when unchanged, explicit warning when the new URL is dead.
+- `references/tunnel-url-lifecycle-and-multi-device-access.md` — "URL lama dah tak boleh buka":
+  `000` vs `302` probe table, why a quick-tunnel hostname cannot be recovered, the log-truncation
+  audit-trail trap, and the one-URL-many-devices answer (LAN IP, CGNAT `100.x` warning, SSH 8022).
+- `references/termux-sshd-8022-provisioning.md` — enabling the `down`-flagged `sshd` service,
+  verifying 8022 without `ss`/`netstat`, key auth vs. pty-driven `passwd`, LAN-IP reading, and the
+  "anyone on the WiFi can try to log in" warning to state plainly.

@@ -112,6 +112,42 @@ relied on to delete the *user's* incoming message (needs the platform message id
 - Do not attempt `getUpdates` to find the id while the gateway holds the long-poll — you will
   get a 409 conflict and steal the running session's updates.
 
+## Getting a secret TO the user without it entering the transcript
+
+Users do ask for it directly ("kata laluan ... hantar sini"). Rule 2 still holds, but a flat refusal
+is not the whole answer — deliver the value through a channel the agent never reads.
+
+**The pattern: compose in a script, not in the prompt.** Write a small sender that reads the secret
+from its 0600 file, splices it into the message, and prints only a verdict. The value never enters
+the context window, `logs/agent.log`, `state.db`, or the reasoning trace.
+
+```python
+pw = creds.get("password")             # parsed from secrets/<x>.txt inside the script
+body = f"...\n  kata laluan : {pw}\n"  # used, never printed
+msg.set_content(body)
+s.send_message(msg)
+print("OK: emel dihantar kepada", to)   # only this line reaches the transcript
+```
+
+Rules that make it trustworthy:
+
+- **Never `print`, `echo`, or partially mask the value** — not even `pw[:2] + "..."`. A masked echo
+  is still a copy in the log.
+- **Do not pass the secret as an argument.** `--password <value>` on the command line moves it into
+  the stored tool call. The script must read the file itself.
+- **Fix staleness in the same pass.** If the credential file also carries a URL/host line that rots
+  (tunnel URL, rotated endpoint), have the script rewrite that line from the single source of truth
+  while it already has the file open, then re-read the file to prove it changed.
+- **Verify delivery out of band**, not from the send call alone: SMTP 250 / exit 0 means accepted;
+  one IMAP `list --days 1` showing the subject + uid means it actually landed.
+- **Say where it now lives** so the user needs no round trip: which mailbox message, and which
+  on-device file + line label.
+- **Offer the risky option explicitly, numbered** ("3. Aku taip kata laluan dalam chat ini (faham
+  risikonya)") rather than deciding silently for them. Refusing with no alternative reads as
+  stonewalling; doing it silently breaks rule 2.
+
+Report the board (destination, uid, exit code, what got re-synced) — never the payload.
+
 ## Report shape (this user)
 
 Board first — `| Tempat | Tindakan | Bukti |` with substitution counts and the re-scan result —

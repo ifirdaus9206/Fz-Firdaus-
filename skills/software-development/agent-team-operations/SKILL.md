@@ -60,6 +60,40 @@ pair → plan doc → wiki, in that order) or `references/identity-rename.md`. B
 doc-alignment waves, the stale-title grep that must stay honest, and the line-count traps that make a
 child's evidence table wrong by one.
 
+## Two machines, two agents — one voice, not one agent
+
+The owner will eventually name a second agent living on another machine (*"di PC ada agent nama dia
+Sofia … kau dan Sofia setiap seorang ada tugas masing-masing, atau perlu buang satu?"*). The question
+is a false binary: **do not retire either.** Answer with the split of duties, then name the one thing
+that must stay singular.
+
+| | Lead on the phone (Termux) | Second agent on the PC |
+|---|---|---|
+| Uptime | 24 h, always with the owner | only while the machine is on |
+| Owns | gateway/Telegram, cron, backup, email, vault, console | heavy work: project code, builds, big files, browser automation, machine health |
+| Reports to | the owner | **the lead**, not the owner |
+
+Rules that keep it a team instead of two competing narrators:
+
+- **One voice to the owner.** Two agents messaging the owner independently produce two chats and two
+  versions of the truth — exactly what the owner was trying to avoid. Write into the second agent's
+  `SOUL.md`: report to the lead, accept 8-field briefs, no daily reports to the owner.
+- **A separate Telegram bot token is mandatory** (two pollers on one token = `409 Conflict`, both go
+  deaf), but the token is not permission for a second conversation: that bot carries **emergency
+  alerts only** (machine down, build failed, disk full); routine status goes to a status file the
+  lead's console reads. Say it plainly: *"token berasingan wajib; suara berasingan tidak."*
+- **One screen is not one origin.** "Monitor satu tempat" is satisfied by the lead's console reading
+  the other machine's status through a relay — `homes.json` holds only local paths, so never claim
+  "dah masuk dashboard" without building the remote read path. Recipe:
+  `localhost-monitoring-console` → `references/multi-machine-agent-relay.md`.
+- **Check reachability before designing the link.** A phone on mobile data (CGNAT `100.64.0.0/10`,
+  e.g. only `100.85.34.233` in `ifconfig`) has no route to the house LAN, and a peer key sitting in
+  `authorized_keys` only proves the key was *installed* — not that the peer ever connected. Put both
+  facts on the board before proposing SSH; the answer changes the plan.
+- **Board shape for this decision:** one row per check with its evidence → duties table → honest
+  ceiling (*"relay lewat 5 minit — cukup untuk tahu PC hidup, bukan tengok skrinnya"*) → 3–4 numbered
+  options. A `3.ya`-style reply resumes that list; recover it from the session DB before acting.
+
 ## Knowledge layer (`knowledge_base/`) — facts live outside memory
 
 Once the doctrine exists, the team still needs a place for **SOP and facts** that is not memory:

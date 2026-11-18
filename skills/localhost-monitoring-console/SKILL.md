@@ -569,6 +569,43 @@ prompts, gates, backups and measured numbers: `references/roster-quality-repair.
    when it reaches ≥60 % of the top score instead (56/282, zero primary churn), and say
    plainly when a one-agent archetype is a true property of the roster.
 
+## Phase 13 — the owner has a second agent on another machine
+
+*"Aku monitor satu tempat sahaja untuk keduanya, boleh tak?"* — yes, but a console whose `homes.json`
+holds **local directories** cannot see a PC by adding an entry. Full recipe:
+`references/multi-machine-agent-relay.md`.
+
+1. **Verify the network before proposing any bridge.** `ifconfig | grep 'inet '` on the phone showing
+   only a `100.64.0.0/10` (CGNAT / mobile data) address means the LAN peer is unreachable — the plan
+   changes from SSH to a relay. Probe `/dev/tcp/<host>/22` for every candidate and record the misses
+   as evidence. A key in `authorized_keys` proves the key was *installed*, not that the peer ever
+   logged in: say "belum terbukti", never "dah bersambung".
+2. **Relay, not a second console.** The other machine `PUT`s a whitelisted `status.json` to a private
+   repo via the GitHub Contents API (no git on the PC, outbound-only both ways); the console serves
+   `GET /api/remote/<key>` from it with a 60 s cache plus `age_s` / `stale`, so a pusher that went
+   silent is visible instead of looking healthy. Exclude `state.db`, `.env`, `config.yaml`,
+   `auth.json` and message text — and say so to the owner.
+3. **Separate Telegram bot token is mandatory (409 otherwise); a separate *voice* is not.** The remote
+   agent reports to the lead and its bot carries emergency alerts only; routine status lives in the
+   relay file. Otherwise the owner gets two chats and two versions of the truth — exactly what they
+   asked to avoid. State the ceiling: 5-minute staleness answers "is the PC alive", not "what is on
+   its screen now".
+
+**Answering "is the console still alive?"** — quote uptime, never a promise: `sv status hermes-console`
+(`run: … (pid N) 13389s`) plus `curl /api/meta` (`version`, `now`), then convert `13389s → 3j 43m` and
+add that runit restarts it in seconds and after a reboot. `Invalid HTTP request received` in the log is
+a probe hitting the HTTP port, not a fault.
+
+Build order once the owner approves the relay (**do the pull half first — it needs no owner action**):
+`ssh -T git@github.com` proves the phone's existing key can clone the private repo, so the console
+needs no PAT; pull into `~/<relay>-status` with a silent `no_agent` cron (`scripts/relay_pull.sh`) and
+serve `GET /api/<key>` off that local file. Repo creation itself **cannot** be done over SSH — hand the
+owner exactly one step (Private repo + fine-grained PAT, Contents: Read and write). PC-side collector
+with no `psutil`/git: `templates/remote_status_push.py` (`--print-config` → `--dry-run` → real PUT).
+Full build recipe, Windows stat methods, cron-db column trap and the handoff pack:
+`references/multi-machine-agent-relay.md` §7–§10.
+
+
 ## Pitfalls (each cost real time)
 
 - **Empty content with a high `reasoning_tokens` count is a *different* bug from truncation.**
@@ -873,6 +910,13 @@ prompts, gates, backups and measured numbers: `references/roster-quality-repair.
   console through its own API — `POST /api/svc/hermes-console {"action":"restart"}` with
   `X-Console-Token` (the deferred path returns before TERM) — and put any multi-line maintenance
   logic in a real `.py` file under `$HOME` and run `python3 <file>`.
+  **Recovery when it already fired:** the payload is not lost — the error names
+  `cache/blocked-scripts/blocked-<ts>-<hash>.sh`, so run exactly
+  `terminal(command="bash <that path>")` instead of retrying the inline form. A multi-line recon
+  probe (many `echo` + `for` + `printf` lines) is *always* better written with `write_file` to
+  `~/tmp/<name>.sh` and then `bash ~/tmp/<name>.sh`; wrapping the same long heredoc inside
+  `execute_code` returns an empty stdout (`stdout_bytes: 1`) when the inner command is blocked, which
+  reads like "the shell produced nothing" and burns a turn.
 
 ## Local knowledge files
 
@@ -925,6 +969,18 @@ prompts, gates, backups and measured numbers: `references/roster-quality-repair.
   shape with `timeout`/`kod`, the `realpath(strict=True)` + `Path.parents` + `is_file()` path guard
   (and why `startswith` is wrong), `X-Console-Token` on every POST test, rename-on-collision
   assertion, the 400 matrix and per-file line counts for the report.
+- `references/multi-machine-agent-relay.md` — a second agent on another machine in the same console:
+  CGNAT reachability proof before designing, Tailscale-vs-relay-vs-second-bot table, GitHub Contents
+  API relay with a whitelisted `status.json` (and the secret exclusions), `GET /api/remote/<key>` with
+  `age_s`/`stale`, why a separate Telegram token must still be one owner-facing voice, **plus the
+  build half (§7–§10): local-git-pull instead of server-side fetch, silent `no_agent` pull contract,
+  stdlib Windows stat collection (ctypes/powershell/tasklist), `executions.db` has `job_id` not
+  `job_name`, sample-status.json→delete verification, and the Windows handoff pack.**
+- `templates/remote_status_push.py` — starter collector/pusher for the remote machine: whitelisted
+  fields only, `--print-config`/`--dry-run`/`--out`, Contents-API PUT with sha update, exit 2 on
+  push failure so Task Scheduler shows it.
+- `scripts/relay_pull.sh` — silent cron pull for the local clone (no repo → silent exit 0, failure →
+  one stdout line + capped log).
 - `scripts/verify_svg_text_layout.py` — geometric SVG text checker (estimated bboxes, frame
   clipping, overlaps) so illustrated guides don't depend on a vision pass that may render tofu.
 - `scripts/console-runit-smoke.sh` — generic runit health script: `sv status`, `/api/ping`, promised

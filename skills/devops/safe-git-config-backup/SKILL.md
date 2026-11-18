@@ -211,6 +211,43 @@ Guard defensively even with .gitignore: if `git ls-files --cached` still lists a
 path (`.env`, `auth.json`, `config.yaml`, `state.db*`, `sessions/`, `logs/`, `pastes/`),
 `git reset` and refuse — belt and braces.
 
+### Tier-2 false positive: placeholders in docstrings block the backup for days
+
+Measured case: the nightly job exited `3` for several nights, HEAD frozen at the last good
+commit, and nobody noticed because the guard's stdout only reaches the chat when a human is
+awake. Offending lines were **documentation placeholders**, not secrets:
+
+```
+GMAIL_APP_PASSWORD=xxxxxxxxxxxxxxxx      # App Password 16 aksara
+```
+
+Tier 2 (`keyword [:=] value ≥12 chars`) matches `xxxxxxxxxxxxxxxx` perfectly — 16 x's are
+`[A-Za-z0-9]`. Same trap for `<your-token-here>`-style samples, `AKIAIOSFODNN7EXAMPLE`, and
+commented-out example configs.
+
+Correct fix — **change the placeholder, never weaken the regex**:
+
+```diff
+-    GMAIL_APP_PASSWORD=xxxxxxxxxxxxxxxx      # App Password 16 aksara
++    GMAIL_APP_PASSWORD=<16-aksara>           # App Password 16 aksara
+```
+
+`<…>` is outside the value charset, so the line stops looking like an assignment while the doc
+still reads correctly. Apply it to **every copy** (top-level `scripts/` *and* the skill copy
+under `skills/**/scripts/` — both are tracked and both fire).
+
+Then triage the whole hit list rather than only the first file: real login artefacts
+(`secrets/*`, `dashboard_login.txt`, `.dash_url_last` stamp files) belong in `.gitignore`, not
+in a "fix the false positive" patch. Re-run until `EXIT=0` and prove the push travelled:
+
+```bash
+git rev-parse HEAD
+timeout 60 git ls-remote origin main     # must equal HEAD; "## main" with no ahead/behind is weaker
+```
+
+A silent `## main` only means local is not behind — it does not prove the push landed. Quote
+the matching SHA from `ls-remote`.
+
 ### Tier 0 — the three tiers cannot see a *short* secret written as prose (real leak)
 
 All three tiers above are shape-based, so a plain password sitting in normal sentences passes
