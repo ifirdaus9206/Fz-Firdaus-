@@ -202,6 +202,15 @@ only** — never echo the matched value:
 2. **Assignment with a real value** (block): keyword + `[:=]` + ≥12 token chars, e.g.
    `KUNCI=‹nilai›` (contoh 12+ aksara), `password: ‹12+ aksara›`. Vars kosong (`KEY=`) tak padan.
 3. **Bare token line** (block): a single added line that is nothing but 32+ `[A-Za-z0-9_/+=-]`.
+   **Weakest tier — drop it if docs are in the repo.** Any markdown hash block, checksum list
+   or signature sample is one long token per line, so this tier fires on documentation that has
+   nothing to do with credentials. Real key formats are already covered by tier 1.
+
+The durable shape is **two independent axes, not three severity tiers**: *which patterns* (hard
+credential shapes vs. `name=value` assignments) × *which files* (everything vs. non-docs only).
+Full design, exact shell functions and measured test results:
+`references/two-tier-secret-scan.md`. Re-runnable regression harness:
+`scripts/scan_matrix_test.sh`.
 
 Scan **added lines of staged files**, not `git diff --cached` as a blob, so you can print
 offending paths; and keep `.gitignore` prose free of the trigger words (write the reason in
