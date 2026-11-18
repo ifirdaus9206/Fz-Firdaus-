@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "dijana_pada": "2026-11-18T10:47:11",
+  "id": "43c3baafa834",
+  "nama": "Sandaran malam ~/.hermes20 ke GitHub (02:00)",
+  "jadual": "0 2 * * *",
+  "jadual_baca": "setiap hari 2:00 pagi",
+  "skrip": "backup_github.sh",
+  "log": "/data/data/com.termux/files/home/.hermes20/logs/backup.log",
+  "enabled": true,
+  "last_status": "error",
+  "last_run_at": "2026-11-18T02:00:19.097177+08:00",
+  "next_run_at": "2026-11-19T02:00:00+08:00",
+  "last_error_ringkas": "Script exited with code 3"
+}

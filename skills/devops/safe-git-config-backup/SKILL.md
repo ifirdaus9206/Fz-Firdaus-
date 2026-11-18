@@ -212,6 +212,21 @@ Full design, exact shell functions and measured test results:
 `references/two-tier-secret-scan.md`. Re-runnable regression harness:
 `scripts/scan_matrix_test.sh`.
 
+### Running the regression harness
+
+```bash
+bash skills/devops/safe-git-config-backup/scripts/scan_matrix_test.sh   # dari akar repo
+bash ~/.hermes20/skills/devops/safe-git-config-backup/scripts/scan_matrix_test.sh  # dari mana-mana cwd
+```
+
+25 kes: 10 blok peringkat 1, 11 placeholder/dokumentasi (termasuk `AKIA…EXAMPLE`), 4 tugasan
+sebenar; cetak `LULUS=x GAGAL=y` dan exit bukan-sifar jika ada kegagalan. Skrip mencari akar
+repo daripada lokasi dirinya sendiri, mencipta **repo buangan** dalam folder sementara dalam
+repo (`git init`, tiada remote ⇒ tiada push) dan memadamkannya melalui `trap`. Kunci palsu
+**dibina semasa runtime** melalui pemboleh ubah berasingan (`PFX_SK='sk-'` + `PJG=…` →
+`KUNCI_SK="${PFX_SK}${PJG}"`, begitu juga ghp_/github_pat_/AIza/AKIA/xox/JWT/tajuk PRIVATE KEY)
+supaya fail harness itu sendiri tidak mencetuskan pengawal peringkat 1 dan selamat di-commit.
+
 Scan **added lines of staged files**, not `git diff --cached` as a blob, so you can print
 offending paths; and keep `.gitignore` prose free of the trigger words (write the reason in
 Malay: "kelayakan", "rahsia") so the guard never flags its own rule file.
@@ -263,6 +278,31 @@ results: `references/two-tier-secret-scan.md`.
 Doc prose can still trip tier 1 by accident: a filename that ends in `task` + hyphen + a long
 word matches the `sk-` rule (a real occurrence was a concurrency-diagnosis note).
 Don't "fix" that by weakening `sk-`; reword or accept the hit.
+
+### Fixing false positives mints new false positives — budget three rounds
+
+Measured case: the guard blocked the night job three runs in a row, each time on **text written
+to explain the previous false positive**:
+
+1. a reference doc (`references/two-tier-secret-scan.md`) quoting full fake keys for the test
+   matrix — tier 1 cannot tell `sk-<32 fake chars>` from the real thing;
+2. a skill paragraph naming a real filename that happens to spell `sk-` + 21 chars;
+3. a one-shot helper (`scripts/redact_reference_once.py`) whose regex literals
+   (`sk-[A-Za-z0-9_-]{20,}`) are themselves matches.
+
+Rules that stop the carousel:
+
+- **Docs never carry a full literal, not even labelled "fake".** Write `sk-<28-aksara>`,
+  `AKIA<16-aksara>`, `ghp_<36-aksara>`, `<JWT-tiga-bahagian>`. A scanner can't tell fake from
+  real, and neither can a reviewer skimming the repo.
+- **One-shot helpers go to `~/tmp/`**, never `<home>/scripts/`; delete them before the next
+  backup run. (`/tmp` is not writable in Termux — `~/tmp` is the scratch space.)
+- **A harness may live under `skills/**` only if it builds its fake keys at runtime.** A
+  *literal* full key is a match forever; `scripts/scan_matrix_test.sh` shows the safe form
+  (pieces joined from variables inside the job). It still runs against a throwaway
+  `HERMES_HOME` sandbox, never the live repo.
+- **Stop condition is behavioural, not analytical:** two consecutive silent runs with empty
+  `git status --short`. Editing the scanner is not evidence; the next quiet run is.
 
 Then triage the whole hit list rather than only the first file: real login artefacts
 (`secrets/*`, `dashboard_login.txt`, `.dash_url_last` stamp files) belong in `.gitignore`, not
@@ -485,3 +525,20 @@ Full recipe: `references/github-remote-bootstrap.md`. Short form:
   step: `gh auth login` + the repo URL from the boss.
 - Flag residual privacy risks you chose to keep (e.g. docs containing a Telegram chat ID)
   instead of silently shipping them.
+
+### Delivering the incident report by email
+
+When the owner says "semak dan emel", the report itself is a deliverable and needs the same
+proof standard as the fix:
+
+1. **Send** through the SMTP already configured in the home (`GMAIL_USER` /
+   `GMAIL_APP_PASSWORD` in `.env`, `smtp.gmail.com:587` + STARTTLS). Read the credentials
+   inside the script; never echo them, never paste them into chat.
+2. **Verify by fetching, not by trusting the send call** — log in over IMAP
+   (`imap.gmail.com:993`), `SEARCH SUBJECT "<subject fragment>"`, fetch the newest hit and
+   print subject/from/date. "Emel dihantar" is a claim; "dijumpai dalam INBOX" is evidence.
+3. **Delete the throwaway sender/verifier scripts** afterwards (`~/tmp/send_report.py`,
+   `~/tmp/verify_mail.py`) — they sit outside the repo but still read credentials.
+4. Body format that worked here: what happened → root cause (state plainly that it was a false
+   positive, not a leak) → what changed → raw evidence table → GitHub/cron status → cleanup
+   notes → signature "— Ketua (UIM)". Malay, no jargon.

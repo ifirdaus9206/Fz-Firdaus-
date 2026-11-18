@@ -1,0 +1,127 @@
+{
+  "ok": true,
+  "dijana_pada": "2026-11-18T10:47:11",
+  "bilangan": 20,
+  "commits": [
+    {
+      "hash": "cf40661034b3919712a15fd082788ce539f7bc72",
+      "pendek": "cf40661",
+      "tarikh": "2026-11-18 10:33",
+      "subjek": "sandaran auto 2026-11-18 10:33"
+    },
+    {
+      "hash": "0fec80d3f6c8dce0d16d153a54cf66dcf02f211c",
+      "pendek": "0fec80d",
+      "tarikh": "2026-11-18 10:31",
+      "subjek": "sandaran auto 2026-11-18 10:31"
+    },
+    {
+      "hash": "edb97ab81d83a316bea3ac8cf92453f95f8119d9",
+      "pendek": "edb97ab",
+      "tarikh": "2026-11-18 10:28",
+      "subjek": "betulkan: buang ujian-contoh.env (fail ujian placeholder)"
+    },
+    {
+      "hash": "86f695113cc949f9f8d6b33493c36f2b9e678f41",
+      "pendek": "86f6951",
+      "tarikh": "2026-11-18 10:28",
+      "subjek": "sandaran auto 2026-11-18 10:28"
+    },
+    {
+      "hash": "9a6b23f2cea5822b575d2b24f4623d232d140bc9",
+      "pendek": "9a6b23f",
+      "tarikh": "2026-11-18 10:27",
+      "subjek": "sandaran auto 2026-11-18 10:27"
+    },
+    {
+      "hash": "0c9591c6e92ee7f23d7eb66e1309f7e86829d247",
+      "pendek": "0c9591c",
+      "tarikh": "2026-11-17 20:00",
+      "subjek": "sandaran auto 2026-11-17 20:00"
+    },
+    {
+      "hash": "ceac4f80403c273a82095c122238c78c3a9d6a8a",
+      "pendek": "ceac4f8",
+      "tarikh": "2026-11-12 02:50",
+      "subjek": "selamat: buang password GitHub daripada fail sandaran"
+    },
+    {
+      "hash": "2d25db6d67a6a78e6d841293390f1dc53ed0671e",
+      "pendek": "2d25db6",
+      "tarikh": "2026-11-12 02:30",
+      "subjek": "sandaran auto 2026-11-12 02:30"
+    },
+    {
+      "hash": "263de64b5f245d8042ec58db180d4605209a7815",
+      "pendek": "263de64",
+      "tarikh": "2026-11-10 15:25",
+      "subjek": "sandaran auto 2026-11-10 15:25"
+    },
+    {
+      "hash": "d8ec8843e8aad7c4c8ce56f4969146d7491d7dba",
+      "pendek": "d8ec884",
+      "tarikh": "2026-11-09 02:00",
+      "subjek": "sandaran auto 2026-11-09 02:00"
+    },
+    {
+      "hash": "ade9f7b43cfdecdb7d7168acf2e17edd6345bba5",
+      "pendek": "ade9f7b",
+      "tarikh": "2026-11-08 15:04",
+      "subjek": "sandaran auto 2026-11-08 15:04"
+    },
+    {
+      "hash": "b498797205807d5081968dcf876f808505287fb3",
+      "pendek": "b498797",
+      "tarikh": "2026-11-06 04:37",
+      "subjek": "sandaran auto 2026-11-06 04:37"
+    },
+    {
+      "hash": "2a91779be27e07a29080dedf50e7a2d816f5dd86",
+      "pendek": "2a91779",
+      "tarikh": "2026-11-06 04:34",
+      "subjek": "gabung README dari GitHub"
+    },
+    {
+      "hash": "1b74732fd07587edb7eae8e22151a16a63f85bb1",
+      "pendek": "1b74732",
+      "tarikh": "2026-11-06 04:23",
+      "subjek": "Initial commit"
+    },
+    {
+      "hash": "84c3c162df2ad539dfd874f1d79b31189955b9b5",
+      "pendek": "84c3c16",
+      "tarikh": "2026-11-06 02:18",
+      "subjek": "kemas repo — abaikan DB bukti runtime verification_evidence.db"
+    },
+    {
+      "hash": "303c7d2bbf7cf1494cec6a554b7ad7c4d81c6c6d",
+      "pendek": "303c7d2",
+      "tarikh": "2026-11-06 02:18",
+      "subjek": "sandaran auto 2026-11-06 02:18"
+    },
+    {
+      "hash": "272f9bb41f0e35a5a8951dad8c569569e2296d54",
+      "pendek": "272f9bb",
+      "tarikh": "2026-11-06 02:18",
+      "subjek": "sandaran auto 2026-11-06 02:18"
+    },
+    {
+      "hash": "49efd95abeaab3aab4d623b67ab002de3831baf1",
+      "pendek": "49efd95",
+      "tarikh": "2026-11-06 02:12",
+      "subjek": "kemas repo — buang fail terbitan dan berat daripada index"
+    },
+    {
+      "hash": "cd8f601806483b0a1783b298b92e7c3013293832",
+      "pendek": "cd8f601",
+      "tarikh": "2026-11-06 02:09",
+      "subjek": "sandaran auto 2026-11-06 02:09"
+    },
+    {
+      "hash": "f2b2e62314c5149780eae6d230916a4568d73d86",
+      "pendek": "f2b2e62",
+      "tarikh": "2026-11-06 02:08",
+      "subjek": "sandaran auto 2026-11-06 02:08"
+    }
+  ]
+}
