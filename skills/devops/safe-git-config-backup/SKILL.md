@@ -245,6 +245,25 @@ Correct fix — **change the placeholder, never weaken the regex**:
 still reads correctly. Apply it to **every copy** (top-level `scripts/` *and* the skill copy
 under `skills/**/scripts/` — both are tracked and both fire).
 
+### Better than editing docs: make tier 2 document-aware
+
+Rewriting the placeholder works but is fragile — docs legitimately quote canonical examples
+(`GMAIL_APP_PASSWORD=xxxxxxxxxxxxxxxx`, `AKIAIOSFODNN7EXAMPLE`), and the next author re-adds
+them. If the same doc files block the night job more than once, fix the **scanner** instead:
+
+- tier 1 (hard shapes) keeps scanning **every** file, `.md` and `docs/` included — no exceptions;
+- tier 2 (`name=value`) skips `*.md`, `docs/`, `references/`, `templates/`,
+  `*.example|*.sample|*.dist`, then filters the captured value (ignore `<…>`, `$(…)`, `${…}`,
+  one repeated char only, `REDACTED|DIMASK|PLACEHOLDER|CHANGEME|YOUR_|example|contoh`, <12 chars).
+
+This is not a loosening: `.md` still gets tier 1, which is what catches `sk-…`/`ghp_…` — proven by
+a matrix case where `sk-…` inside a `.md` still exits 3. Design, exact functions and measured
+results: `references/two-tier-secret-scan.md`.
+
+Doc prose can still trip tier 1 by accident: a filename that ends in `task` + hyphen + a long
+word matches the `sk-` rule (a real occurrence was a concurrency-diagnosis note).
+Don't "fix" that by weakening `sk-`; reword or accept the hit.
+
 Then triage the whole hit list rather than only the first file: real login artefacts
 (`secrets/*`, `dashboard_login.txt`, `.dash_url_last` stamp files) belong in `.gitignore`, not
 in a "fix the false positive" patch. Re-run until `EXIT=0` and prove the push travelled:
@@ -302,7 +321,9 @@ Copy `templates/backup_github.sh` and adapt. Contract that matters:
 - stdout only on problems.
 
 `templates/backup_github.sh` is the tested implementation (guards, tiers, exit codes) —
-start from it instead of re-deriving the regexes. `references/hermes20-inventory.md` records
+start from it instead of re-deriving the regexes. **Its scan block is the older single-layer
+version**; when docs live in the repo, replace it with the two-tier block in
+`references/two-tier-secret-scan.md` and prove it with `scripts/scan_matrix_test.sh`. `references/hermes20-inventory.md` records
 the already-measured folder sizes, confirmed secret files, and churn list for the
 `~/.hermes20` home, so a repeat run skips the 16 GB scan.
 
@@ -316,6 +337,22 @@ the already-measured folder sizes, confirmed secret files, and churn list for th
   the warning plus filename.
 - Shell wrapper `$(...)` capture is the cleanest way to prove "stdout empty": `out=$(bash
   script.sh); echo "exit=$? stdout=[$out]"`.
+- **Check `git remote -v` BEFORE running the script as a test.** The script pushes whenever
+  `origin` exists, so a "clean" test run can publish commits to a real GitHub repo. Measured
+  case: context said "tiada remote sekarang", but `origin` existed and two test commits
+  (`sandaran auto …`) went up mid-test, one carrying a probe file
+  (`api_key=xxxxxxxxxxxxxxxx` — harmless, but *published*). Probe first; if a remote exists,
+  either accept-and-disclose or point `HERMES_HOME` at a throwaway repo.
+- **Matrix tests belong in a throwaway repo, not the live one.** The script honours
+  `HERMES_HOME`, so `HERMES_HOME=$HOME/.uji-repo` + `git init` gives a sandbox for 20+
+  positive/negative cases without touching the real backup. Put `logs/` in that sandbox's
+  `.gitignore` or the forbidden-path guard fires on the log file it just wrote. Harness:
+  `scripts/scan_matrix_test.sh`.
+- **Tool output elides long tokens — never trust the echoed match.** A real
+  `AKIAIOSFODNN7EXAMPLE` in a doc was displayed as `AKIAIO...MPLE`, which sent a whole detour
+  chasing "how can a 13-char string match `AKIA[0-9A-Z]{16}`?". Confirm the bytes before
+  theorising: `grep -n 'AKIA' file.md | od -c | head -5`, or `awk '/AKIA/{print length($0)}'`.
+  Quote lengths and prefixes as evidence, not the elided string.
 
 ## Verification (paste raw output in the report)
 
