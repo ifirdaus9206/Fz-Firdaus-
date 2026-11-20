@@ -22,15 +22,15 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 2455
+        "completed": 2583
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-03T21:00:32.277446+08:00",
-      "next_run_at": "2026-11-19T02:05:00+08:00",
-      "last_run_at": "2026-11-19T02:00:31.426609+08:00",
+      "next_run_at": "2026-11-20T10:10:00+08:00",
+      "last_run_at": "2026-11-20T10:09:37.580545+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -114,15 +114,15 @@
       "schedule_display": "0 9,21 * * *",
       "repeat": {
         "times": null,
-        "completed": 19
+        "completed": 21
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-05T11:01:10.777993+08:00",
-      "next_run_at": "2026-11-19T09:00:00+08:00",
-      "last_run_at": "2026-11-18T21:01:23.914003+08:00",
+      "next_run_at": "2026-11-20T21:00:00+08:00",
+      "last_run_at": "2026-11-19T21:02:30.532350+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -160,17 +160,17 @@
       "schedule_display": "0 2 * * *",
       "repeat": {
         "times": null,
-        "completed": 11
+        "completed": 12
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-06T02:10:20.344219+08:00",
-      "next_run_at": "2026-11-20T02:00:00+08:00",
-      "last_run_at": "2026-11-18T02:00:19.097177+08:00",
-      "last_status": "error",
-      "last_error": "Script exited with code 3\nstdout:\nAMARAN: imbasan rahsia menemui padanan \u2014 commit DIBATALKAN.\n  - docs/INSIDEN-2026-11-17.md\n  - skills/devops/safe-git-config-backup/SKILL.md\nSemak fail di atas, pindahkan rahsia ke .env, dan tambah corak ke .gitignore.",
+      "next_run_at": "2026-11-21T02:00:00+08:00",
+      "last_run_at": "2026-11-19T02:00:41.993090+08:00",
+      "last_status": "ok",
+      "last_error": null,
       "last_delivery_error": null,
       "deliver": "origin",
       "origin": {
@@ -206,15 +206,15 @@
       "schedule_display": "*/15 * * * *",
       "repeat": {
         "times": null,
-        "completed": 112
+        "completed": 157
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T05:17:20.325319+08:00",
-      "next_run_at": "2026-11-19T02:15:00+08:00",
-      "last_run_at": "2026-11-19T01:45:33.526402+08:00",
+      "next_run_at": "2026-11-20T10:15:00+08:00",
+      "last_run_at": "2026-11-19T22:16:02.230303+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -252,15 +252,15 @@
       "schedule_display": "*/10 * * * *",
       "repeat": {
         "times": null,
-        "completed": 625
+        "completed": 689
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T05:31:08.418161+08:00",
-      "next_run_at": "2026-11-19T02:10:00+08:00",
-      "last_run_at": "2026-11-19T01:50:39.702436+08:00",
+      "next_run_at": "2026-11-20T10:10:00+08:00",
+      "last_run_at": "2026-11-19T22:11:08.735441+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -298,15 +298,15 @@
       "schedule_display": "0 8 * * *",
       "repeat": {
         "times": null,
-        "completed": 6
+        "completed": 7
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T13:38:54.292325+08:00",
-      "next_run_at": "2026-11-19T08:00:00+08:00",
-      "last_run_at": "2026-11-18T08:00:37.808040+08:00",
+      "next_run_at": "2026-11-21T08:00:00+08:00",
+      "last_run_at": "2026-11-19T08:01:00.344752+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -344,15 +344,15 @@
       "schedule_display": "0 */6 * * *",
       "repeat": {
         "times": null,
-        "completed": 19
+        "completed": 22
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T16:28:49.170357+08:00",
-      "next_run_at": "2026-11-19T06:00:00+08:00",
-      "last_run_at": "2026-11-19T00:00:59.888741+08:00",
+      "next_run_at": "2026-11-20T12:00:00+08:00",
+      "last_run_at": "2026-11-19T18:40:27.890350+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -390,15 +390,15 @@
       "schedule_display": "*/15 * * * *",
       "repeat": {
         "times": null,
-        "completed": 115
+        "completed": 159
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-17T19:29:45.619482+08:00",
-      "next_run_at": "2026-11-19T02:15:00+08:00",
-      "last_run_at": "2026-11-19T02:00:31.401447+08:00",
+      "next_run_at": "2026-11-20T10:15:00+08:00",
+      "last_run_at": "2026-11-19T22:15:59.367675+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -483,15 +483,15 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 158
+        "completed": 286
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-18T10:24:38.919382+08:00",
-      "next_run_at": "2026-11-19T02:05:00+08:00",
-      "last_run_at": "2026-11-19T02:00:31.362708+08:00",
+      "next_run_at": "2026-11-20T10:10:00+08:00",
+      "last_run_at": "2026-11-20T10:09:37.745450+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -508,5 +508,5 @@
       "fire_claim": null
     }
   ],
-  "updated_at": "2026-11-19T02:00:31.427923+08:00"
+  "updated_at": "2026-11-20T10:09:37.746717+08:00"
 }

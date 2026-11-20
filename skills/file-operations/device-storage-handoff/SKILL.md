@@ -64,8 +64,24 @@ Chain: `$HOME/**/*.md` → `~/.hermes20/tmp/<name>.pdf` → `/sdcard/Documents/U
 - Tables: `pdf.table(borders_layout="ALL", headings_style=FontFace(emphasis="BOLD",
   fill_color=(233,233,233)), wrapmode=WrapMode.WORD)`; code: `multi_cell(fill=True)` on
   `(242,242,242)` plus a border drawn only when the page did not change.
-- Recipes, the sanitizer bug that silently deletes `<nama>`-style text, and rasterizer-free
+- Recipe, the sanitizer bug that silently deletes `<nama>`-style text, and rasterizer-free
   verification: see `references/markdown-to-pdf-fpdf2.md`.
+- **Deliver a PDF, never a `.txt`, when the user says "simpan dalam nota telefon".** A plain-text
+  attachment can arrive with nothing the phone's Notes app will import — this user's verdict was
+  *"fail yang kau bagi tak boleh buka pun dan dalam buku nota apa pun tak ada lagi"*. Render the
+  PDF, hand it over with `MEDIA:<absolute path>` (Telegram shows it as a document), optionally
+  attach the same PDF to email via SMTP, and name the exact save path in the reply.
+- **`multi_cell(0, …)` right after a filled cell raises
+  `FPDFException: Not enough horizontal space to render a single character`** — `x` is already at the
+  right margin. Route every call through one helper: `def row(h, text, **kw): pdf.set_x(MARGIN);
+  pdf.multi_cell(pdf.epw, h, text, **kw)`. Then no width-0 call can land off-page.
+- **Verify by extraction, not by page count.** `pypdf` → join all pages → assert the strings the user
+  actually cares about (address, password, section headings) appear; only then say "siap". A 4-page
+  PDF that lost the URL is worse than no PDF.
+- **Line-oriented renderer for plain-text notes:** when the source is a `.txt` instruction sheet
+  rather than Markdown, skip `markdown`+`write_html` and walk the lines — `═══` → rule,
+  `BAHAGIAN …` → filled bold heading, indented/command lines → `DejaVuSansMono` in a tinted box,
+  everything else → body. Reusable script: `scripts/txt_note_pdf.py`.
 
 ## One-click button in the local console
 Console = FastAPI app at `~/hermes-console/app.py` + `static/{index.html,app.js,style.css}`,
@@ -131,6 +147,10 @@ runit service `hermes-console`, `127.0.0.1:8787`.
 - `scripts/uim_pdf.sh` — Markdown → PDF → warehouse wrapper (expects `md_to_pdf.py` beside it; the
   live converter is `~/.hermes20/scripts/md_to_pdf.py`, ~25 KB, backed up nightly — do not duplicate
   it here, restore from the `~/.hermes20` backup if lost).
+- `scripts/txt_note_pdf.py` — line-oriented `.txt` → A4 PDF renderer (rule lines, `BAHAGIAN …`
+  headings, mono command boxes) plus the `row()` x-reset helper that prevents fpdf2's
+  "Not enough horizontal space to render a single character". For plain-text instruction sheets,
+  not Markdown.
 - `references/termux-phone-storage-boundary.md` — permission findings, test matrix, log format.
 - `references/markdown-to-pdf-fpdf2.md` — fpdf2 block-render architecture, table/WrapMode settings,
   the `<nama>` sanitizer bug, rasterizer-free verification, wrapper failure-path tests.

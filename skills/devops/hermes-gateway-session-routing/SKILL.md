@@ -75,6 +75,51 @@ message and holds no earlier turns, the session key changed between messages.
    (console API `POST /api/svc/hermes-gateway`, or a one-shot cron — see
    `termux-runit-services`). Never restart mid-turn: the gateway dies before delivering.
 
+## DM topics in a private chat — mode OFF is worse than no topics at all
+
+User's words: *"dalam topik mesej aku saja"* — inside a Telegram DM topic they see only their own
+messages, while the bot's replies appear in the root / "All Messages" view; or work from an earlier
+topic bleeds into the current task and comes out wrong.
+
+Why: Telegram sends `message_thread_id` + `is_topic_message` for DM topics, but Hermes honours them
+only when it **manages** topics for that chat (`config.extra.dm_topics`, or user-driven `/topic`
+mode). With mode off, `_dm_topic_chat_ids` is empty → `thread_id` is dropped, so **every topic
+collapses into one session** and outbound replies carry no thread id, landing outside the topic.
+From inside, the agent believes it is continuing a single conversation — that is how unrelated
+tasks get mixed and the delivered work is wrong.
+
+Three checks that settle it (never print the token):
+
+```bash
+# 1. bot capability
+curl -s "https://api.telegram.org/bot$TOKEN/getMe" \
+  | jq '.result|{username,has_topics_enabled,allows_users_to_create_topics}'
+# 2. is topic mode actually on?
+python - <<'EOF'
+import sqlite3, os
+c = sqlite3.connect(f"file:{os.path.expanduser('~/.hermes20/state.db')}?mode=ro", uri=True)
+for t in ("telegram_dm_topic_mode", "telegram_dm_topic_bindings"):
+    try: print(t, c.execute(f"select * from {t}").fetchall())
+    except Exception as e: print(t, "TIADA:", e)
+EOF
+# 3. are thread ids arriving, and used?
+grep -oE "chat=[0-9]+ thread=[0-9]+" logs/gateway.log | tail -5
+```
+
+`has_topics_enabled: True` + **tables absent** = user has topics, Hermes is not in topic mode → the
+collapse above. `chat_type=dm` rows carrying a `thread` id in `gateway.log` are the second tell.
+
+Remedy is a **user action, not a code patch**: send `/topic` once in the **root** DM. Hermes checks
+the BotFather Threads Settings flags (`has_topics_enabled`, `allows_users_to_create_topics`), creates
+a pinned System topic, and from then on each topic is an independent session
+(`agent:main:telegram:dm:<chat>:<thread>`) with replies delivered inside that topic. `/topic off`
+returns to one continuous session. After enabling, the root DM is a lobby: plain prompts are
+rejected there, so say so explicitly or the user thinks the bot broke.
+
+Working rule for this user: **finish one topic before starting the next.** Do not switch topic or
+task mid-way because a new topic/message arrived; a new topic is new work only after the user says
+the previous one is done. Ask which topic a reply belongs to when it is ambiguous.
+
 ## Pitfalls
 
 - **`/tmp` is not writable on Termux.** Write probe scripts to `$HOME/…`;
@@ -87,9 +132,19 @@ message and holds no earlier turns, the session key changed between messages.
   the exact log string (`"Scheduled auto-resume for"`) and follow it to the function instead.
 - **Don't edit Hermes core for a per-user symptom** before checking `config.extra`: DM topics,
   group/thread isolation and reply modes are all config-driven.
+- **A split conversation never shows up as an unhealthy service.** `sv status`, `/api/agency/health`
+  and the gateway log all look fine while the user sees "my messages and yours in different
+  places". When the complaint is about *where* replies appear, check thread routing first — do not
+  start with restarts, keeper scripts or model quality.
+- **"Messages were partial / I got half" is a routing symptom, not truncation.** Two topics folded
+  into one session make the agent answer the wrong thread with the wrong context. Confirm by
+  comparing the topic ids in `gateway.log` against the session key before touching token limits.
 
 ## References
 - `references/telegram-dm-thread-fragmentation.md` — worked case with measured numbers, the exact
   diff, test output and the evidence table used in the report.
+- `references/telegram-dm-topics-mode.md` — "inside the topic I only see my own messages": `/topic`
+  mode off vs on, `has_topics_enabled` + missing `telegram_dm_topic_*` tables as proof, the
+  user-driven remedy and the post-activation verification.
 - `scripts/probe_dm_thread_id.py` — run with the live venv python to prove which branch a
   Telegram message source takes; exits non-zero on regression.

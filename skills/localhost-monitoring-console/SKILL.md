@@ -304,6 +304,22 @@ and *"apa jadi minggu ini"*.
    (token leaves the URL), `/api/ping` stays public for probes, and the Host allowlist is skipped
    only when the token gate is active. TLS is a self-signed cert with the device IP in SAN.
    Flow, middleware and curl matrix: `references/lan-access-and-tls.md`.
+6. **Answer "why not just localhost?" with all three tiers, never one.** Loopback is
+   per-device by definition (a PC cannot reach the phone's `127.0.0.1`); LAN
+   (`http://192.168.x.y:PORT`, needs `0.0.0.0` bind + both devices on the same Wi-Fi) never
+   expires but stops at the router; internet needs a tunnel, a tailnet or a domain. Read the
+   interface before promising: `ccmni1`/`100.95.x.x` = mobile data (no LAN, no inbound),
+   `wlan0` + `192.168.x.x` = Wi-Fi. Prove LAN with codes, not words:
+   `curl -o /dev/null -w '%{http_code}' http://<lan-ip>:PORT/` → 302 and a
+   `POST /auth/password-login` → 200. Warn that DHCP renumbers it — only a router-side
+   reservation makes it permanent.
+   - One-command handoff for a non-terminal owner: `templates/termux_up.sh` (wake-lock +
+     `sv up` + prints loopback / LAN / public URL / where the password lives). They will
+     mistype a long path and paste script *output* as a command
+     (`auto-mode:: command not found`), so give them one word.
+   - Three-tier answer, launcher and the phone-note handoff:
+     `references/dashboard-auth-and-tunnel-urls.md`; probe it all with
+     `scripts/remote_access_probe.sh`.
 
 ## Phase 8 — attention layer, reports, file handoff
 
@@ -780,6 +796,14 @@ no delivered message) before calling the relay done (§11).
 - **Run `app.py` under runit, not as an orphan.** `ppid=1` means nothing restarts the console; it
   only survived the 15:25 event because it sat in its own `setsid` session. A `console` service
   gives `sv status` one-line health plus automatic restart — cheaper than any watcher.
+- **"Why not just use localhost?" — because localhost is per-device, and a LAN address is not a
+  promise you can make blind.** `127.0.0.1` inside the phone's browser is the phone; a PC typing
+  `localhost` reaches itself. The shared option is the phone's LAN IP — and only while both are on
+  the same Wi-Fi: read the interface first (`ccmni1` + `100.95.x.x` = carrier CGNAT/mobile data,
+  no LAN and no inbound; `wlan0` + `192.168.x.x` = Wi-Fi), then prove it with
+  `curl -w '%{http_code}' http://<lan-ip>:9119/` → `302` plus a login POST → `200`. Say plainly
+  that DHCP can renumber it, so "kekal" needs a router-side reservation; anything advertised as
+  permanent must be the tailnet name or a named domain.
 - **A saved public link that "works at home but not on mobile data" is usually a dead hostname, not a
   network fault.** Cloudflare quick tunnels (`cloudflared tunnel --url …`) print a **new random
   `*.trycloudflare.com` name on every process start**, so a runit restart after an Android kill
@@ -1034,6 +1058,18 @@ no delivered message) before calling the relay done (§11).
 - `references/cost-and-agent-tracking.md` — `usage.cost` capture, per-agent/per-stage roll-up,
   `running_since`, server-side `/api/bot` commands, history snapshots.
 - `references/lan-access-and-tls.md` — token→cookie handshake, `?t=` redirect, `/api/ping`, SAN.
+- `references/dashboard-auth-and-tunnel-urls.md` — the **LAN / loopback / internet** answer with
+  `ccmni1` vs `wlan0` evidence, LAN curl proof, Google-has-no-free-domain facts, and the
+  "write it all into one plain .txt for the phone notes" handoff (verified-fresh facts, `MEDIA:`,
+  vault copy).
+- `templates/termux_up.sh` — one-command launcher (`hermes-up`): wake-lock, `sv up`, then print
+  loopback / LAN / published URL / password file; for owners who mistype paths.
+- `scripts/remote_access_probe.sh` — read-only report: bind address, `sv status`, loopback and LAN
+  codes, published URL with `dns=` age so a dead hostname is obvious.
+- `scripts/txt_to_pdf.py` — plain-text instruction note → phone-readable PDF (DejaVu fonts,
+  `BAHAGIAN` headings, shaded monospace command lines, page N/M footer); encodes the fpdf2
+  `multi_cell` width trap. Use it whenever the owner asks to save instructions in their phone notes —
+  a `.txt` attachment does not open there.
 - `references/remote-access-tailnet-and-tunnels.md` — reaching the console from outside the LAN:
   DNS-vs-tunnel-vs-origin-vs-auth triage in one `curl -w`, quick-tunnel hostname rotation (and why a
   saved link dies silently), durable options table (named tunnel / ngrok static domain / Tailscale),
@@ -1127,3 +1163,19 @@ Seterusnya: <3–4 concrete options, numbered — this user answers by number>
 Reply shape that works for this user: one short section per request they made (status + a table
 of measured numbers), the bugs found and fixed, then the numbered options. Attach generated
 documents with `MEDIA:` instead of pasting them.
+
+**"Tulis semua jawapan, aku nak simpan dalam nota telefon"** = **a PDF, and `.txt` is not an
+acceptable substitute.** Measured 2026-11-19: the plain-text note was delivered with `MEDIA:` and came
+back as *"fail yang kau bagi tak boleh buka pun dan aku tegak dalam buku nota apa pun tak ada"* — the
+phone never opened it and nothing landed in the notes app. Generate `NOTA-….pdf` with
+`scripts/txt_to_pdf.py` (DejaVu fonts, `BAHAGIAN` headings, shaded monospace command lines) and send
+that; keep the `.txt` only as the source, mirrored to `~/vault/operasi/`, so the next edit is one
+command from a fresh PDF. Content rules stay: numbered `BAHAGIAN` sections, exact copy-paste commands,
+current URL + login, the two errors they will actually hit
+(`/hermes-console/...: No such file or directory` = missing `~/`; `auto-mode:: command not found` =
+they pasted script *output* as a command), and a 3-line summary at the end. Re-verify each live fact
+(`hermes-up status`, LAN code, published URL) **immediately before** sending, and state in the reply
+which channel carries future changes ("pautan baharu dihantar ke Telegram") instead of promising the
+document stays current. fpdf2 trap while generating: `multi_cell(0, …)` raises *"Not enough horizontal
+space to render a single character"* once a filled cell has advanced `x` — always `set_x(MARGIN)` and
+pass `pdf.epw`.
