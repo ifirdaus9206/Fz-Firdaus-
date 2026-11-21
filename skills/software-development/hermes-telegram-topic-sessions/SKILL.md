@@ -102,6 +102,13 @@ Embed this in behaviour, not just in the reply:
   messages in the topic, yours in the root. Confirm with the DB check, not with a screenshot request.
 - **`enabled: 0` is not proof it was never configured.** Check `activated_at` / `updated_at`; a
   `/topic off` leaves the row behind.
+- **A row appearing after the owner ran `/topic` is not success either.** Measured 2026-11-20:
+  after the owner sent `/topic`, `telegram_dm_topic_mode` had a row for the chat with
+  `enabled: 0`, `has_topics_enabled: 1`, `allows_users_to_create_topics: NULL` and **zero**
+  bindings — the activation did not stick. Re-read `enabled` (must be `1`) and expect a binding row
+  only after the first message *inside* a topic; if `enabled` is still 0, ask them to send `/topic`
+  again in the **root** DM (not inside a topic) and quote the value back to them. Do not report
+  "mod topik sudah aktif" from the presence of a row alone.
 - **Turning mode on changes root behaviour**: the root DM becomes a lobby and normal prompts are
   rejected there. Warn the owner *before* they run `/topic`, or the "error" looks like a regression.
 - **Bot API version matters.** Threaded mode predates topics support in some bot versions; if

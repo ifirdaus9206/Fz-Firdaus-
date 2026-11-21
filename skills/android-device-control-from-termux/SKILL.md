@@ -65,6 +65,34 @@ Cache in `~/.cache/buka/components.tsv`; `aapt` on a 58 MB APK costs a second. S
 (`com.android.settings`, Play Store) often expose no `launchable-activity` — keep a small
 known-component map (`com.android.settings/.Settings`).
 
+### When `aapt`, `pm dump` and `resolve-activity` are all blocked
+
+Guessing activity names is expensive: measured 2026-11-20, seven guesses for MacroDroid
+(`MainActivity`, `.ui.MainActivity`, `.ui.home.HomeActivity`, `.MacroDroidActivity`,
+`.SplashActivity`, `.macro.MacroListActivity`, `.activities.MainActivity`) all returned
+`Error type 3 — Activity class … does not exist`, while the real one was `.LauncherActivity`.
+`pm path <pkg>` still works, and the APK is world-readable, so read the manifest yourself:
+
+```bash
+python3 scripts/apk-activities.py com.arlosoft.macrodroid            # list candidates
+python3 scripts/apk-activities.py com.arlosoft.macrodroid --start    # + launch validation
+python3 scripts/apk-activities.py <pkg> --keys extra_ macro guid     # extra key names (dex)
+```
+
+Two details that decide whether the scan works:
+
+- **Scan both encodings of the AXML string pool.** AndroidManifest.xml is binary; string runs
+  appear as UTF-16LE *and* as plain 8-bit runs. Decoding only one way yields offset garbage
+  (`!.homescreen.NewHomeScreenActivity`, `$com.termux.api`) that looks almost right. Taking the
+  union of `[\x20-\x7e]{6,}` and `(?:[\x20-\x7e]\x00){6,}` gave 968 usable strings.
+- **Validate by launching, and read the LAST line.** `am start -n pkg/.Name` prints
+  `Starting: Intent {…}` first even for a component that does not exist, then
+  `Error type 3` / `Error: Activity class … does not exist` and exits 2. Grepping `head -1` makes
+  every wrong name look like a success.
+
+Same technique mines `classes*.dex` for extra/config key names (`macroGuid`,
+`quick_run_macro_guids`) when an activity needs an extra you do not have.
+
 ## Step 2 — `buka` launcher
 
 `scripts/buka.sh` → `$PREFIX/bin/buka`:
@@ -330,6 +358,55 @@ Termux sends a signal → MacroDroid acts. Full recipe, Malay UI label map and t
 - No `ss`/`netstat` on this Termux build: probe a listener with
   `curl -s -m 2 -o /dev/null -w "%{http_code}" http://127.0.0.1:<port>/` — `000` means nothing listens.
 
+**Component map, measured 2026-11-20 (HyperOS 3 / Android 16, Play build):**
+
+| Component | Behaviour |
+|---|---|
+| `com.arlosoft.macrodroid.LauncherActivity` | exported, launches with rc=0 — use this to open the app for the user |
+| `com.arlosoft.macrodroid.ShortcutDispatchActivity` | exported, starts, but needs a `macroGuid` extra (keys `macroGuid` / `macro_guid` / `quick_run_macro_guids` in `classes*.dex`) that lives in app-private storage |
+| `com.arlosoft.macrodroid.SelectForceRunMacroActivity` | **not exported** → `SecurityException` from `am start` |
+
+**Isolate trigger vs action before claiming a bridge works.** `am broadcast -a <action>` (plain,
+`-p <pkg>`, `-f 32`, or both) always answers `Broadcast sent without waiting for result` — that is
+the wrapper acknowledging the call, not MacroDroid receiving it. On this build all four variants
+produced no visible effect while the macro looked correct (`Intent Diterima` + one `Mesej Popup`
+action, 0 constraints). Order of proof:
+
+1. `▶ Test` inside the macro edit screen — does the action fire at all?
+2. Trigger → `Pintasan Dilancarkan` (shortcut) — does the *action* work when launched locally?
+3. Only then the intent/broadcast trigger.
+
+A background `Toast` is a bad test action: Android 11+ drops toasts from background apps, so the
+in-app "ujian berjaya" and the absence of a toast tell you nothing. Use **`Lancar Aplikasi` →
+`Tetapan`** instead — Settings opening on screen is unambiguous and needs no accessibility service.
+`am start -a android.settings.SETTINGS` from Termux is a second, independent control for the same
+test: if that opens Settings but the macro's launch does not, the break is on the MacroDroid side.
+
+**Never build the macro with MacroDroid's own AI ("Create with AI").** Measured 2026-11-21: asked for
+`Intent Diterima com.ketua.TAP` + Toast + a UI-interaction tap at 540/1200, the AI's chat reply claimed
+it had added the tap, while the saved `Tindakan` list contained only
+`1. Mesej Popup` and `2. Jalankan Makro → <the same macro>` — a **self-call instead of any tap**, so
+nothing on screen could ever move. The AI also silently omitted the accessibility caveat into a note
+instead of a real action. Read the action rows, never the AI's prose.
+
+**Rebuild protocol when the macro must be deleted and remade by the user** (they will do it by hand,
+so make divergence impossible to miss):
+
+1. Delete the old macro first and say the list must show no macro with that name.
+2. New empty macro (`Makro Kosong`, not AI), exact name, e.g. `TAP UJIAN`.
+3. `Pencetus` → search `intent` → `Intent Diterima`, Action typed exactly (`com.ketua.TAP`), other
+   fields untouched. Expect `Pencetus: 1`.
+4. `Tindakan` → search `lancar` → `Lancar Aplikasi` → `Tetapan`. Expect `Tindakan: 1` and a row that
+   reads `Lancar Aplikasi: Tetapan`.
+5. Only then fire `am broadcast`; add the `Sentuh` (UI interaction) action last, after the launch
+   proof passes.
+
+One step per message, ends with "balas **N siap**", then wait. Before diagnosing anything, **read the
+macro title in the next screenshot** — a session where the user re-opened the old macro (`Ujian Tap`,
+single `Mesej Popup`) and did step 4 on it burned two rounds; the giveaway is a name that does not
+match the one you asked for and a `Tindakan` count of 1 with the wrong action type. Say which macro the
+screenshot shows and ask for the macro **list** (names + toggle colours) before continuing.
+
 ## Pitfalls
 
 1. **Exit 0 is not evidence of a UI action.** `termux-open` on an APK and `am start` with a bad
@@ -424,6 +501,13 @@ Termux sends a signal → MacroDroid acts. Full recipe, Malay UI label map and t
     on screen proves nothing: the app renders it client-side before the macro is saved. Also note the
     cloud URL needs Google Play services + FCM, so `200` means *queued*, never *acted*.
 
+23. **The first line of `am start` output is not the verdict.** `Starting: Intent {…}` is printed
+    before the platform resolves anything; the truth (`Error type 3` /
+    `Error: Activity class … does not exist`) comes last and the command exits **2**. A loop that
+    piped through `head -1` reported four of four MacroDroid components as launched when all four
+    were missing — and that wrong "it started" reached the user. Always read the last line plus
+    `rc`, e.g. `out=$(am start -n "$c" 2>&1); rc=$?; printf '%s | rc=%s\n' "$(printf '%s' "$out" | tail -1)" "$rc"`.
+
 ## Verification before reporting
 
 ```bash
@@ -461,6 +545,10 @@ screen, say "aku tak boleh lihat skrin tanpa ADB" and offer pairing.
   switch-vs-row-text trap, ⋮ overflow and Settings-search fallbacks.
 - `scripts/adb-pair-scan.py` — scan 30000–50000 and `adb pair` each open port when the user supplies
   only the 6-digit code; prints BERJAYA/gagal per port and connects on success.
+- `scripts/apk-activities.py` — enumerate an APK's activities/receivers/services and its
+  `extra_*`/`*guid*` keys by string-scanning the binary AndroidManifest and `classes*.dex` when
+  `aapt` / `pm dump` / `cmd package resolve-activity` are all denied; `--start` validates each
+  candidate with `am start` and only a missing `Error type 3` counts as existing.
 - `references/macrodroid-bridge-and-actuator-isolation.md` — using MacroDroid as a free
   tap/vibrate/screenshot bridge when ADB pairing is blocked: Malay UI label map (Pencetus / Tindakan /
   Kekangan), **cloud webhook facts** (`https://trigger.macrodroid.com/<device-id>/<identifier>`, FCM

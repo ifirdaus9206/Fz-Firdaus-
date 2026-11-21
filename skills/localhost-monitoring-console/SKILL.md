@@ -835,6 +835,21 @@ no delivered message) before calling the relay done (§11).
   **through the public tunnel URL** `200` — the last one is the only one the user experiences.
   Write url/username/password/updated-at into `~/.hermes20/secrets/dashboard_login.txt` (0600) because
   that is the file they open later.
+- **A recurring job that reports every success trains the owner to ignore it — and they will say so.**
+  Measured 2026-11-20: the Gmail sorting job printed `📬 1 email disusun — Penting 1 · …` every
+  15 minutes; the reply was *"untuk email bagi laporan setiap 9 malam satu kali sahaja, tak payah
+  banyak kali, ada masalah baru bagitahu"*. Standing policy for every `no_agent` job here: **silent
+  on success**, one digest at a fixed hour (21:00) from a **separate** job that reads the log plus
+  live counts, and **only the failure branch speaks immediately** (keep `echo "⚠️ … GAGAL"` before
+  `exit 0`). Verify with two runs — the work script must print nothing, the digest must print its
+  real numbers — and quote both in the report.
+- **A sweep with `--max N --days D` looks healthy while covering ~1 % of the data.** Gmail INBOX held
+  **17,585** messages but only 244 had ever been labelled, because cron ran
+  `apply --max 80 --days 2` (80 newest, last 2 days). Items matching no rule stay in INBOX and are
+  re-scanned on every run (~40 % of each batch here). Diagnose by counting the source first
+  (`IMAP4_SSL(...).select('"INBOX"')` per label) and comparing with what the log claims; then raise
+  `--max`, drop the day filter, and **time one batch** (400 messages ≈ 3 m 18 s, 800 ≈ 7 min) so a
+  batch stays shorter than the cron interval. Report the untouched remainder, never just "sorted".
 - **Kill keeper shells by pid, never by pattern.** `kill -TERM <keeper_pid>` after
   `ps -o pid,args -p <pid>` leaves the `app.py` children serving (they reparent to `PPID 1`);
   `pkill -f app.py` would take the console down with the caller's own shell.
@@ -1148,6 +1163,14 @@ no delivered message) before calling the relay done (§11).
   pid-only keeper cleanup**.
 - `scripts/supervise_consoles.sh` — env-driven starter + keeper for N console ports (silent when
   healthy, prints only what it repaired).
+- `references/cron-digest-and-batch-sweeps.md` — recurring-job reporting policy (silent success, one
+  21:00 digest, failure-only interruption) with the digest script shape and measured 6.7 s run; the
+  `--max/--days` coverage ceiling (17,585 INBOX vs 244 labelled, 400 msgs ≈ 3 m 18 s); the
+  Termux→`/sdcard` mirror contract and the 17 GB-vs-85 KB honesty check; and the **verified**
+  Termux device-bridge matrix (`am start`/`am broadcast` work, `input` blocked by `INJECT_EVENTS`,
+  `settings`/`dumpsys`/`/dev/input` denied) with the MacroDroid isolation ladder marked unverified.
+- `scripts/mirror_to_shared_storage.sh` — one-way sha256 mirror of notes/reports into
+  `/sdcard/Documents/UIM/01-LAPORAN`, silent unless something copied, `--dry` for a preview.
 - `references/watchdog-recovery-drill.md` — deliberate-kill drill: commands, measured 8 s keeper /
   16 s total recovery, two-`app.py` disambiguation via `/proc/<pid>/environ`, cron-tick sampling rule.
 - `scripts/validate_desktop_plugin.py` — static validator for a `desktop-plugins/` entry.

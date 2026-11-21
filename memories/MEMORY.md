@@ -1,8 +1,8 @@
 Config guard: write/patch refuse ~/.hermes/*/config.yaml; guna `hermes config set` / python+yaml.
 §
-~/.hermes19 = trading home (config/.env sendiri, skills trading/, ATC, meta5). Jalan: `hermes19` atau HERMES_HOME=~/.hermes19 hermes. Catalog: sync_agency_catalog.py.
+~/.hermes19 trading home: jalan `hermes19`; catalog sync_agency_catalog.py.
 §
-OpenRouter :free kerap timeout; guna deepseek-v4.1-flash + fallback.
+OpenRouter :free kerap timeout; guna deepseek-v4.1-flash.
 §
 ATC ~/.hermes19: 5 pair, lev 100→20. MetaAPI demo/live kedua UNDEPLOYED; feed metaapi→yahoo GC=F.
 §
@@ -12,7 +12,7 @@ Telegram: bot @ainafz_bot (Aina), chat 1312929583 (firdaus). Token+allowlist di 
 §
 Runbook OPERASI.md + docs/KETUA.md. workspaces/<ejen>, ~/vault (memori), knowledge_base (SOP). Roster 282 = teks; kerja fail guna delegate_task. /api/agency/health.
 §
-Android 25080RABDG (Redmi Note 15 Pro 5G, HyperOS3/A16, tiada root): pembangun DISEKAT → ADB pair & am start mustahil. Konsol 8787 = runit hermes-console.
+Android 25080RABDG (HyperOS3/A16, tiada root): ADB pair mustahil; `am start` & `am broadcast` BERFUNGSI, `input` disekat (INJECT_EVENTS). Konsol 8787=runit hermes-console; MacroDroid dipasang.
 §
 Persona ejen 3 salinan: agency-agents/*.md, corpus-baseline, agents.json body; skill agency-roster-curation.
 §
@@ -24,4 +24,4 @@ Gudang = /sdcard/Documents/UIM (akar /sdcard RO). uim_hantar (sha256) sehala; au
 §
 Telefon: runit konsol 8787 + dashboard 9119 + tunnel; login ~/.hermes20/secrets/dashboard_login.txt; `hermes-up` (~/bin) hidup semua; Tailscale tetap http://100.89.45.41:9119; sshd 8022 (kunci sofia-pc). Sofia=PC, token Telegram sendiri. Bos guna topik DM Telegram: habiskan satu topik dulu, baru /new; jangan tukar topik di tengah kerja.
 §
-Panduan bos: hantar PDF ke ifirdaus9206@gmail.com (txt gagal dibuka); perubahan sistem → notifikasi Telegram. Termux tak boleh inject input (INJECT_EVENTS).
+Panduan bos: hantar PDF ke ifirdaus9206@gmail.com (txt tak boleh dibuka); perubahan sistem → Telegram. Cron: SENYAP bila sihat, satu laporan 21:00, ralat beritahu segera. Termux tak boleh inject input.
