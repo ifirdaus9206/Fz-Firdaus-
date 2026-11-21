@@ -39,7 +39,16 @@ Related but opposite direction (phone → agent home) is covered by the user-own
 4. **Emit the phone path** as the last line (`MEDIA:<path>`) so it can be attached to chat directly.
 5. **Audit silently with cron** (`scripts/uim_semak.sh`, `no_agent=True`, daily): it prints only on
    violations and exits 0 when clean — the watchdog pattern, so a clean day sends nothing.
-6. **Report with evidence**: table of components + paths, table of guard tests with the *actual*
+6. **Sync new artifacts on a schedule instead of by hand.** Daily `no_agent` cron calling a script
+   shaped like `~/.hermes20/scripts/uim_sync.sh`: fixed source set (`~/NOTA-*.pdf|txt`,
+   `~/reports/*.md|pdf`, project `reports/`), then per file compare `sha256sum` with the warehouse
+   copy and **skip when equal**, printing one line only when something was copied. Measured
+   2026-11-20: 10 files in 1.8 s, second run printed nothing. Without the hash-skip every run
+   re-copies and the chat gets a daily "disalin" message for files that never changed.
+   Prefix warehouse names with the source folder (`reports-VERIFIKASI.md`) so two `reports/`
+   directories cannot collide, and keep `cp -p` + post-copy hash compare so a truncated copy is
+   counted as a failure, not a success.
+7. **Report with evidence**: table of components + paths, table of guard tests with the *actual*
    exit codes and messages, then the log tail. Numbered next-step options at the end.
 
 ## Markdown → PDF leg (when the user wants readable reports, not raw .md)

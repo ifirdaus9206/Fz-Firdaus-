@@ -949,6 +949,9 @@ no delivered message) before calling the relay done (§11).
   and never echo the values into the transcript; print key names or `sha256[:8]` instead.
 - **Second Telegram poller gets `409 Conflict`.** The gateway owns the bot's `getUpdates`; inbound
   needs a separate bot token. Outbound `sendMessage`/`sendDocument` is fine on the existing token.
+  If the *user's* symptom is instead "my messages and the bot's replies are in different places", the
+  cause is DM topic routing, not delivery — see the `hermes-telegram-topic-sessions` skill
+  (`/topic`, `telegram_dm_topic_mode.enabled`, thread-id dropping).
 
 - **Polling a 3-minute run inside one foreground call hits the tool timeout.** A `python3 - <<EOF`
   loop that plans, starts and polls a run dies at ~180 s; buffered `print()` output is lost, so the

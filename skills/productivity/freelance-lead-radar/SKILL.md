@@ -85,6 +85,13 @@ config.yaml (keywords, blocked words, budget USD, max items, sources)
 Reference implementation: `~/freelance-radar/` (`scripts/scan.py`, `config.yaml`, `PROFIL.md`,
 `BACA-DULU.md`, `drafts/`). Reuse it rather than rewriting.
 
+Scan output `data/<stamp>.json` is a **dict**, not a list:
+`{masa, laporan, bilangan, baharu, kerja, log, ditapis}` — iterate `d["kerja"]`. Items use Malay keys
+(`sumber, id, tajuk, pautan, penerangan, bajet_min, bajet_max, mata_wang, jenis_bajet, bajet_usd,
+bidaan, umur_jam`), and **`bajet_usd` stores only the maximum already converted to USD** — convert
+`bajet_min` yourself (`INR 12,500–37,500` → `≈USD 135–405`). A first attempt with `d.get("items")`
+returns nothing and looks like an empty run.
+
 Companion probe: `scripts/project_detail.py <id>…` (in this skill) prints the full description,
 budget, bid stats and skill tags for chosen project ids — run it between scan and drafting.
 
@@ -117,14 +124,18 @@ guess the scope. Each run, in this order:
 2. **Dedupe by source id before ranking.** A project matched by several query keywords is appended
    once per keyword (`fl-40815260` appeared ×3 in one run), so a raw "top 3" can be three copies of
    one gig. Rank the unique ids, then say in the report that duplicates were removed.
-3. **Skip ids that already have a draft** — `ls drafts/ | grep <lead-slug>`. Re-drafting yesterday's
-   gig creates duplicate files and wastes the run; name the existing draft file in the report instead.
+3. **Skip ids that already have a draft** — `ls drafts/ | grep <YYYY-MM-DD>` (the 21:00 run must see
+   what the 09:00 run already drafted today, not just yesterday's files). Re-drafting a covered gig
+   creates duplicate files and wastes the run; keep it in the numbered list with a note ("draf sudah
+   ada: <fail>") and spend the three drafts on the next unique leads.
 4. Pull full text for the 3 chosen ids: `python3 scripts/project_detail.py <id> [<id>…]`
    (endpoint `/api/projects/0.1/projects/<id>/?full_description=true&job_details=true`, no auth).
    It also returns the requested skill tags and `bid_avg` — a `bid_avg` far below `budget.maximum`
    means the market is bidding low, not that the gig pays well.
-5. Write `drafts/<YYYY-MM-DD>-<slug>.md`; keep the proposal ≤120 words and state the word count.
-   Aim it at the client's *stated* pain, not the job title.
+5. Write `drafts/<YYYY-MM-DD>-<slug>.md`; keep the proposal ≤120 words and state the **measured**
+   word count — run `python3 scripts/count_draft_words.py [--fix] drafts/<date>-*.md` from this skill.
+   A hand-guessed count in the header is off by 2–10 words every time (wrote "116", actual 107).
+   Aim the draft at the client's *stated* pain, not the job title.
 6. Report in Malay: numbered list of ≤5 unique leads (tajuk | bajet | sumber | skor), full text of
    draft #1, filenames of the rest, honesty flags (empty profile, commission-only, budget below the
    work), then a numbered 3–4 option list.
@@ -184,3 +195,15 @@ arguments are being dropped — verify with `hermes cron runs <id>` and by check
   `terminal`, which smart-approval allows.
 - **Don't claim the Telegram delivery of a manual `cron run`** — run with `source=direct` writes the
   output file but is not the scheduler path; confirm on the next scheduled fire instead.
+- **The structured budget field can contradict the description.** One run listed `USD 10–30` while the
+  body said "Total Budget: Maximum $100 for the entire project" and asked for 4–5 hours of live
+  Zoom coaching. Always read the full description (`project_detail.py`) before quoting; put the
+  discrepancy in the draft header *and* the checklist rather than picking one number silently.
+- **Ongoing coverage gigs have no natural price anchor.** "Assistants who take full ownership of the
+  inbox… hit send without managerial approval" is a recurring shift, not a deliverable. Ask whether
+  the fixed range is per month or per phase, and write the authority limits into the checklist
+  (no refunds, no price promises, no account changes) — "resolve independently" without limits is
+  how a VA gig turns into unpaid liability.
+- **Duplicates can be heavier than one extra row.** A run reported 8 leads that were only 4 unique
+  gigs (one id ×4, another ×2). State the unique count in the report ("8 baris = 4 kerja unik") so
+  the owner doesn't think the radar is broken or that the market is busier than it is.

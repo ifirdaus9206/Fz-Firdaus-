@@ -88,6 +88,38 @@ Keep the mock (`mock_webhook.py` + `BASE=http://127.0.0.1:18080/trigger`) as the
 Termux half; `HTTP 000` against it means no listener, which is expected until it is started. Keep
 both of these facts on the report: "Termux side OK (200 from mock)" and "cloud side 404".
 
+### A3. Intent broadcast — the free bridge that needs no premium webhook
+
+Measured 2026-11-20 (HyperOS 3 / Android 16, Play-signed Termux): Termux's `am` wrapper **can**
+send an ordinary broadcast, and MacroDroid can trigger on it. No premium, no FCM, no Play services
+round-trip, no variable plumbing.
+
+```bash
+am broadcast -a com.ketua.TAP --es ujian tap
+# Broadcasting: Intent { act=com.ketua.TAP (has extras) }
+# Broadcast sent without waiting for result        rc=0
+```
+
+Macro side (same assembly order: trigger → action → no constraint):
+
+1. Trigger **`Intent Received`** (search "intent" in the trigger list) → field **Action** = exactly
+   `com.ketua.TAP`.
+2. Action **`Toast`** with text `UJIAN TAP BERJAYA`, then action **`Tap`** (`UI Interaction`,
+   X/Y centre of screen) or **`Swipe`** (e.g. 300,1200 → 300,400, 300 ms).
+3. No constraint. Accessibility service for MacroDroid must be ON (tap/swipe need it; a Toast
+   alone does not).
+
+**`rc=0` is submission, not delivery** — the same trap as `termux-toast`. Never report success from
+the exit code: the `Toast` in the macro is the delivery proof the user can see, and
+`logcat -d | grep -i macrodroid` is usually unreadable from app uid, so ask the user what appeared.
+
+Naming convention that keeps future commands readable: `com.ketua.<VERB>` (`TAP`, `TEST`, `SHOT`).
+One action name per command, so the curl line is self-documenting.
+
+**Why this beats the alternatives here:** the cloud webhook needs a paid tier and depends on FCM;
+the notification bridge needs `com.termux.api` installed. A broadcast needs neither — only that
+MacroDroid is alive (Autostart ON, battery unrestricted) and the macro is enabled.
+
 ### B. Notification (free)
 ```bash
 termux-notification --title "KETUA-UJI-21:18:58" --content "Notifikasi ujian" \

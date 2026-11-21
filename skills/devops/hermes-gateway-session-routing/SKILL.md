@@ -1,6 +1,6 @@
 ---
 name: hermes-gateway-session-routing
-description: Diagnose split/duplicate chat sessions in Hermes gateway.
+description: Diagnose gateway session splits, silent bot, canned replies.
 category: devops
 ---
 
@@ -120,6 +120,118 @@ Working rule for this user: **finish one topic before starting the next.** Do no
 task mid-way because a new topic/message arrived; a new topic is new work only after the user says
 the previous one is done. Ask which topic a reply belongs to when it is ambiguous.
 
+## Silent bot: canned reply, zero agent turns (topic mode ON, user typing in the root DM)
+
+Symptom words: *"mesej tak boleh dah ikut arahan pun tak balas"* / "bot tak balas langsung".
+The service is healthy, Telegram is connected, and `gateway.log` shows `Sending response (N chars)`
+— so a naive check says "it replied". Look at **N**: the same N repeating for every message is a
+canned template, not the agent. The agent never ran, so nothing is wrong with the model or the session.
+
+Fast proof (no restart, no token):
+
+```bash
+grep -n "Sending response" logs/gateway.log | tail -10   # identical char counts = template
+grep -rn "reserved for system commands" tools/hermes-source/hermes-agent | head -3
+```
+
+| observed N | template | meaning |
+|---|---|---|
+| 267 | "This main chat is reserved for system commands…" (`_telegram_topic_root_lobby_message`) | root DM prompt, topic mode ON |
+| 304 | "To start a new parallel Hermes chat…" (`_telegram_topic_root_new_message`) | `/new` typed in the root DM |
+| 1644 | topic-mode activation intro | `/topic` was just enabled |
+
+Confirm with read-only state, then fix:
+
+```python
+import sqlite3, os
+c = sqlite3.connect(f"file:{os.path.expanduser('~/.hermes20/state.db')}?mode=ro", uri=True)
+c.row_factory = sqlite3.Row
+for r in c.execute("select chat_id,thread_id,content,created_at from delivery_obligations order by created_at desc limit 5"):
+    print(r["thread_id"], len(r["content"]), r["content"][:80])          # 1) the canned text
+print(c.execute("select id,thread_id,last_activity_at from sessions where source='telegram' "
+                "order by last_activity_at desc limit 3").fetchall())     # 2) no new row = agent never ran
+print(c.execute("select * from telegram_dm_topic_mode").fetchall())        # 3) enabled=1?
+```
+
+Fix — the user sends `/topic off` in the root DM (clean path, also clears bindings), or toggle the
+flag directly. `is_telegram_topic_mode_enabled()` re-reads the DB on every message, so an `UPDATE`
+takes effect **without restarting the gateway**:
+
+```python
+import sqlite3, os, time
+c = sqlite3.connect(os.path.expanduser('~/.hermes20/state.db'), timeout=15)
+c.execute("update telegram_dm_topic_mode set enabled=0, updated_at=? where chat_id=?", (time.time(), CHAT))
+c.execute("delete from telegram_dm_topic_bindings where chat_id=?", (CHAT,))
+c.commit()
+```
+
+Then have the user send one test message and judge the **new** log lines: a real turn shows a
+`Flushing text batch agent:main:telegram:…` line, a variable-length response, and a fresh telegram
+row in `sessions`. Only that proves the fix — a restart alone proves nothing.
+
+## "Kerja tak habis, dia lupa arahan lama" — busy_input_mode=interrupt
+
+Symptom words: *"tak habis satu-satu mesej, dia buat yang lain"*, *"tiba-tiba mesej kerja masuk,
+yang sebelum ini dia dah lupa"*. Nothing is broken in routing: the gateway delivers every message,
+and the newest one **cancels** the turn in flight. Default `display.busy_input_mode` is
+`interrupt`, so a message typed while the agent is working kills the current turn and starts a new
+one from the new text — the earlier instruction is never completed and its context is lost.
+
+```bash
+hermes config get display.busy_input_mode          # interrupt → the cause
+hermes config set display.busy_input_mode queue    # new messages wait; current turn finishes first
+```
+
+`queue` is the right default for this user: work finishes one item at a time and follow-ups arrive
+in order. `steer` folds the new text into the running turn — do not choose it for someone who
+complains about interleaved or forgotten work.
+
+**This one needs a restart** — unlike the topic-mode DB flag. Config.yaml is read at gateway start:
+
+```bash
+sv restart hermes-gateway && sleep 15 && sv status hermes-gateway
+grep -n "Connected to Telegram" logs/gateway.log | tail -2
+```
+
+Same for `.env` changes (`TELEGRAM_CRON_THREAD_ID`): restart, then verify. Always state which
+changes are live-immediately (DB flags) and which need a restart (config.yaml, .env) — mixing them
+up makes the user think a fix failed when it simply was not loaded yet.
+
+## "Dah hantar, tak balas" — prove inbound and outbound separately
+
+When the user insists they sent a message and got nothing, do not argue from the template table
+alone. Split the claim into two independent tests:
+
+1. **Outbound alive?** `hermes send -t telegram "..."` → `Sent to telegram home channel`. If that
+   works, the token, allowlist and network are fine.
+2. **Inbound arriving?** `grep -n "inbound message" logs/gateway.log | tail -5`. No line after the
+   user's timestamp means the message never reached the gateway — the agent cannot be blamed.
+
+```bash
+# read-only peek at the update queue (never print the token)
+curl -s "https://api.telegram.org/bot$TOKEN/getUpdates?offset=-1&limit=3" \
+  | jq '.ok, (.result|length)'
+```
+
+Read it carefully: an empty result while the gateway is long-polling is **inconclusive** — the
+poller normally drains the queue first. It only proves something when the gateway is stopped. A
+`409 Conflict` means a second poller is running. Neither result is evidence that a reply was
+delivered; only the `inbound message` → `response ready` → `Sending response` triple is.
+
+If the user is typing inside a DM topic while topic mode is OFF, say so plainly and ask them to
+send in the **root** chat for the test — an unmanaged topic lane is the first thing to rule out,
+not the model.
+
+## Don't promise an auto-topic router — it does not exist
+
+When the user asks for *"mesej 1 masuk topik 1, mesej 2 masuk topik 2, dia auto letak di mana
+sesuai"*: Hermes has **no content classifier** that reads a message and files it into a topic.
+Topic mode gives one topic = one independent session; the *human* picks the topic. Say that plainly
+instead of inventing a router, then offer the closest real scheme — a small fixed set of topics
+(e.g. KERJA / KRON / UMUM) where each topic keeps its own context and the user sends to the right
+one. A dedicated cron topic plus `TELEGRAM_CRON_THREAD_ID=<thread_id>` keeps automated reports out
+of the work conversation.
+
 ## Pitfalls
 
 - **`/tmp` is not writable on Termux.** Write probe scripts to `$HOME/…`;
@@ -136,6 +248,12 @@ the previous one is done. Ask which topic a reply belongs to when it is ambiguou
   and the gateway log all look fine while the user sees "my messages and yours in different
   places". When the complaint is about *where* replies appear, check thread routing first — do not
   start with restarts, keeper scripts or model quality.
+- **`httpx.ReadError` + "Primary api.telegram.org connection failed … sticky fallback IP" is normal
+  noise in this gateway.** It reconnects within seconds and does not stop replies. Do not report it
+  as the cause of a silent bot — check the response char counts first.
+- **"It replied" is not proof.** Match the logged char count against a template string in the source
+  (`grep -rn "<first words>" tools/hermes-source/hermes-agent`). A 267-char reply to a 37-char prompt
+  is the lobby notice, not an answer.
 - **"Messages were partial / I got half" is a routing symptom, not truncation.** Two topics folded
   into one session make the agent answer the wrong thread with the wrong context. Confirm by
   comparing the topic ids in `gateway.log` against the session key before touching token limits.
@@ -146,5 +264,11 @@ the previous one is done. Ask which topic a reply belongs to when it is ambiguou
 - `references/telegram-dm-topics-mode.md` — "inside the topic I only see my own messages": `/topic`
   mode off vs on, `has_topics_enabled` + missing `telegram_dm_topic_*` tables as proof, the
   user-driven remedy and the post-activation verification.
+- `references/telegram-lobby-silent-bot.md` — worked case "bot tak balas langsung": identical 267-char
+  replies as the tell, the 267/304/223/1644 template fingerprints, `delivery_obligations` + `sessions`
+  evidence, the live `enabled=0` fix (no restart needed) and the cron-thread side effect.
 - `scripts/probe_dm_thread_id.py` — run with the live venv python to prove which branch a
   Telegram message source takes; exits non-zero on regression.
+- `references/telegram-busy-input-interrupt.md` — worked case "tak habis satu-satu mesej": the
+  interrupt-vs-queue diagnosis, the evidence lines, the restart sequence and the honest answer
+  about auto-topic routing.
