@@ -6,8 +6,10 @@ For deliverable handoffs, wants files packed as ONE FORMAT PER FOLDER (not a sin
 §
 Expects "Ketua" to direct named agents (assign, verify, escalate) not do handiwork, and checks the web console for who is assigned. When he must tap on the phone: ONE numbered step per message, confirms "N siap", approval before building.
 §
-Wants files/images kept on device (console data/steps), not left in Telegram: after hash/HTTP check, delete the chat copy. Sends phone screenshots and expects short factual readings, no secrets echoed.
+Wants files on device not Telegram (delete chat copy after hash check); sends screenshots, expects short factual readings.
 §
 Wants each new work in its OWN console tab + data folder; gives the tunnel URL and expects the same login.
 §
-Wants permanent access (asks why not LAN/localhost instead of tunnels); pastes output lines and bare paths as commands — give exact one-line commands with ~/ and label output vs command.
+Asks why not LAN instead of tunnels; pastes output lines as commands — give exact one-line commands, label output vs command.
+§
+Says "test" = fire it now. Wants one exact step per message during phone setup, no multi-option lists to merge.

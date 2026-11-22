@@ -202,6 +202,26 @@ testable by you, the app half is 15-20 human taps.
    `Apl yang dimuat turun` / `Perkhidmatan yang dimuat turun` → app → toggle on → `Benarkan`.
 5. Hand over the macro spec: `templates/macrodroid-bridge-macros.md`.
 
+### Recipe 6b - Intent Received + `Lancar Aplikasi` (launch apps from Termux, verified)
+
+When `am start` is blocked by background-activity limits but accessibility is already granted, the
+working launcher is one MacroDroid macro per app plus a broadcast from Termux:
+
+1. Macro: trigger **`Intent Diterima` (Intent Received)**, Action exactly `com.ketua.OPEN.<APP>`;
+   exactly ONE action **`Lancar Aplikasi` → <app>** (row reads `Lancar Nota`, never `Lancar null`).
+2. Termux: `am broadcast -a com.ketua.OPEN.<APP>` — this DOES reach MacroDroid and the app opens
+   (verified 2026-11-22 on HyperOS 3 / Android 16: `OPEN.NOTES` opened Nota twice, and the same
+   broadcast opened Claude after the action was repointed to Claude).
+3. **Control-test before blaming a macro**: fire the app you know works, then the suspect one, 8–10 s
+   apart, and ask which screens changed. Result table: control opens + suspect doesn't → the suspect
+   macro (trigger text / toggle), not the delivery path. Both open → success. Neither → activation.
+4. Manual "Uji" inside the editor runs a macro **even when it is disabled**, so "it works when I test
+   it here" never proves the broadcast path — only the control test does.
+5. One macro per app; several `Lancar Aplikasi` rows in ONE macro run in sequence and only the last
+   screen stays, so it is not a menu. If the user asks for a menu, offer an extra-variable + `If`
+   macro or a `Dialog` action instead of stacking launches.
+6. Exact AI prompts, action-naming, and the failure→cause table: `references/macrodroid-intent-launcher.md`.
+
 Report status honestly: "Termux side verified, app side not yet" — a passing mock must never be
 reported as "the phone can be tapped now".
 
@@ -214,6 +234,30 @@ device" - it is not root.
 
 ## Pitfalls
 
+- **An accessibility macro that "runs" but changes nothing = the service is off, not a bad trigger.**
+  Measured 2026-11-21 (HyperOS 3 / Android 16, MacroDroid 6.1.5 from Play Store): `Tetapan →
+  Kebolehcapaian → Apl yang dimuat turun` listed `Interaksi UI MacroDroid` and `MacroDroid` greyed as
+  **`Dikawal oleh Tetapan Terhad`**. Android 10+ blocks background activity launches, so even
+  `Lancar Aplikasi` / `Lancar Skrin Utama` go through the accessibility service — without it the macro
+  logs nothing and no screen opens. `Info apl → ⋮` on HyperOS has **no** "Benarkan tetapan terhad"
+  (only *Info apl* / *Kongsi*), so the AOSP unlock recipe is a dead end there. The toggle actually
+  lives lower on the same Info apl page, in the **`Tetapan lanjutan`** section (`Padam tetapan lalai`,
+  **`Benarkan tetapan terhad`**) — scroll to the bottom, no menu needed. Failing that, launch the
+  dialog from Settings' own manifest string instead:
+  `am start -a android.settings.SHOW_RESTRICTED_SETTING_DIALOG --es android.intent.extra.PACKAGE_NAME <pkg>`.
+  Once `Benarkan tetapan terhad` is ON, the greyed `Dikawal oleh Tetapan Terhad` rows turn into live
+  toggles and macros with `Intent Diterima` triggers + `Lancar Aplikasi` / `Sentuh` actions fire
+  normally (verified on this handset after the toggle).
+  Enabled-state cannot be read from the shell (`settings get secure enabled_accessibility_services`
+  → INTERACT_ACROSS_USERS, `cmd accessibility get-bindings` → empty, `pm dump` → DUMP denied), so ask
+  for a screenshot of that list instead of "is it on".
+- **Never build the macro with the automation app's own AI generator.** Asked for an intent trigger +
+  toast + UI tap at 540/1200, MacroDroid's AI chat claimed the tap was added while the saved action
+  rows were `1. Mesej Popup` and `2. Jalankan Makro → <the same macro>` — a self-call, so no tap ever
+  existed. Read the action rows, never the AI's prose; rebuild by hand, one step per message ending
+  with "balas **N siap**".
+- **`am start … -d 'component:pkg/pkg.Service'` arrives truncated at the `/`** (`dat=component:`),
+  the same wrapper bug as `-d ":settings:show_fragment…"`. Put components/services in `-e` extras.
 - **`am start` prints "Starting: Intent {…}" and NOTHING appears while Termux is backgrounded.**
   Android 10+ blocks background activity starts; the wrapper exits 0 with no `Error type 3`. Verified
   on Xiaomi 25080RABDG (HyperOS/Android 16): `-a android.settings.APPLICATION_DEVELOPMENT_SETTINGS`
@@ -238,6 +282,19 @@ device" - it is not root.
 - **A greyed-out `Nyahtifkan` on a device-admin page is not the blocker.** `Pentadbir peranti →
   Telecoms Client` is a normal system component; users conclude "my monthly-contract line is blocking
   me". Name the real cause (financing lock, Recipe 5) instead of debating the red herring.
+- **Manifest string-pool extraction: strip the AXML length byte or every candidate is junk.**
+  AXML stores each string with a length prefix whose byte is often printable (`$`, `.`, `0`), so
+  `s.endswith("Activity")` is true but the name carries a leading junk char and `am start -n` fails
+  with "Error type 3". Strip with `re.sub(r'^[^A-Za-z]+','',s)` and `re.sub(r'[^A-Za-z0-9_.]+$','',s)`,
+  drop names without `/`, then rank: `MainActivity`/`LauncherActivity` → `*Launcher*` → `Main*` →
+  `*Splash*` → `*Home*` → rest; try each with `am start -W` and cache the winner.
+- **Split/AAB apps break the naming convention** (verified on this handset): Chrome is
+  `com.google.android.apps.chrome.Main`, Claude is `com.anthropic.claude.mainactivity.MainActivity`,
+  Grok is `ai.x.grok.main.GrokActivity`, Mi Notes is `com.miui.pc.frame.PcMainActivity`. Keep a
+  `SPECIAL[pkg]` map for ones already solved instead of re-deriving them.
+- **Termux's `am` rejects `--allow-background-activity-starts` and `--receiver-include-background`**
+  ("Unknown option"), so those AOSP workarounds are unavailable from the wrapper; go through the
+  automation app instead (Recipe 6b).
 - pm list packages is not ground truth; visibility hides most apps.
 - am is not /system/bin/am; the real one fails with SecurityException (com.android.shell).
 - monkey -p pkg -c LAUNCHER 1 often fails with "Unable to connect to window manager" - use am start -n.
@@ -282,4 +339,11 @@ adb devices            -> (empty until paired)
   any macro is built; a 200 from it is NOT evidence the phone can be tapped.
 - templates/macrodroid-bridge-macros.md - the three macros to hand a human, plus Play link,
   accessibility path and acceptance test.
+- references/macrodroid-intent-launcher.md - Intent Received + `Lancar Aplikasi` launcher that works
+  when `am start` is blocked: macro contract, AI prompts, `Lancar null` repair, failure→cause table,
+  and the control test that separates a bad macro from a blocked delivery path.
 - references/apk-signature-verification.md - openssl chain, published fingerprints, version probing.
+- references/hyperos-restricted-settings-accessibility.md - `Dikawal oleh Tetapan Terhad`: why a
+  Play-installed automation app cannot enable accessibility, the dead ends (`Info apl ⋮`), the
+  working `SHOW_RESTRICTED_SETTING_DIALOG` launch, manifest string-pool mining for Settings intents
+  and service components, and the honest no-tap fallback.

@@ -1,7 +1,7 @@
 ---
 name: android-device-control-from-termux
 description: Control Android apps, APKs, and UI from Termux.
-version: 1.3.0
+version: 1.4.0
 author: Hermes Agent
 license: MIT
 platforms: [termux]
@@ -106,6 +106,46 @@ buka apk /storage/emulated/0/Download/x.apk     # open the FOLDER in Files app
 ```
 
 `buka apk` opens a folder on purpose: Termux cannot install.
+
+### Background activity launches are dropped silently (BAL, Android 10+)
+
+Measured 2026-11-22 (HyperOS 3 / A16, console in the phone's own Chrome): `buka notes` from a
+Termux background process printed `pakej: com.miui.notes` + `OK (cache) … SnsEditActivity` and
+exited 0, while the screen stayed on Chrome — three apps in a row "succeeded" and none appeared.
+In the same window `am start -a android.settings.SETTINGS` *did* open Settings. So the split is:
+system activities pass, **third-party app launches from a background caller are silently
+cancelled** (no `Error`, no log line, exit stays 0). `am start -W` does not detect it either.
+
+What the agent cannot verify is the phone screen — say so and have the owner look at the
+**device**, not at the chat client (a Telegram/PC client shows nothing, which reads as "tak
+jalan"). Reporting `OK · exit 0` as success is the round-burner here; report "intent dihantar,
+skrin belum berubah".
+
+Candidate remedies, one of which is now **confirmed** (2026-11-22, same HyperOS 3 device):
+(a) grant Termux *Paparan di atas apl lain* / `SYSTEM_ALERT_WINDOW` — on this Play build the
+toggle is **absent** from both `Info apl` and `Kebenaran lain` (the user was walked through
+`Notifikasi` by mistake, then `Kebenaran lain`: nothing), so treat it as unavailable instead of
+sending the owner hunting;
+(b) **let MacroDroid perform the launch — VERIFIED WORKING.** A macro `BUKA NOTA` with
+`Pencetus: Intent Diterima → com.ketua.OPEN.NOTES` and exactly one action
+`Lancar Aplikasi: Nota` opened Mi Notes from `am broadcast -a com.ketua.OPEN.NOTES`, while
+`buka notes` (`am start` of the resolved activity) had failed silently minutes earlier in the
+same session. One macro per app, unique action string per app (`com.ketua.OPEN.<APP>`); the
+accessibility service must be on and past `Tetapan Terhad` (see
+`references/hyperos-restricted-settings-accessibility.md`). Recipe, AI prompt template and the
+`Lancar null` trap: `references/macrodroid-launch-application-bridge.md`;
+(c) have Termux itself in the foreground when the button is pressed (untested).
+Design consequence: **Termux is the brain, MacroDroid is the hands.** Anything that must move the
+screen belongs in a `Lancar Aplikasi` action, not in `am start`.
+
+### Expose the launcher as a console tab (users press, they do not type)
+
+`hermes-console/tools/patch_bukatab.py` (additive, idempotent, backs up three files) adds a **BUKA**
+tab: `GET /api/buka` → third-party packages + fixed buttons (`home`, `set`), `POST /api/buka`
+`{target}` or `{url}` → runs `~/bin/buka` and returns `{ok, exit, out}`. Two gotchas: POST must carry
+`X-Console-Token` from `GET /api/meta` (CSRF middleware rejects otherwise), and the new tab needs
+both the `data-tab` button in `index.html` and an entry in the tab-title map in `app.js`. Verify with
+`sv restart hermes-console`, `curl /api/buka`, and `node --check static/app.js`.
 
 ## Step 3 — APK install reality
 
@@ -378,11 +418,34 @@ action, 0 constraints). Order of proof:
 
 A background `Toast` is a bad test action: Android 11+ drops toasts from background apps, so the
 in-app "ujian berjaya" and the absence of a toast tell you nothing. Use **`Lancar Aplikasi` →
-`Tetapan`** instead — Settings opening on screen is unambiguous and needs no accessibility service.
-`am start -a android.settings.SETTINGS` from Termux is a second, independent control for the same
-test: if that opens Settings but the macro's launch does not, the break is on the MacroDroid side.
+`Tetapan`** (or `Lancar Skrin Utama`) instead — Settings/home appearing on screen is unambiguous.
 
-**Never build the macro with MacroDroid's own AI ("Create with AI").** Measured 2026-11-21: asked for
+**But do not conclude "needs no accessibility service".** Measured 2026-11-21: with the
+accessibility service still locked (`Dikawal oleh Tetapan Terhad`), a macro whose only action was
+`Lancar Skrin Utama` fired nothing at all, while `am start -a android.settings.SETTINGS` from Termux
+opened Settings in the same minute. MacroDroid routes `Lancar Aplikasi` / `Lancar Skrin Utama`
+through the accessibility service to bypass the Android 10+ background-activity-launch block, so
+without it they fail **identically to a dead trigger**. Version proof: after the restricted-settings
+unlock + service ON, the same macro ran and the screen changed on the user's own test.
+
+Fastest local test that needs no broadcast at all: **long-press the action row → `Uji tindakan` /
+`Uji tindakan dari sini`** (per-action) — a menu with `Konfigurasi`, `Uji tindakan`, `Uji tindakan
+dari sini`, `Tambah label`, `Potong`, `Salin`, `Tampal`, `Ekstrak ke Blok`, `Padam`, `Lumpuhkan`.
+`Uji tindakan dari sini` runs that one action in place, which separates action-vs-trigger in a single
+tap. `Padam` in the same menu is also the only reliable way to delete an action — there is no trash
+icon on the macro screen (`+` and the clipboard icon are all the header offers).
+
+So the independent control is: `am start -a android.settings.SETTINGS` from Termux. If that works but
+the macro's launch does nothing, the break is on the MacroDroid side — check accessibility state
+(`references/hyperos-restricted-settings-accessibility.md`) before touching the trigger.
+
+**MacroDroid's AI builder is usable only with a strict prompt — and only if the saved rows are read
+back.** The owner may explicitly ask for it ("guna macrodroid LLM, lebih cepat, bagi arahan betul"):
+comply, but send a prompt that names the **package**, says *exactly ONE action*, and forbids
+`Run Macro` / `UI Interaction` (template:
+`references/macrodroid-launch-application-bridge.md`), then verify the literal row text
+(`Lancar <app>`, never `Lancar null`). Without those three constraints the AI produces macros that
+look finished and do nothing. Measured 2026-11-21: asked for
 `Intent Diterima com.ketua.TAP` + Toast + a UI-interaction tap at 540/1200, the AI's chat reply claimed
 it had added the tap, while the saved `Tindakan` list contained only
 `1. Mesej Popup` and `2. Jalankan Makro → <the same macro>` — a **self-call instead of any tap**, so
@@ -398,14 +461,70 @@ so make divergence impossible to miss):
    fields untouched. Expect `Pencetus: 1`.
 4. `Tindakan` → search `lancar` → `Lancar Aplikasi` → `Tetapan`. Expect `Tindakan: 1` and a row that
    reads `Lancar Aplikasi: Tetapan`.
-5. Only then fire `am broadcast`; add the `Sentuh` (UI interaction) action last, after the launch
-   proof passes.
+5. Only then fire `am broadcast`; add the UI-tap action last, after the launch proof passes.
+
+**The Malay action name for a tap is not `Sentuh`.** Searching `sentuh` returns exactly one hit —
+`Sekat Sentuhan Skrin` (Block Screen Touches) — and users read that as "the tap action is missing".
+Measured label path on MacroDroid 6.1.5 / Malay:
+
+```
+Carian "interaksi"  → Interaksi UI            (the action you want)
+  Interaksi UI → Pilih Opsyen:
+      Klik · Klik lama · Klik kanan · Salin · Potong · Tampal ·
+      Kosongkan pilihan · Gerak isyarat · Jujukan Gerak Isyarat ·
+      Tekan Enter · Cubit Zum · Putar Dua Jari
+  Klik (radio) → OK → choose the coordinate target
+      Koordinat Skrin / X/Y Coordinates   (NOT "Pilih Elemen")
+  X = 540 · Y = 1200 → OK → Save
+```
+
+`Klik` = tap, `Klik lama` = long-press. Confirm by finding the coordinate mode first — the X/Y fields
+only appear after it is selected — and read the saved row back (it must say the coordinates, not
+`Lancar Skrin Utama`).
+
+**The coordinate dialog is where taps silently go wrong (measured 2026-11-22, 1280×2772).** The
+`Lokasi X,Y` screen has `Piksel` / `Peratusan` radios, a `Tunjukkan lokasi sentuhan` checkbox, a
+`Togol tindakan lokasi sentuhan` button and prints `Resolusi skrin: <w>, <h>` — that line is the only
+free way to learn the device resolution from the phone screen. Two failure modes seen live:
+
+- Default is **`Piksel`**. With `X=50, Y=75` the tap lands 50 px from the left / 75 px from the top —
+  the status bar. MacroDroid still reports the tap as successful, so \"ketukan berjaya\" + no visible
+  change means *wrong coordinate mode*, not a broken action.
+- A leftover action **above** the tap (`Lancar Skrin Utama`) fires first, so the tap lands on the home
+  screen and the user reports \"dia keluar pergi menu utama\". Make them delete it and confirm
+  `Tindakan` drops from 2 → 1 before any test.
+
+Ask for `Peratusan` + `Tunjukkan lokasi sentuhan` ticked, then X/Y as percentages (e.g. `50` / `78` =
+bottom centre, relies on no resolution knowledge). With the circle shown, one screenshot answers
+\"did it tap where we meant\" without ADB.
+
+`am start -a android.intent.action.MAIN -c android.intent.category.HOME` opens the launcher from
+Termux, which gives a neutral, predictable screen for a tap test (dock icons open on a hit; empty
+desktop means the coordinate missed).
 
 One step per message, ends with "balas **N siap**", then wait. Before diagnosing anything, **read the
 macro title in the next screenshot** — a session where the user re-opened the old macro (`Ujian Tap`,
 single `Mesej Popup`) and did step 4 on it burned two rounds; the giveaway is a name that does not
 match the one you asked for and a `Tindakan` count of 1 with the wrong action type. Say which macro the
 screenshot shows and ask for the macro **list** (names + toggle colours) before continuing.
+
+**Control test first when one macro fires and its twin does not (measured 2026-11-22).** With the
+same shape (`Intent Diterima com.ketua.OPEN.<APP>` + one `Lancar Aplikasi`), `BUKA NOTA` opened Mi
+Notes from `am broadcast` twice, while `BUKA CLAUDE` (visually identical, `Lancar Claude — Paksa
+baru`, 0 constraints) did nothing — and the owner reported the same macro *does* open Claude when he
+presses `▶ Test`. So the trigger path was healthy and the fault was per-macro/per-app. Ladder that
+settles it in two rounds instead of ten:
+
+1. Fire the **known-good** macro and the suspect macro ~10 s apart in one call
+   (`am broadcast -a com.ketua.OPEN.NOTES; sleep 10; am broadcast -a com.ketua.OPEN.CLAUDE`) and ask
+   which won. "Nota buka, Claude tak" = not a bridge problem — stop touching the trigger.
+2. Then compare the two macros side by side: **toggle colour in the macro list** (a manual `▶` test
+   still runs a macro that is switched off, an external broadcast does not), and whether the target
+   app was ever opened since boot (HyperOS pauses unused apps; opening it once un-freezes it).
+3. Only if both are identical, suspect the app itself (`Paksa baru` vs normal launch, deep link,
+   hibernation/battery restriction) — not `Intent Diterima`.
+
+Report the split ("pencetus berfungsi, app X sahaja gagal") instead of restating "tak jalan".
 
 ## Pitfalls
 
@@ -508,6 +627,20 @@ screenshot shows and ask for the macro **list** (names + toggle colours) before 
     were missing — and that wrong "it started" reached the user. Always read the last line plus
     `rc`, e.g. `out=$(am start -n "$c" 2>&1); rc=$?; printf '%s | rc=%s\n' "$(printf '%s' "$out" | tail -1)" "$rc"`.
 
+24. **Termux's `am` wrapper rejects the two flags that would fix BAL and background delivery.**
+    Measured 2026-11-22:
+    `am broadcast --receiver-include-background` → `Error: Unknown option`,
+    `am start --allow-background-activity-starts` → `Error: Unknown option` (both exist in
+    `/system/bin/am`, which needs shell uid you do not have). Do not spend rounds hunting flags —
+    route screen-moving work through MacroDroid actions instead. Related: `systemctl`-style flag
+    guesses (`-f 0x…`, `-p <pkg>`) are accepted by the wrapper yet change nothing.
+
+25. **Inside `execute_code`, shelling out is not available.** `subprocess.run(...shell=True)` fails
+    with `PermissionError: … /usr/bin/sh`, and `pm path <pkg>` run via `subprocess.run(["pm", …])`
+    returns empty output even when the package is installed. Do the shell step with the `terminal`
+    tool, then feed the resulting literal path to the Python parser (that combination read
+    MacroDroid's 91 MB APK fine).
+
 ## Verification before reporting
 
 ```bash
@@ -557,6 +690,15 @@ screen, say "aku tak boleh lihat skrin tanpa ADB" and offer pairing.
   `Pemberitahuan diterima` (`Termux:API` as source app), the actuator-isolation test protocol,
   per-port `curl %{http_code}` listener probe when `ss`/`netstat` are absent, and the silent
   IP-constraint trap.
+- `references/macrodroid-launch-application-bridge.md` — **verified** BAL bypass: one macro per app
+  (`Intent Diterima com.ketua.OPEN.<APP>` + `Lancar Aplikasi`), action-string/package table,
+  MacroDroid-AI prompt template in English, and the two AI failure modes that look complete but do
+  nothing (`Jalankan Makro` self-call, `Lancar null`).
+- `references/hyperos-restricted-settings-accessibility.md` — `Dikawal oleh Tetapan Terhad`: why every
+  accessibility-dependent action (UI tap **and** `Lancar Aplikasi` / `Lancar Skrin Utama`) fails
+  silently, `pm list packages -i` proof the app is Play-installed, the confirmed unlock location
+  (`Info apl → Tetapan lanjutan → Benarkan tetapan terhad`), the `⋮`-menu dead end, the
+  `SHOW_RESTRICTED_SETTING_DIALOG` intent, and the state reads that are denied for app uid.
 - `references/hyperos-settings-component-discovery.md` — when the pairing row simply is not on the
   screen: `aapt dump xmltree` fails ("resource table is invalid/corrupt") so enumerate Settings
   components with a Python UTF-16LE string-pool scan; the AOSP component names that do **not** exist
