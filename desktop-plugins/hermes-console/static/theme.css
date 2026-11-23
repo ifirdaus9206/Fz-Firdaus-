@@ -1,0 +1,570 @@
+/* ==========================================================================
+   THEME — SATU PUSAT (gaya Dashboard Hermes Agent · amber-on-dark)
+   Token diambil daripada hermes_cli/web_dist/assets/index-BqNxjeBk.css
+   ========================================================================== */
+:root{
+  --bg:#0b0b0c;
+  --bg2:#111113;
+  --panel:#141416;
+  --panel2:#191a1d;
+  --line:#26262a;
+  --line2:#333338;
+  --ink:#f4f4f6;
+  --ink2:#d8d8de;
+  --dim:#8f8f98;
+  --acc:#4ade80;
+  --acc-d:#22c55e;
+  --acc-l:#86efac;
+  --ok:#4ade80;
+  --red:#fb2c36;
+  --blue:#3080ff;
+  --amber:#ffac02;
+  --mono:"Courier Prime","JetBrains Mono",ui-monospace,monospace;
+  --sans:"Collapse",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --radius:.6rem;
+  --side:236px;
+  /* carta organisasi (SVG) */
+  --oc-link:#1c2a26;
+  --oc-link2:#16231f;
+  --oc-root:#0d1a15;
+  --oc-root-stroke:#5ee3a1;
+  --oc-node:#0b1311;
+  --oc-node-active:#12241c;
+  --oc-accent:#5ee3a1;
+  --oc-text:#d7e4df;
+  --oc-dim:#6f8a81;
+  --oc-dim2:#4f6a61;
+  --oc-div:#0a1210;
+  --oc-div-active:#10201a;
+  --oc-float:#121a12;
+  --oc-float-text:#e8f5ef;
+  --oc-float-dim:#8fa9a0;
+}
+
+/* ---------- asas ---------- */
+html,body{background:var(--bg)!important;color:var(--ink)!important;font-family:var(--sans)}
+body{
+  background:
+    radial-gradient(1100px 560px at 88% -10%, rgba(255,172,2,.10), transparent 62%),
+    radial-gradient(900px 500px at -5% 108%, rgba(48,128,255,.06), transparent 62%),
+    var(--bg)!important;
+}
+
+/* ---------- sidebar ---------- */
+.side{
+  position:fixed;top:0;left:0;bottom:0;width:var(--side);z-index:60;
+  background:linear-gradient(180deg,#1b1204,#120a02);
+  border-right:1px solid var(--line);
+  padding:16px 12px;overflow-y:auto;
+}
+.side .brand{
+  display:flex;align-items:center;gap:10px;padding:6px 8px 16px;
+  font-weight:800;letter-spacing:2px;font-size:13px;color:var(--acc);
+}
+.side .brand span.dot{
+  width:9px;height:9px;border-radius:50%;background:var(--acc);
+  box-shadow:0 0 12px rgba(255,172,2,.9)
+}
+.side .grp{
+  font-size:10px;letter-spacing:1.6px;color:var(--dim);
+  text-transform:uppercase;margin:16px 10px 6px
+}
+.side button{
+  display:flex;align-items:center;gap:10px;width:100%;
+  background:transparent;border:0;border-radius:10px;
+  padding:10px 12px;margin-bottom:3px;
+  color:var(--ink2);font-size:13.5px;font-family:var(--sans);
+  text-align:left;cursor:pointer;transition:background .15s,color .15s
+}
+.side button:hover{background:rgba(255,172,2,.10);color:#fff}
+.side button.on{
+  background:linear-gradient(90deg,rgba(255,172,2,.20),rgba(255,172,2,.04));
+  color:#fff;box-shadow:inset 2px 0 0 var(--acc)
+}
+.side button i{font-style:normal;width:18px;text-align:center;opacity:.9}
+.side .foot{
+  margin-top:18px;padding-top:12px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--dim);line-height:1.5
+}
+
+/* ---------- susun atur utama ---------- */
+header.top{
+  position:sticky;top:0;z-index:50;
+  background:rgba(18,10,2,.92)!important;backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)!important;border-radius:0!important;
+  padding-left:calc(var(--side) + 14px)!important;
+  min-height:58px
+}
+main{padding-left:calc(var(--side) + 4px)!important;padding-bottom:28px}
+nav.tabs{display:none!important}
+
+/* ---------- hud bar ---------- */
+.hud{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin:10px 0 4px;padding:0 2px
+}
+.hud .pill{
+  display:inline-flex;align-items:center;gap:7px;
+  border:1px solid var(--line2);border-radius:999px;
+  background:rgba(255,172,2,.06);color:var(--ink2);
+  padding:6px 12px;font-size:11.5px;letter-spacing:.5px
+}
+.hud .pill b{color:var(--acc)}
+.hud .pill.ok{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.10)}
+.hud .pill.ok b{color:var(--ok)}
+.hud .pill.bad{border-color:rgba(251,44,54,.45);background:rgba(251,44,54,.10)}
+.hud .pill.bad b{color:var(--red)}
+.hud .spacer{flex:1}
+
+/* ---------- kad ---------- */
+.panel{
+  background:linear-gradient(180deg,rgba(37,26,7,.92),rgba(26,18,5,.95))!important;
+  border:1px solid var(--line)!important;border-radius:16px!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.03)!important;
+  margin-bottom:16px;overflow:hidden
+}
+.ph{
+  padding:13px 18px!important;
+  border-bottom:1px solid var(--line)!important;
+  background:linear-gradient(180deg,rgba(255,172,2,.07),transparent)!important
+}
+.ph h2{
+  font-size:12.5px!important;letter-spacing:1.7px!important;
+  text-transform:uppercase;color:var(--ink)!important
+}
+.ph h2::before{
+  content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--acc);box-shadow:0 0 10px rgba(255,172,2,.9);
+  margin-right:9px;vertical-align:middle
+}
+
+/* ---------- butang / input ---------- */
+.btn{
+  border-radius:10px!important;border:1px solid var(--line2)!important;
+  background:linear-gradient(180deg,#2a1d08,#1a1204)!important;
+  color:var(--ink2)!important;font-weight:600;letter-spacing:.4px;
+  padding:9px 14px!important;cursor:pointer;transition:all .16s
+}
+.btn:hover{border-color:#6b4d13!important;color:#fff!important}
+.btn.primary{
+  background:linear-gradient(180deg,var(--acc-l),var(--acc-d))!important;
+  color:#1a1204!important;border-color:#ffd479!important;
+  box-shadow:0 8px 22px rgba(255,172,2,.28)
+}
+.btn.gold{background:linear-gradient(180deg,#ffe0a3,#ffac02)!important;color:#1a1204!important}
+input,select,textarea{
+  border-radius:10px!important;border:1px solid var(--line2)!important;
+  background:#140d03!important;color:var(--ink2)!important;padding:10px 12px
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--acc)!important;box-shadow:0 0 0 3px rgba(255,172,2,.15)!important;outline:none
+}
+.kv{border-bottom:1px dashed rgba(74,54,14,.6)!important;padding:8px 0;font-size:13px;display:flex;justify-content:space-between;gap:12px}
+.kv .k{color:var(--dim)}
+.kv .v{color:var(--ink2);text-align:right;word-break:break-word}
+.copybox{border:1px solid var(--line2)!important;background:#120c03!important;color:var(--acc-l)!important;border-radius:10px;padding:11px 13px;font-family:var(--mono)}
+.svc-row{border:1px solid var(--line)!important;background:#171004!important;border-radius:12px;padding:11px 13px;margin-bottom:9px}
+.tag{border-radius:999px;padding:3px 10px;font-size:10.5px;font-weight:700;letter-spacing:.7px}
+.tag.ok{background:rgba(74,222,128,.16);color:var(--ok);border:1px solid rgba(74,222,128,.35)}
+.tag.bad{background:rgba(251,44,54,.16);color:var(--red);border:1px solid rgba(251,44,54,.35)}
+.tag.warn{background:rgba(255,172,2,.16);color:var(--acc);border:1px solid rgba(255,172,2,.35)}
+table{width:100%;border-collapse:separate;border-spacing:0}
+th{font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);background:rgba(255,172,2,.05)}
+td{padding:10px 12px;border-bottom:1px solid rgba(58,42,11,.6);font-size:13px}
+tr:hover td{background:rgba(255,172,2,.06)}
+.empty{border:1px dashed var(--line2);border-radius:12px;background:#150e04;color:var(--dim);padding:20px;text-align:center;font-size:13px}
+pre.bot-log{background:#100a02!important;border:1px solid var(--line2)!important;color:#ffd88a!important;border-radius:12px}
+.hint{color:var(--dim)!important;font-size:11.5px}
+.mono{font-family:var(--mono)!important}
+
+/* ---------- tema terang ---------- */
+/* palet terang bersih: putih + kelabu + aksen hijau (tiada blok gelap) */
+body.light{
+  --bg:#f6f7f9;--bg2:#eef0f3;--panel:#ffffff;--panel2:#f8f9fb;
+  --line:#e4e4e7;--line2:#d4d4d8;--ink:#18181b;--ink2:#27272a;--dim:#52525b;--acc:#16a34a;
+}
+body.light .panel{background:#ffffff!important}
+body.light .side{background:linear-gradient(180deg,#ffffff,#f7f7f8)!important;border-right:1px solid #e4e4e7!important}
+body.light header.top{background:rgba(255,255,255,.96)!important}
+body.light .svc-row{background:#ffffff!important}
+body.light input,body.light select,body.light textarea{background:#ffffff!important;color:#18181b!important;border:1px solid #d4d4d8!important}
+body.light .copybox{background:#f8f9fb!important;color:#15803d!important}
+body.light pre.bot-log{background:#f8f9fb!important;color:#1f2937!important}
+/* pil / tag / kad kecil — semua cerah, tiada latar hitam */
+body.light .pill,body.light .tag,body.light .abadge{
+  background:#f4f4f5!important;border:1px solid #d4d4d8!important;color:#18181b!important
+}
+body.light .pill b,body.light .tag b{color:#15803d!important}
+body.light .tag.ok{background:#dcfce7!important;border-color:#86efac!important;color:#15803d!important}
+body.light .tag.bad{background:#fee2e2!important;border-color:#fca5a5!important;color:#b91c1c!important}
+body.light .tag.warn{background:#fef3c7!important;border-color:#fcd34d!important;color:#92400e!important}
+body.light .empty{background:#f8f9fb!important;border:1px dashed #d4d4d8!important;color:#52525b!important}
+
+/* ---------- mudah alih ---------- */
+@media (max-width:900px){
+  :root{--side:0px}
+  .side{position:static;width:auto;display:flex;gap:6px;overflow-x:auto;padding:8px}
+  .side .brand,.side .grp,.side .foot{display:none}
+  .side button{width:auto;white-space:nowrap;margin:0;padding:8px 12px;font-size:12.5px}
+  header.top{padding-left:12px!important}
+}
+
+/* ===== NEUTRAL DARK (selaras penuh Dashboard Hermes Agent) ===== */
+body{
+  background:
+    radial-gradient(1200px 600px at 88% -12%, rgba(74,222,128,.07), transparent 62%),
+    radial-gradient(900px 520px at -6% 110%, rgba(48,128,255,.05), transparent 62%),
+    #0b0b0c!important;
+}
+.side{background:linear-gradient(180deg,#111113,#0b0b0c)!important;border-right:1px solid #26262a!important}
+.side button:hover{background:rgba(255,255,255,.06)!important}
+.side button.on{
+  background:linear-gradient(90deg,rgba(74,222,128,.18),rgba(74,222,128,.03))!important;
+  box-shadow:inset 2px 0 0 var(--acc)!important;color:#fff!important
+}
+.side .brand{color:var(--acc)!important}
+.side .brand span.dot{background:var(--acc)!important;box-shadow:0 0 12px rgba(74,222,128,.9)!important}
+header.top{background:rgba(12,12,13,.92)!important;border-bottom:1px solid #26262a!important}
+.panel{
+  background:linear-gradient(180deg,#141416,#101012)!important;
+  border:1px solid #26262a!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.03)!important
+}
+.ph{background:linear-gradient(180deg,rgba(255,255,255,.035),transparent)!important;border-bottom:1px solid #26262a!important}
+.ph h2::before{background:var(--acc)!important;box-shadow:0 0 10px rgba(74,222,128,.85)!important}
+.hud .pill{background:rgba(255,255,255,.04)!important;border-color:#333338!important;color:var(--ink2)!important}
+.hud .pill b{color:var(--acc)!important}
+.hud .pill.ok{border-color:rgba(74,222,128,.45)!important;background:rgba(74,222,128,.10)!important}
+.hud .pill.bad{border-color:rgba(251,44,54,.45)!important;background:rgba(251,44,54,.10)!important}
+.btn{background:linear-gradient(180deg,#1b1c1f,#141416)!important;border:1px solid #333338!important;color:var(--ink)!important}
+.btn:hover{border-color:#4a4a52!important}
+.btn.primary{background:linear-gradient(180deg,#86efac,#22c55e)!important;color:#06120a!important;border-color:#a7f3c6!important;box-shadow:0 8px 22px rgba(74,222,128,.22)!important}
+.btn.gold{background:linear-gradient(180deg,#ffd479,#ffac02)!important;color:#1a1204!important}
+input,select,textarea{background:#0f0f11!important;border:1px solid #333338!important;color:var(--ink)!important}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)!important;box-shadow:0 0 0 3px rgba(74,222,128,.14)!important}
+.copybox{background:#0f0f11!important;border:1px solid #333338!important;color:#86efac!important}
+.svc-row{background:#101012!important;border:1px solid #26262a!important}
+.kv{border-bottom:1px dashed rgba(255,255,255,.07)!important}
+.empty{background:#0f0f11!important;border:1px dashed #333338!important}
+pre.bot-log{background:#08080a!important;border:1px solid #26262a!important;color:#c8f7d8!important}
+th{background:rgba(255,255,255,.03)!important;border-bottom:1px solid #26262a!important}
+td{border-bottom:1px solid rgba(255,255,255,.06)!important}
+tr:hover td{background:rgba(74,222,128,.05)!important}
+.tag.warn{background:rgba(255,172,2,.16)!important;color:#ffac02!important;border:1px solid rgba(255,172,2,.35)!important}
+
+/* ===== KONTRA & KETERBACAAN (tulisan hitam tidak lagi hilang) ===== */
+.panel,.pbody,.ph{color:var(--ink)!important}
+.ph h2{color:var(--ink)!important}
+.pbody .hint,.ph .hint{color:var(--dim)!important}
+.kv .k{color:var(--dim)!important}
+.kv .v{color:var(--ink2)!important}
+.svc-main b{color:var(--ink)!important}
+.svc-main .hint{color:var(--dim)!important}
+td,th{color:var(--ink2)!important}
+th{color:var(--dim)!important}
+td b,td strong{color:var(--ink)!important}
+.tag{color:var(--ink2)!important}
+.tag.ok{color:#4ade80!important}
+.tag.bad{color:#fb2c36!important}
+.tag.warn{color:#ffac02!important}
+input::placeholder,textarea::placeholder{color:#7d7d88!important}
+select,option{color:var(--ink)!important;background:#0f0f11!important}
+.mono{color:var(--ink2)}
+/* butang: pastikan teks jelas */
+.btn{color:var(--ink)!important}
+.btn.primary,.btn.gold{color:#06120a!important}
+.side button{color:#cfcfd6!important}
+.side button.on{color:#fff!important}
+
+/* mod terang — semua tulisan gelap */
+body.light{--ink:#141414;--ink2:#2b2b2b;--dim:#6b6b6b}
+body.light .panel,body.light .pbody,body.light .ph,body.light td,body.light th,
+body.light .kv .v,body.light .svc-main b,body.light .hint{color:var(--ink)!important}
+body.light .hint,body.light .kv .k,body.light th{color:var(--dim)!important}
+body.light .side button{color:#2b2b2b!important}
+body.light .side button.on{color:#0b0b0c!important}
+body.light .btn{background:#f2f2f4!important;color:#141414!important;border-color:#d8d8dc!important}
+body.light .btn.primary{background:linear-gradient(180deg,#4ade80,#22c55e)!important;color:#06210f!important}
+body.light td{border-bottom:1px solid #e6e6ea!important}
+body.light .svc-row{background:#fff!important;border-color:#e6e6ea!important}
+body.light .copybox{background:#fafafa!important;color:#0b6b34!important;border-color:#e0e0e6!important}
+body.light pre.bot-log{background:#fbfbfc!important;color:#1f3a2a!important;border-color:#e6e6ea!important}
+
+/* ===== MOD TERANG PENUH — latar cerah, tulisan hitam mudah (dibaiki 2026-11-23) ===== */
+body.light,html:has(body.light){
+  background:#f4f4f5!important;color:#141414!important;
+}
+body.light{
+  background:radial-gradient(1200px 600px at 88% -12%,rgba(34,197,94,.06),transparent 62%),
+             radial-gradient(900px 520px at -6% 110%,rgba(48,128,255,.05),transparent 62%),
+             #f4f4f5!important;
+}
+body.light .side{background:linear-gradient(180deg,#ffffff,#f7f7f8)!important;border-right:1px solid #e4e4e7!important}
+body.light .side .brand{color:#15803d!important}
+body.light .side .grp{color:#71717a!important}
+body.light .side button{color:#27272a!important}
+body.light .side button:hover{background:#f0f0f2!important}
+body.light .side button.on{background:linear-gradient(90deg,rgba(34,197,94,.16),rgba(34,197,94,.03))!important;color:#111!important;box-shadow:inset 2px 0 0 #22c55e!important}
+body.light header.top{background:rgba(255,255,255,.94)!important;border-bottom:1px solid #e4e4e7!important}
+body.light .panel{background:#ffffff!important;border:1px solid #e4e4e7!important;box-shadow:0 6px 20px rgba(15,23,42,.06)!important}
+body.light .ph{background:linear-gradient(180deg,#fafafa,transparent)!important;border-bottom:1px solid #e4e4e7!important}
+body.light .panel,body.light .pbody,body.light .ph,body.light .panel *{color:#18181b!important}
+body.light .hint,body.light .dim,body.light .kv .k,body.light th{color:#52525b!important}
+body.light .kv .v,body.light .mono{color:#18181b!important}
+body.light .kv{border-bottom:1px dashed #e4e4e7!important}
+body.light .hud .pill{background:#f4f4f5!important;border-color:#d4d4d8!important;color:#27272a!important}
+body.light .hud .pill b{color:#15803d!important}
+body.light .btn{background:#f4f4f5!important;border:1px solid #d4d4d8!important;color:#18181b!important}
+body.light .btn:hover{background:#e9e9ec!important;border-color:#a1a1aa!important}
+body.light .btn.primary{background:linear-gradient(180deg,#4ade80,#22c55e)!important;color:#052e16!important;border-color:#16a34a!important}
+body.light .btn.gold{background:linear-gradient(180deg,#fbbf24,#f59e0b)!important;color:#1c1204!important}
+body.light input,body.light select,body.light textarea,body.light option{background:#ffffff!important;border:1px solid #d4d4d8!important;color:#18181b!important}
+body.light input::placeholder,body.light textarea::placeholder{color:#a1a1aa!important}
+body.light .copybox{background:#f4f4f5!important;border:1px solid #d4d4d8!important;color:#15803d!important}
+body.light .svc-row{background:#fafafa!important;border:1px solid #e4e4e7!important}
+body.light .empty{background:#fafafa!important;border:1px dashed #d4d4d8!important;color:#52525b!important}
+body.light pre.bot-log{background:#f8fafc!important;border:1px solid #e4e4e7!important;color:#14532d!important}
+body.light th{background:#f4f4f5!important;border-bottom:1px solid #e4e4e7!important}
+body.light td{border-bottom:1px solid #eeeeF1!important;color:#27272a!important}
+body.light tr:hover td{background:#f4fdf7!important}
+body.light .tag{background:#f4f4f5!important;border:1px solid #d4d4d8!important;color:#3f3f46!important}
+body.light .tag.ok{background:#dcfce7!important;border-color:#86efac!important;color:#15803d!important}
+body.light .tag.bad{background:#fee2e2!important;border-color:#fca5a5!important;color:#b91c1c!important}
+body.light .tag.warn{background:#fef3c7!important;border-color:#fcd34d!important;color:#b45309!important}
+
+/* ===== TERANG: paksa latar cerah (override blok gelap) ===== */
+body.light{
+  background:radial-gradient(1200px 600px at 88% -12%, rgba(34,197,94,.06), transparent 62%),
+             radial-gradient(900px 520px at -6% 110%, rgba(59,130,246,.05), transparent 62%),
+             #f7f7f8!important;
+  color:#18181b!important;
+}
+body.light .side{background:linear-gradient(180deg,#ffffff,#f4f4f5)!important;border-right:1px solid #e4e4e7!important}
+body.light .side button{color:#27272a!important}
+body.light .side button:hover{background:#f0f0f2!important}
+body.light .side .brand,body.light .side .grp,body.light .side .foot{color:#3f3f46!important}
+body.light header.top{background:rgba(255,255,255,.96)!important;border-bottom:1px solid #e4e4e7!important}
+body.light header.top .title,body.light header.top b{color:#18181b!important}
+body.light .hud{color:#27272a!important}
+body.light .panel{background:linear-gradient(180deg,#ffffff,#fafafa)!important;border:1px solid #e4e4e7!important;box-shadow:0 2px 10px rgba(0,0,0,.05)!important}
+body.light .ph{background:#f4f4f5!important;border-bottom:1px solid #e4e4e7!important;color:#18181b!important}
+body.light .pbody{color:#27272a!important}
+body.light .card,body.light .kv{background:#ffffff!important;border-color:#e4e4e7!important;color:#27272a!important}
+body.light .kv .k{color:#52525b!important}
+body.light .kv .v{color:#18181b!important}
+body.light .hint{color:#52525b!important}
+body.light .mono{color:#18181b}
+body.light a{color:#15803d!important}
+
+/* ===== TERANG: hero + blok gelap tengah (dibaiki 2026-11-23) ===== */
+body.light .hero-live{background:#eef2f0!important;border:1px solid #e4e4e7!important}
+body.light .hero-img{display:none!important}
+body.light .hero-overlay{
+  position:static!important;inset:auto!important;padding:20px 22px!important;
+  background:linear-gradient(135deg,#ecfdf5,#f4f4f5)!important
+}
+body.light .hl-kicker{color:#15803d!important;opacity:1!important}
+body.light .hl-title{color:#111827!important;font-size:26px!important}
+body.light .hl-sub{color:#374151!important}
+body.light .hl-chips span,body.light .hl-chips .pill{
+  background:#ffffff!important;border:1px solid #d4d4d8!important;color:#18181b!important
+}
+body.light .hl-chips b{color:#15803d!important}
+body.light .pbody{background:transparent!important}
+body.light .workbar,body.light .svc-list{background:transparent!important}
+body.light .empty{background:#fafafa!important;color:#52525b!important}
+body.light #lv-feed,body.light .feed-row{background:#ffffff!important;color:#27272a!important}
+body.light .ochart-wrap{background:#ffffff!important}
+/* ===== TERANG: carta organisasi (SVG) — warna cerah, teks hitam ===== */
+body.light{
+  --oc-link:#d4d4d8;
+  --oc-link2:#e4e4e7;
+  --oc-root:#ecfdf5;
+  --oc-root-stroke:#16a34a;
+  --oc-node:#ffffff;
+  --oc-node-active:#ecfdf5;
+  --oc-accent:#16a34a;
+  --oc-text:#18181b;
+  --oc-dim:#52525b;
+  --oc-dim2:#71717a;
+  --oc-div:#ffffff;
+  --oc-div-active:#ecfdf5;
+  --oc-float:#ffffff;
+  --oc-float-text:#18181b;
+  --oc-float-dim:#52525b;
+}
+body.light #oc text{fill:var(--oc-text)}
+body.light #oc .oc-div text,body.light #oc .oc-float text{fill:var(--oc-text)}
+body.light .hl-title,body.light .hl-sub,body.light .hl-kicker{text-shadow:none!important}
+
+/* ===== TERANG: komponen yang masih gelap dalam style.css ===== */
+body.light .inbox-item,body.light .dropzone,body.light #inbox-note,
+body.light .divchip,body.light .acard,body.light .stepcard,body.light .lv-run,
+body.light .sys,body.light .avtask,body.light .krcard,body.light .avh,
+body.light .planbox,body.light .agsel .one,body.light .outblock summary,
+body.light .bodytext,body.light .outblock .ob,body.light pre.log,
+body.light .bot-log,body.light .toolcall,body.light .cmdk-box,
+body.light .drawer-box,body.light .toast,body.light .av-chip,
+body.light .av-back,body.light .avsrc,body.light .step .nm,
+body.light .minibar .track,body.light .stepimg,body.light .hguide img,
+body.light .hero-live,body.light .maprow,body.light .tbl tr:hover td,
+body.light .rowlink.sel td,body.light .tab:hover{
+  background:#ffffff!important;border-color:#e4e4e7!important;color:#18181b!important
+}
+body.light .divchip.on,body.light .acard:hover,body.light .dropzone.over,
+body.light .avrow:active,body.light .runitem:hover,body.light .cmdk-item:hover,
+body.light .cmdk-item.sel,body.light .rowlink.sel td{
+  background:#ecfdf5!important;border-color:#86efac!important;color:#14532d!important
+}
+body.light .workbar input,body.light .workbar select,body.light textarea#da-instr,
+body.light .bot-input input,body.light .av-bar input,body.light .av-bar select{
+  background:#ffffff!important;border:1px solid #d4d4d8!important;color:#18181b!important
+}
+body.light .bodytext,body.light .outblock .ob,body.light pre.log,body.light .bot-log{
+  color:#1f2937!important
+}
+body.light .inbox-item .nm,body.light .step .nm{color:#18181b!important}
+body.light .inbox-item .note,body.light .avsrc{color:#52525b!important}
+body.light .abadge{background:#f4f4f5!important;border-color:#d4d4d8!important;color:#52525b!important}
+
+/* ===== TERANG v12: semua latar gelap dalam style.css ditukar cerah ===== */
+body.light #inbox-note,
+body.light .abadge,
+body.light .acard,
+body.light .av-back,
+body.light .av-bar input,
+body.light .av-bar select,
+body.light .av-chip,
+body.light .av-emoji,
+body.light .av-facts span,
+body.light .av-stats span,
+body.light .avbar,
+body.light .avh,
+body.light .avsrc,
+body.light .avtask,
+body.light .bodytext,
+body.light .bot-input input,
+body.light .bot-log,
+body.light .btn,
+body.light .cmdk-box,
+body.light .copybox,
+body.light .divchip,
+body.light .drawer-box,
+body.light .dropzone,
+body.light .hbtn,
+body.light .hero-live,
+body.light .hguide,
+body.light .hguide img,
+body.light .inbox-item,
+body.light .krcard,
+body.light .lv-ag.queued .st,
+body.light .lv-run,
+body.light .minibar .track,
+body.light .outblock .ob,
+body.light .outblock summary,
+body.light .panel,
+body.light .planbox,
+body.light .step .nm,
+body.light .stepcard,
+body.light .stepimg,
+body.light .svc-row,
+body.light .sys,
+body.light .toast,
+body.light .toolcall,
+body.light .workbar input,
+body.light .workbar select,
+body.light input,
+body.light pre.log,
+body.light select,
+body.light textarea,
+body.light textarea#da-instr{
+  background:#ffffff!important;border-color:#e4e4e7!important;color:#18181b!important
+}
+body.light .acard:hover,
+body.light .agsel .one,
+body.light .avrow:active,
+body.light .btn:hover,
+body.light .cmdk-item.sel,
+body.light .cmdk-item:hover,
+body.light .divchip.on,
+body.light .dropzone.over,
+body.light .maprow:hover td,
+body.light .panel:hover,
+body.light .rowlink.sel td,
+body.light .runitem:hover,
+body.light .tab:hover,
+body.light .tbl tr:hover td{
+  background:#ecfdf5!important;border-color:#86efac!important;color:#14532d!important
+}
+body.light .btn,body.light .hbtn{background:#f4f4f5!important;border:1px solid #d4d4d8!important;color:#18181b!important}
+body.light .minibar .track,body.light .avbar{background:#e4e4e7!important}
+body.light .bodytext,body.light .outblock .ob,body.light pre.log,body.light .bot-log{color:#1f2937!important}
+body.light .toolcall{color:#14532d!important}
+body.light .stepimg,body.light .hguide img{background:#f4f4f5!important}
+/* ===== TERANG v13: chip status, header, nombor langkah ===== */
+body.light .chip-live{
+  background:#ffffff!important;border:1px solid #d4d4d8!important;
+  color:#3f3f46!important;backdrop-filter:none!important;box-shadow:none!important
+}
+body.light .chip-live b{color:#15803d!important}
+body.light .chip-live.warn{background:#fffbeb!important;border-color:#fcd34d!important;color:#78350f!important}
+body.light .chip-live.warn b{color:#b45309!important}
+body.light .chip-live.bad{background:#fef2f2!important;border-color:#fca5a5!important;color:#7f1d1d!important}
+body.light .chip-live.bad b{color:#b91c1c!important}
+body.light .top{background:rgba(255,255,255,.95)!important;border-bottom:1px solid #e4e4e7!important;backdrop-filter:blur(8px)!important}
+body.light .stepnum{background:#ffffff!important;border:1px solid #16a34a!important;color:#15803d!important}
+body.light .abar .seg,body.light .avbar{background:#e4e4e7!important}
+body.light .bar{background:#e4e4e7!important}
+body.light .bar i{background:#16a34a!important}
+/* ===== TERANG v14: sapu semua input/select/chip gelap ===== */
+body.light .workbar input,body.light .workbar select,body.light .workbar textarea,
+body.light input,body.light select,body.light textarea{
+  background:#ffffff!important;border:1px solid #d4d4d8!important;color:#18181b!important;
+  box-shadow:none!important
+}
+body.light .workbar input::placeholder,body.light input::placeholder{color:#71717a!important}
+body.light #em-chips .chip-live,body.light .workbar .chip-live,body.light .hl-chips .chip-live{
+  background:#ffffff!important;border:1px solid #d4d4d8!important;color:#3f3f46!important;
+  backdrop-filter:none!important;box-shadow:none!important
+}
+body.light #em-chips .chip-live b,body.light .workbar .chip-live b{color:#15803d!important}
+body.light .svc-row{background:#ffffff!important;border-color:#e4e4e7!important}
+body.light .drop,.light .dropzone{background:#fafafa!important;border-color:#d4d4d8!important;color:#3f3f46!important}
+/* ===== TEMA PILIHAN v15: krim / biru muda / kelabu / hijau muda / gelap ===== */
+body.theme-cream{--bg:#fdf6e3;--bg2:#fbf1dc;--panel:#fffaf0;--panel2:#f7ecd7;--line:#e6d9bd;--line2:#d8c8a6;--ink:#3b2f1f;--ink2:#54452f;--dim:#8a7a5f;--acc:#b45309;--oc-text:#3b2f1f}
+body.theme-blue{--bg:#eef6ff;--bg2:#e4f0fe;--panel:#ffffff;--panel2:#f0f7ff;--line:#cfe3f7;--line2:#b6d4f0;--ink:#12314d;--ink2:#264763;--dim:#5c7f9c;--acc:#1d6fd0;--oc-text:#12314d}
+body.theme-grey{--bg:#f2f2f4;--bg2:#e9e9ed;--panel:#ffffff;--panel2:#f4f4f6;--line:#dcdce2;--line2:#c9c9d2;--ink:#26262b;--ink2:#3f3f46;--dim:#71717a;--acc:#3f3f46;--oc-text:#26262b}
+body.theme-mint{--bg:#effaf4;--bg2:#e3f5ec;--panel:#ffffff;--panel2:#f1fbf6;--line:#cbe9db;--line2:#b0dcc8;--ink:#14352a;--ink2:#2a5244;--dim:#5f8878;--acc:#0f9b63;--oc-text:#14352a}
+
+body.theme-cream,body.theme-blue,body.theme-grey,body.theme-mint{background:var(--bg)!important;color:var(--ink)!important}
+body.theme-cream .panel,body.theme-blue .panel,body.theme-grey .panel,body.theme-mint .panel{background:var(--panel)!important;border-color:var(--line)!important;color:var(--ink)!important}
+body.theme-cream .side,body.theme-blue .side,body.theme-grey .side,body.theme-mint .side{background:var(--panel)!important;border-right:1px solid var(--line)!important}
+body.theme-cream header.top,body.theme-blue header.top,body.theme-grey header.top,body.theme-mint header.top{background:var(--panel)!important;border-bottom:1px solid var(--line)!important}
+body.theme-cream .card,body.theme-blue .card,body.theme-grey .card,body.theme-mint .card,
+body.theme-cream .krcard,body.theme-blue .krcard,body.theme-grey .krcard,body.theme-mint .krcard,
+body.theme-cream .svc-row,body.theme-blue .svc-row,body.theme-grey .svc-row,body.theme-mint .svc-row,
+body.theme-cream .inbox-item,body.theme-blue .inbox-item,body.theme-grey .inbox-item,body.theme-mint .inbox-item{background:var(--panel)!important;border-color:var(--line)!important;color:var(--ink)!important}
+body.theme-cream .hero-live,body.theme-blue .hero-live,body.theme-grey .hero-live,body.theme-mint .hero-live{background:var(--panel2)!important}
+body.theme-cream .hl-title,body.theme-blue .hl-title,body.theme-grey .hl-title,body.theme-mint .hl-title{color:var(--ink)!important}
+body.theme-cream .hl-sub,body.theme-blue .hl-sub,body.theme-grey .hl-sub,body.theme-mint .hl-sub{color:var(--dim)!important}
+body.theme-cream .chip-live,body.theme-blue .chip-live,body.theme-grey .chip-live,body.theme-mint .chip-live{background:var(--panel)!important;border-color:var(--line)!important;color:var(--ink2)!important}
+body.theme-cream .bodytext,body.theme-blue .bodytext,body.theme-grey .bodytext,body.theme-mint .bodytext{background:var(--panel)!important;color:var(--ink)!important}
+body.theme-cream input,body.theme-blue input,body.theme-grey input,body.theme-mint input,
+body.theme-cream textarea,body.theme-blue textarea,body.theme-grey textarea,body.theme-mint textarea,
+body.theme-cream select,body.theme-blue select,body.theme-grey select,body.theme-mint select{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--line2)!important}
+body.theme-cream #side button[data-go],body.theme-blue #side button[data-go],body.theme-grey #side button[data-go],body.theme-mint #side button[data-go]{color:var(--ink2)!important}
+body.theme-cream #side button[data-go].on,body.theme-blue #side button[data-go].on,body.theme-grey #side button[data-go].on,body.theme-mint #side button[data-go].on{background:var(--panel2)!important;color:var(--acc)!important}
+/* ===== TERANG v16: baki blok gelap (av-head, laporan harian, kad) ===== */
+body.light .av-head{
+  background:linear-gradient(180deg,#ffffff,#f6f7f9)!important;
+  border:1px solid #e4e4e7!important;color:#18181b!important
+}
+body.light .av-head *{color:#18181b!important}
+body.light .bodytext{background:#ffffff!important;color:#1f2937!important}
+body.light .bodytext *{color:#1f2937!important}
+body.light #report-preview{background:#ffffff!important;color:#1f2937!important;border:1px solid #e4e4e7!important}
+body.light .panel,body.light .card,body.light .outblock{background:#ffffff!important;border-color:#e4e4e7!important;color:#18181b!important}
+body.light .btn{background:#f4f4f5!important;color:#18181b!important;border-color:#d4d4d8!important}
+body.light .btn.gold{background:#fef3c7!important;color:#78350f!important;border-color:#fcd34d!important}
+body.light .hero-live{background:#ffffff!important;border:1px solid #e4e4e7!important;color:#18181b!important}
+body.light .hint{color:#52525b!important}

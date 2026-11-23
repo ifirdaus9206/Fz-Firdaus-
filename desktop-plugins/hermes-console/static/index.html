@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HERMES CONSOLE</title>
+<link rel="stylesheet" href="/static/style.css?v=20261123b">
+<link rel="stylesheet" href="/static/theme.css?v=16">
+</head>
+<body class="light">
+<nav class="side" id="side">
+  <div class="brand"><span class="dot"></span> SATU PUSAT</div>
+  <div class="grp">Pantau</div>
+  <button data-go="pusat" class="on"><i>◉</i> PUSAT</button>
+  <button data-go="work"><i>▶</i> KERJA</button>
+  <button data-go="watak"><i>☰</i> EJEN / WATAK</button>
+  <button data-go="org"><i>⌗</i> ORGANISASI</button>
+  <button data-go="skill"><i>✦</i> SKILL</button>
+  <button data-go="cron"><i>⏱</i> CRON</button>
+  <button data-go="email"><i>✉</i> EMAIL</button>
+  <button data-go="mcp"><i>⚡</i> MCP</button>
+  <div class="grp">Kawal</div>
+  <button data-go="agency"><i>⚙</i> AGENCY</button>
+  <button data-go="buka"><i>↗</i> BUKA APP</button>
+  <button data-go="trading"><i>$</i> TRADING 19</button>
+  <div class="grp">Sistem</div>
+  <button data-go="system"><i>⛭</i> SERVIS</button>
+  <button data-go="gudang"><i>▤</i> GUDANG</button>
+  <button data-go="sandaran"><i>⤓</i> SANDARAN</button>
+  <button data-go="sofia"><i>◫</i> SOFIA · PC</button>
+  <div class="foot">
+    <div id="side-svc">–</div>
+  </div>
+</nav>
+
+<header class="top">
+  <div class="brand">
+    <span class="dot" id="livedot"></span>
+    <span class="logo">HERMES<span class="ac">CONSOLE</span></span>
+    <span class="ver" id="ver">v1.0</span>
+    <button class="btn" id="quick-adb" title="Terus ke borang pasang ADB">ADB</button>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tab="pusat">PUSAT</button>
+    <button class="tab" data-tab="overview">OVERVIEW</button>
+    <button class="tab" data-tab="work">KERJA</button>
+    <button class="tab" data-tab="org">ORGANISASI</button>
+    <button class="tab" data-tab="agency">AGENCY</button>
+    <button class="tab" data-tab="ejen">EJEN</button>
+    <button class="tab" data-tab="trading">TRADING 19</button>
+    <button class="tab" data-tab="panduan">PANDUAN</button>
+    <button class="tab" data-tab="system">SISTEM</button>
+    <button class="tab" data-tab="web">WEB UI</button>
+    <button class="tab" data-tab="buka">BUKA</button>
+    <button class="tab" data-tab="gudang">GUDANG</button>
+    <button class="tab" data-tab="sofia">SOFIA · PC</button>
+  <button class="tab" data-tab="sandaran">SANDARAN</button>
+  </nav>
+  <div class="homes" id="homes"></div>
+  <div class="clock"><span id="clock">--:--:--</span><span class="live" id="live">LIVE</span></div>
+</header>
+
+<main>
+<div id="fileov" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.78);padding:16px;overflow:auto">
+  <div class="panel" style="max-width:940px;margin:0 auto">
+    <div class="ph"><h2 id="fileov-name">FAIL</h2><button class="btn" id="fileov-close">TUTUP</button></div>
+    <div class="pbody"><pre class="bot-log" id="fileov-body" style="max-height:72vh;overflow:auto;white-space:pre-wrap">–</pre></div>
+  </div>
+</div>
+<div class="hud">
+  <span class="pill">HERMES20 <b id="hud-gw1">–</b></span>
+  <span class="pill">HERMES19 <b id="hud-gw2">–</b></span>
+  <span class="pill">SKILL <b id="hud-sk">–</b></span>
+  <span class="pill">RAM <b id="hud-mem">–</b></span>
+  <span class="spacer"></span>
+  <select class="btn" id="hud-theme" title="Tukar tema" style="padding:4px 6px">
+    <option value="light">TERANG</option>
+    <option value="cream">KRIM</option>
+    <option value="blue">BIRU MUDA</option>
+    <option value="grey">KELABU TERANG</option>
+    <option value="mint">HIJAU MUDA</option>
+    <option value="dark">GELAP</option>
+  </select>
+</div>
+
+  <section id="tab-pusat" class="pane active">
+    <div class="hero-live">
+      <img class="hero-img" src="/static/img/hero-control.png" alt="">
+      <div class="hero-overlay">
+        <div class="hl-kicker">MISSION CONTROL</div>
+        <div class="hl-title">PUSAT PEMANTAU</div>
+        <div class="hl-sub">Ketua → 8 sistem → 18 divisi → 282 ejen · dikemas kini setiap 2 saat</div>
+        <div class="hl-chips" id="hl-chips"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>DASHBOARD WEB · 9119</h2><span class="hint" id="pw-meta">–</span></div>
+      <div class="pbody">
+        <div class="copybox" id="pw-url" style="font-size:12px;word-break:break-all">memuat…</div>
+        <div class="workbar" style="flex-wrap:wrap;margin-top:10px">
+          <button class="btn primary" id="pw-open">BUKA DASHBOARD</button>
+          <button class="btn" id="pw-copy">SALIN URL</button>
+          <span class="hint" id="pw-msg"></span>
+        </div>
+        <div class="kv"><span class="k">LAN (WiFi sama)</span><span class="v" id="pw-lan">–</span></div>
+        <div class="kv"><span class="k">Pengguna</span><span class="v" id="pw-user">–</span></div>
+        <div class="kv"><span class="k">Port 9119</span><span class="v" id="pw-port">–</span></div>
+        <div class="kv"><span class="k">Tailscale (tetap)</span><span class="v mono" id="pw-ts">http://100.89.45.41:9119/</span></div>
+        <div class="kv"><span class="k">Servis</span><span class="v" id="pw-svc">–</span></div>
+        <div class="kv"><span class="k">Kata laluan</span><span class="v mono" id="pw-secret">–</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>TUGAS SEDANG JALAN</h2><span class="hint" id="ws-meta">–</span></div>
+      <div class="pbody" id="ws-list"><div class="empty">Tiada tugasan berjalan sekarang.</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>GERBANG · SKILL · ENAJIN</h2><span class="hint" id="fl-meta">–</span></div>
+      <div class="pbody">
+        <div class="svc-list" id="fl-gw">memuat…</div>
+        <div class="workbar" style="flex-wrap:wrap;margin-top:12px;gap:8px" id="fl-chips"></div>
+        <div class="kv"><span class="k">Skill</span><span class="v" id="fl-skills">–</span></div>
+        <div class="kv"><span class="k">ATC (trading)</span><span class="v" id="fl-atc">–</span></div>
+        <div class="kv"><span class="k">RAM bebas</span><span class="v" id="fl-mem">–</span></div>
+        <div class="kv"><span class="k">Cakera bebas</span><span class="v" id="fl-disk">–</span></div>
+      </div>
+    </div>
+
+    <div class="grid2 wide-left">
+      <div class="panel">
+        <div class="ph"><h2>CARTA ORGANISASI · LIVE</h2><span class="hint" id="oc-meta"></span></div>
+        <div class="pbody ochart-wrap"><svg id="oc" viewBox="0 0 1400 620" preserveAspectRatio="xMidYMin meet"></svg></div>
+      </div>
+      <div>
+        <div class="panel" style="display:none">
+          <div class="ph"><h2>SEDANG JALAN</h2><span class="hint" id="lv-runs">–</span></div>
+          <div class="pbody" id="lv-active"><div class="empty">Tiada run aktif. Mulakan di tab AGENCY → DEWAN ARAHAN.</div></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><h2>AKTIVITI LIVE</h2><span class="hint"><span class="ldot"></span> aliran langsung</span></div>
+          <div class="pbody" id="lv-feed" style="max-height:330px;overflow:auto"><div class="empty">menunggu…</div></div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="panel">
+      <div class="ph"><h2>PETA EJEN AKTIF</h2><span class="hint" id="map-meta">–</span></div>
+      <div class="pbody scrollx" id="map-body"><div class="empty">Tiada ejen berjalan.</div></div>
+    </div>
+
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>INBOX — FAIL / IMEJ</h2><span class="hint" id="inbox-meta">–</span></div>
+        <div class="pbody">
+          <div class="dropzone" id="inbox-drop">
+            Tarik fail ke sini, atau <label class="pick">pilih fail<input type="file" id="inbox-file" multiple hidden></label>
+            <div class="hint" style="margin-top:4px">imej · teks · csv · json · kod · apa-apa fail (maks 8 MB)</div>
+          </div>
+          <textarea id="inbox-note" rows="2" placeholder="Nota untuk fail ini (contoh: ini draf menu, betulkan harga)"></textarea>
+          <div class="workbar">
+            <button class="btn primary" id="inbox-send">TAMBAH KE INBOX</button>
+            <span class="hint" id="inbox-status"></span>
+          </div>
+          <div id="inbox-list" class="inbox-list"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>LAPORAN HARIAN</h2><span class="hint" id="report-meta">–</span></div>
+        <div class="pbody">
+          <div class="bodytext" id="report-preview" style="max-height:200px">memuat…</div>
+          <div class="workbar">
+            <button class="btn" id="report-dl">MUAT TURUN .MD</button>
+            <button class="btn gold" id="report-tg">HANTAR KE TELEGRAM</button>
+            <span class="hint" id="report-status"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>BOT STATUS</h2><span class="hint">tanya di mana ejen berada &amp; kosnya</span></div>
+        <div class="pbody">
+          <div class="bot-log" id="bot-log">
+            <div class="bot-line sys">Taip /help untuk senarai arahan. Contoh: <code>/agents</code>, <code>/where brand-guardian</code>, <code>/cost</code></div>
+          </div>
+          <div class="bot-input">
+            <input id="bot-cmd" placeholder="/status · /agents · /where &lt;slug&gt; · /cost · /runs" autocomplete="off">
+            <button class="btn primary" id="bot-send">HANTAR</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>SEJARAH 7 HARI</h2><span class="hint" id="hist-meta">–</span></div>
+        <div class="pbody" id="hist-body"><div class="empty">mengumpul…</div></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>BEBAN 60 MINIT</h2><span class="hint" id="lv-tools">–</span></div>
+        <div class="pbody"><div class="spark" id="lv-spark"></div>
+          <div class="spark-axis"><span>-60m</span><span>-30m</span><span>sekarang</span></div></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>RADAR SISTEM</h2><span class="hint" id="lv-now">–</span></div>
+        <div class="pbody radar-wrap">
+          <img class="radar" src="/static/img/radar.png" alt="">
+          <div class="radar-info" id="lv-radar"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-overview" class="pane">
+    <div class="cards" id="ov-cards"></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>AKTIVITI 14 HARI</h2><span class="hint">bar = sesi · garis = tool call</span></div>
+        <div id="ov-chart" class="chart"></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>AKTIVITI TERAKHIR</h2></div>
+        <div id="ov-last" class="pbody"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>SESI TERKINI</h2></div>
+      <div id="ov-recent" class="pbody"></div>
+    </div>
+  </section>
+
+  <section id="tab-work" class="pane">
+    <div class="panel">
+      <div class="ph"><h2>TAMBAH KERJA</h2><span class="hint" id="tk-meta">Ketua merancang · ejen menjalankan</span></div>
+      <div class="pbody">
+        <textarea id="tk-instr" rows="3" placeholder="Tulis arahan kerja (min 12 aksara)…" style="width:100%"></textarea>
+        <div class="workbar" style="margin-top:10px;flex-wrap:wrap">
+          <select id="tk-max">
+            <option value="1">1 ejen</option>
+            <option value="2">2 ejen</option>
+            <option value="3" selected>3 ejen</option>
+            <option value="4">4 ejen</option>
+            <option value="5">5 ejen</option>
+            <option value="6">6 ejen</option>
+          </select>
+          <button class="btn primary" id="tk-hantar">HANTAR &amp; JALANKAN</button>
+          <span class="hint" id="tk-msg"></span>
+        </div>
+      </div>
+    </div>
+    <div class="workbar">
+      <input id="wq" placeholder="cari tajuk / id sesi…" autocomplete="off">
+      <select id="wlimit">
+        <option value="40">40 terakhir</option>
+        <option value="100" selected>100 terakhir</option>
+        <option value="300">300 terakhir</option>
+      </select>
+      <span class="hint" id="wcount"></span>
+    </div>
+    <div class="workgrid">
+      <div class="panel scroll" id="w-list"><div class="pbody"><div class="empty">memuat…</div></div></div>
+      <div class="panel scroll" id="w-detail"><div class="pbody"><div class="empty">Pilih satu sesi di kiri.</div></div></div>
+    </div>
+  </section>
+
+  <section id="tab-org" class="pane">
+    <div class="hero" id="org-hero"></div>
+    <div class="panel">
+      <div class="ph"><h2>ENJIN — 8 SISTEM</h2><span class="hint">sumber tunggal kebenaran: system/*.md</span></div>
+      <div class="sysgrid" id="org-systems"></div>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>ALIRAN WAJIB</h2></div>
+        <div class="pbody"><div class="flow" id="org-flow"></div></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>UNDANG-UNDANG TETAP</h2><span class="hint" id="org-lawcount"></span></div>
+        <div class="pbody"><ol class="laws" id="org-laws"></ol></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>SKILL PER HOME</h2></div>
+      <div class="pbody"><div class="skills" id="org-skills"></div></div>
+    </div>
+  </section>
+
+
+  <section id="tab-agency" class="pane">
+    <div class="hero" id="ag-hero"></div>
+    <div class="cards" id="ag-cards"></div>
+
+
+    <div class="panel">
+      <div class="ph"><h2>DEWAN ARAHAN</h2><span class="hint">kau arah → Ketua selidik 282 ejen → ejen jalan dengan persona sendiri</span></div>
+      <div class="pbody">
+        <textarea id="da-instr" placeholder="Contoh: Bina halaman landing ringkas untuk produk kopi tempatan, ada borang tempahan, mesti laju di telefon."></textarea>
+        <div class="workbar" style="margin:10px 0 0">
+          <select id="da-max" title="had ejen">
+            <option value="2">2 ejen</option>
+            <option value="3" selected>3 ejen</option>
+            <option value="4">4 ejen</option>
+            <option value="5">5 ejen</option>
+            <option value="6">6 ejen</option>
+          </select>
+          <button class="btn primary" id="da-plan">SELIDIK &amp; RANCANG</button>
+          <button class="btn gold" id="da-run" disabled>LAKSANA</button>
+          <span class="statuspill" id="da-status">sedia</span>
+          <span class="hint" id="da-meta"></span>
+        </div>
+        <div class="hint" id="da-atts" style="margin-top:8px"></div>
+        <div class="da-flow" id="da-flow">
+          <span class="st" data-step="1">01 ARAHAN</span><span class="ar">→</span>
+          <span class="st" data-step="2">02 KETUA FAHAM</span><span class="ar">→</span>
+          <span class="st" data-step="3">03 SELIDIK 282</span><span class="ar">→</span>
+          <span class="st" data-step="4">04 PILIH &amp; AGIH</span><span class="ar">→</span>
+          <span class="st" data-step="5">05 EKSEKUSI PERSONA</span><span class="ar">→</span>
+          <span class="st" data-step="6">06 QA</span><span class="ar">→</span>
+          <span class="st" data-step="7">07 SINTESIS</span><span class="ar">→</span>
+          <span class="st" data-step="8">08 ARKIB</span>
+        </div>
+        <div class="hint" id="da-guard" style="margin-top:6px"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="da-planpanel" style="display:none">
+      <div class="ph"><h2>PELAN KETUA</h2><span class="hint" id="da-planid"></span></div>
+      <div class="pbody" id="da-planbody"></div>
+    </div>
+
+    <div class="panel" id="da-resultpanel" style="display:none">
+      <div class="ph"><h2>HASIL &amp; KEPUTUSAN</h2><span class="hint" id="da-resultmeta"></span></div>
+      <div class="pbody" id="da-resultbody"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>ALUR KERJA</h2><span class="hint">imej penuh 1500×1210</span></div>
+        <div class="pbody">
+          <a href="/static/img/workflow.png" target="_blank"><img class="workflow" src="/static/img/workflow.png" alt="Alur kerja Ketua × 282 ejen"></a>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>ANALISIS BENTUK &amp; GAYA</h2><span class="hint" id="an-meta"></span></div>
+        <div class="pbody" id="an-body"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>ARKIB RUN</h2><span class="hint" id="da-rundir"></span></div>
+      <div class="pbody" id="da-runs"></div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>DIVISI → PERANAN DALAM 8 SISTEM</h2><span class="hint">klik untuk tapis</span></div>
+      <div class="pbody"><div class="divchips" id="ag-divs"></div></div>
+    </div>
+
+    <div class="panel" id="kr-panel">
+      <div class="ph"><h2>ROSTER KETUA — 282 EJEN</h2><span class="hint" id="kr-meta">memuat…</span></div>
+      <div class="pbody">
+        <div class="hint" style="margin-bottom:7px">SETIAP EJEN: ARCHETYPE · VIBE · BADAN PENUH · DIVISI · TIER KUALITI</div>
+        <div class="divchips" id="kr-arch"></div>
+        <div class="workbar" style="margin:9px 0">
+          <input id="kr-q" placeholder="cari: slug, nama, tag, hasil…" autocomplete="off">
+          <select id="kr-tier" title="tapis tier">
+            <option value="">semua tier</option>
+            <option value="A">A · teratas</option>
+            <option value="B">B · kukuh</option>
+            <option value="C">C · asas</option>
+          </select>
+        </div>
+        <div class="kr-list" id="kr-list"><div class="empty">memuat…</div></div>
+      </div>
+    </div>
+
+    <div class="workgrid">
+      <div class="panel scroll">
+        <div class="ph"><h2>ROSTER</h2><span class="hint" id="ag-count"></span></div>
+        <div class="pbody">
+          <div class="workbar" style="margin-bottom:10px">
+            <input id="agq" placeholder="cari ejen: slug, nama, deskripsi…" autocomplete="off">
+          </div>
+          <div class="agrid" id="ag-list"><div class="empty">memuat…</div></div>
+        </div>
+      </div>
+      <div class="panel scroll" id="ag-detail"><div class="pbody"><div class="empty">Pilih satu ejen di kiri.</div></div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>SUMBER &amp; KEMAS KINI</h2><span class="hint" id="ag-githint"></span></div>
+        <div class="pbody" id="ag-src"></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>CADANGAN KETUA</h2><span class="hint">dijana dari data, bukan teks statik</span></div>
+        <div class="pbody" id="ag-ideas"></div>
+        <div class="pbody" id="ag-pilots"></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>DRIFT KATALOG</h2><span class="hint">roster vs korpus cakera</span></div>
+        <div class="pbody" id="ag-drift"></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>PENGGUNAAN TOOL AGENCY</h2><span class="hint" id="ag-usecount"></span></div>
+        <div class="pbody" id="ag-usage"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-ejen" class="pane">
+    <div id="av-picker">
+      <div class="av-hero" id="av-hero"></div>
+      <div class="av-health" id="av-health"></div>
+      <div class="av-bar">
+        <input id="av-q" placeholder="Cari ejen: nama, archetype, tag, hasil…" autocomplete="off">
+        <select id="av-sort" title="susun">
+          <option value="skor">ikut skor</option>
+          <option value="nama">ikut nama</option>
+          <option value="badan">ikut badan</option>
+        </select>
+      </div>
+      <div class="av-chips" id="av-chips"></div>
+      <div class="av-list" id="av-list"><div class="empty">memuat…</div></div>
+    </div>
+    <div id="av-dash" style="display:none"></div>
+  </section>
+
+  <section id="tab-trading" class="pane">
+    <div class="hero" id="tr-hero"></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>SKOP PASARAN</h2><span class="hint">leverage berbeza setiap instrumen</span></div>
+        <div class="pbody"><table class="tbl" id="tr-symbols"></table></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>DOKTRIN RISIKO</h2></div>
+        <div class="pbody"><ol class="laws" id="tr-doctrine"></ol></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>KEPUTUSAN ATC</h2><span class="hint" id="tr-counts"></span></div>
+      <div class="pbody scrollx"><table class="tbl" id="tr-decisions"></table></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>PAPER LIVE — DEMO ATC</h2><span class="hint" id="tr-pl-meta"></span></div>
+      <div class="pbody">
+        <div id="tr-pl-strip" class="workbar" style="margin-bottom:8px"></div>
+        <div id="tr-pl-events" class="feed" style="max-height:150px"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>PAPER TRADING</h2></div>
+      <div class="pbody scrollx"><table class="tbl" id="tr-paper"></table></div>
+    </div>
+  </section>
+
+
+  <section id="tab-panduan" class="pane">
+    <div class="panel">
+      <div class="ph"><h2>STATUS PERANTI</h2><span class="hint" id="pd-checked">–</span></div>
+      <div class="pbody">
+        <div id="pd-status" class="workbar">memuat…</div>
+        <div id="pd-caveat" class="hint" style="margin-top:8px"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>LANGKAH PEMASANGAN F-DROID</h2><span class="hint" id="pd-count">–</span></div>
+      <div class="pbody">
+        <div id="pd-steps" class="steps">memuat…</div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-hyperos">
+      <div class="ph"><h2>PANDUAN HYPEROS — AUTO-RESTART TANPA DIGANGGU</h2>
+        <span class="hint">3 tetapan wajib · HyperOS (Android 16)</span></div>
+      <div class="pbody">
+        <div class="hint" style="margin-bottom:10px;line-height:1.6">
+          Tujuan: HyperOS suka menutup aplikasi latar belakang. Ikut 4 langkah di bawah
+          supaya <b>Termux + console 8787</b> hidup berterusan. Gambar ialah <b>gambar rajah UI</b>
+          (bukan tangkapan skrin sebenar) — susunan menu boleh berbeza sedikit ikut versi HyperOS,
+          tetapi nama tetapan adalah sama. Tekan gambar untuk buka penuh.
+        </div>
+        <div class="hguides">
+          <figure class="hguide">
+            <div class="stepnum">1</div>
+            <a href="/static/img/panduan/hyperos-01-urus-apl.svg" target="_blank">
+              <img src="/static/img/panduan/hyperos-01-urus-apl.svg" alt="Seting › Apl › Urus apl" loading="lazy"></a>
+            <figcaption><b>Buka senarai apl</b>
+              <ol><li>Seting</li><li>Apl</li><li>Urus apl</li><li>Cari <b>Termux</b>, tekan</li></ol>
+            </figcaption>
+          </figure>
+          <figure class="hguide">
+            <div class="stepnum">2</div>
+            <a href="/static/img/panduan/hyperos-02-autostart.svg" target="_blank">
+              <img src="/static/img/panduan/hyperos-02-autostart.svg" alt="Suis Autostart" loading="lazy"></a>
+            <figcaption><b>Hidupkan Autostart</b>
+              <ol><li>Dalam halaman Termux, cari baris <b>Autostart</b></li>
+                  <li>Tekan suis sampai jadi <b>hijau</b></li></ol>
+            </figcaption>
+          </figure>
+          <figure class="hguide">
+            <div class="stepnum">3</div>
+            <a href="/static/img/panduan/hyperos-03-bateri.svg" target="_blank">
+              <img src="/static/img/panduan/hyperos-03-bateri.svg" alt="Bateri › Tiada had" loading="lazy"></a>
+            <figcaption><b>Bateri → Tiada had</b>
+              <ol><li>Tekan baris <b>Bateri</b></li><li>Pilih <b>Tiada had</b></li>
+                  <li>Sahkan. Ulang untuk <b>Termux:API</b> / <b>Termux:Boot</b> jika ada</li></ol>
+            </figcaption>
+          </figure>
+          <figure class="hguide">
+            <div class="stepnum">4</div>
+            <a href="/static/img/panduan/hyperos-04-recents.svg" target="_blank">
+              <img src="/static/img/panduan/hyperos-04-recents.svg" alt="Kunci kad dalam Recents" loading="lazy"></a>
+            <figcaption><b>Kunci kad Recents</b>
+              <ol><li>Buka <b>Apl terkini</b> (Recent apps)</li><li><b>Tekan lama</b> kad Termux</li>
+                  <li>Tekan ikon <b>kunci</b> → kad kekal walaupun “clear all”</li></ol>
+            </figcaption>
+          </figure>
+        </div>
+        <div class="hint" style="margin-top:12px">
+          Semakan pantas: kalau console mati bila skrin ditutup, ulang langkah 2 dan 3.
+          Selepas ketiga-tiga tetapan, uji dengan menutup skrin 5 minit —
+          <code>curl -s http://127.0.0.1:8787/api/ping</code> mesti balas <code>{"ok":true}</code>.
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-boot">
+      <div class="ph"><h2>PASANG TERMUX:BOOT — AUTO-MULA SELEPAS REBOOT</h2>
+        <span class="hint" id="boot-meta">–</span></div>
+      <div class="pbody">
+        <div id="boot-status" class="workbar">memuat…</div>
+        <div class="workbar" style="margin-top:10px">
+          <button class="btn primary" id="boot-go">BUKA PEMASANG APK</button>
+          <button class="btn" id="boot-refresh">SEMAK SEMULA</button>
+          <span class="hint" id="boot-msg"></span>
+        </div>
+        <pre class="log" id="boot-log" style="margin-top:8px;display:none"></pre>
+        <div class="hguides" style="margin-top:12px">
+          <figure class="hguide">
+            <div class="stepnum">1</div>
+            <a href="/static/img/panduan/boot-01-fail.svg" target="_blank">
+              <img src="/static/img/panduan/boot-01-fail.svg" alt="Folder Download: tekan TermuxBoot.apk" loading="lazy"></a>
+            <figcaption><b>Buka fail APK</b>
+              <ol><li>App <b>Files</b> › Download</li><li>Tekan <b>TermuxBoot.apk</b> (26 KB)</li>
+                  <li>Pemasang Android terbuka</li></ol></figcaption>
+          </figure>
+          <figure class="hguide">
+            <div class="stepnum">2</div>
+            <a href="/static/img/panduan/boot-02-install.svg" target="_blank">
+              <img src="/static/img/panduan/boot-02-install.svg" alt="Dialog pemasang Android: tekan PASANG" loading="lazy"></a>
+            <figcaption><b>Tekan PASANG</b>
+              <ol><li>Jika disekat: hidupkan <b>Benarkan dari sumber ini</b></li>
+                  <li>Tekan <b>PASANG</b></li><li>Tunggu “Apl dipasang”</li></ol></figcaption>
+          </figure>
+          <figure class="hguide">
+            <div class="stepnum">3</div>
+            <a href="/static/img/panduan/boot-03-selesai.svg" target="_blank">
+              <img src="/static/img/panduan/boot-03-selesai.svg" alt="Buka app Termux:Boot sekali" loading="lazy"></a>
+            <figcaption><b>Buka app SEKALI</b>
+              <ol><li>Buka <b>Termux:Boot</b> sekali (wajib)</li>
+                  <li>Skrip <code>~/.termux/boot/</code> berjalan setiap kali telefon dihidupkan</li>
+                  <li>Sahkan status di atas → <b>TERPASANG</b></li></ol></figcaption>
+          </figure>
+        </div>
+        <div class="hint" style="margin-top:10px">
+          Selepas ini: buka Termux dan jalankan <code>sv status hermes-console</code> —
+          ia akan hidup sendiri setiap kali telefon reboot, tanpa perlu buka Termux.
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-adb-guide">
+      <div class="ph"><h2>ADB WAYARLES — TANGKAP SKRIN SEBENAR</h2>
+        <span class="hint">3 langkah · perlukan kod 6 digit</span></div>
+      <div class="pbody">
+        <div class="hint" style="margin-bottom:10px;line-height:1.6">
+          ADB dipasang dalam Termux (<code>adb 1.0.41</code>) tetapi telefon belum <b>paired</b>.
+          Panduan di bawah untuk <b>Redmi Note 15 Pro 5G</b> (HyperOS) — nama menu sama dengan
+          peranti lain. Selepas paired: butang <b>TANGKAP SKRIN PERANTI</b> (tab SISTEM) akan
+          menyimpan tangkapan skrin sebenar ke galeri LANGKAH.
+        </div>
+        <div class="workbar">
+          <button class="btn gold" id="adb-guide-go">PERGI KE BORANG ADB (tab SISTEM)</button>
+          <span class="hint">borang ada di tab SISTEM › PASANG ADB WAYARLES</span>
+        </div>
+        <div class="hguides" style="margin-top:12px">
+          <figure class="hguide">
+            <div class="stepnum">1</div>
+            <a href="/static/img/panduan/adb-01-pembangun.svg" target="_blank">
+              <img src="/static/img/panduan/adb-01-pembangun.svg" alt="Perihal telefon: nombor binaan 7 kali" loading="lazy"></a>
+            <figcaption><b>Hidupkan Pilihan pembangun</b>
+              <ol><li>Seting › <b>Perihal telefon</b></li><li>Ketik <b>Nombor binaan</b> 7 kali</li>
+                  <li>Pilihan pembangun terbuka</li></ol></figcaption>
+          </figure>
+          <figure class="hguide">
+            <div class="stepnum">2</div>
+            <a href="/static/img/panduan/adb-02-wayarles.svg" target="_blank">
+              <img src="/static/img/panduan/adb-02-wayarles.svg" alt="Pilihan pembangun: nyahpepijat wayarles" loading="lazy"></a>
+            <figcaption><b>Nyahpepijat wayarles</b>
+              <ol><li>Seting › <b>Pilihan pembangun</b></li><li>Hidupkan <b>Nyahpepijat wayarles</b></li>
+                  <li>Wi-Fi telefon mesti sama dengan rangkaian</li></ol></figcaption>
+          </figure>
+          <figure class="hguide">
+            <div class="stepnum">3</div>
+            <a href="/static/img/panduan/adb-03-kod.svg" target="_blank">
+              <img src="/static/img/panduan/adb-03-kod.svg" alt="Pasangkan peranti dengan kod" loading="lazy"></a>
+            <figcaption><b>Pasangkan dengan kod</b>
+              <ol><li>Tekan <b>Pasangkan peranti dengan kod</b></li>
+                  <li>Salin <b>IP:port</b> + <b>kod 6 digit</b></li>
+                  <li>Tampal dalam borang tab SISTEM → <b>PASANGKAN</b></li></ol></figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-upload">
+      <div class="ph"><h2>MUAT NAIK GAMBAR ANDA</h2>
+        <span class="hint">JPG / PNG / WEBP · maks 20 MB · imej besar dikecilkan sendiri</span></div>
+      <div class="pbody">
+        <div class="hint" style="margin-bottom:8px;line-height:1.6">
+          Guna panel ini untuk meletakkan <b>tangkapan skrin telefon anda sendiri</b>
+          (contoh: skrin ADB / Termux:Boot). Imej akan muncul dalam galeri
+          <b>LANGKAH PEMASANGAN</b> di atas, ikut urutan. Kalau imej terlalu besar atau
+          formatnya HEIC/AVIF, sistem tukar sendiri ke JPG 1600px.
+        </div>
+        <div class="workbar" style="flex-wrap:wrap;align-items:flex-start">
+          <label class="pick" style="border:1px dashed #2b463e;border-radius:8px;padding:8px 12px">
+            Pilih imej<input type="file" id="up-file" accept="image/*" hidden></label>
+          <span class="hint" id="up-info">tiada imej dipilih</span>
+        </div>
+        <img id="up-preview" class="pd-preview" alt="" style="display:none">
+        <input id="up-caption" placeholder="Keterangan (contoh: Skrin Nyahpepijat wayarles di Redmi Note 15 Pro 5G)"
+               style="width:100%;margin-top:8px;background:#0a1210;border:1px solid var(--line);border-radius:7px;padding:8px 10px;color:var(--ink)">
+        <div class="workbar">
+          <button class="btn primary" id="up-send">SIMPAN KE GALERI</button>
+          <button class="btn" id="up-clear">KOSONGKAN</button>
+          <span class="hint" id="up-msg"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>NOTA</h2><span class="hint">borang tambah imej ada di tab SISTEM</span></div>
+      <div class="pbody"><div class="hint">Guna tab <b>SISTEM → TAMBAH TANGKAPAN SKRIN</b> untuk muat naik imej atau tangkap skrin peranti.
+        Semua langkah muncul di atas mengikut urutan.</div></div>
+    </div>
+  </section>
+
+  <section id="tab-system" class="pane">
+    <div class="panel">
+      <div class="ph"><h2>TAMBAH TANGKAPAN SKRIN</h2><span class="hint" id="cap-meta">pilih imej + keterangan</span></div>
+      <div class="pbody">
+        <div class="workbar" style="flex-wrap:wrap;align-items:flex-start">
+          <label class="pick" style="border:1px dashed #2b463e;border-radius:8px;padding:8px 12px">
+            Pilih imej<input type="file" id="pd-file" accept="image/*" hidden></label>
+          <button class="btn" id="pd-clear" title="buang pilihan imej">KOSONGKAN IMEJ</button>
+          <span class="hint" id="pd-fileinfo">tiada imej dipilih</span>
+        </div>
+        <img id="pd-preview" class="pd-preview" alt="" style="display:none">
+        <input id="pd-caption" placeholder="Keterangan langkah (contoh: dialog Install keluar)"
+               style="width:100%;margin-top:8px;background:#0a1210;border:1px solid var(--line);border-radius:7px;padding:8px 10px;color:var(--ink)">
+        <div class="workbar">
+          <button class="btn primary" id="pd-send">TAMBAH LANGKAH</button>
+          <button class="btn gold" id="pd-shot" title="tangkam skrin melalui adb">TANGKAP SKRIN PERANTI</button>
+          <span class="hint" id="pd-msg"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>PASANG ADB WAYARLES</h2><span class="hint">tempat letak IP:port + kod 6 digit</span></div>
+      <div class="pbody">
+        <div class="workbar" style="flex-wrap:wrap">
+          <input id="adb-host" placeholder="IP:port  (cth 192.168.0.8:37123)"
+                 value="192.168.0.8:"
+                 style="flex:1;min-width:200px;background:#0a1210;border:1px solid var(--line);border-radius:7px;padding:8px 10px;color:var(--ink)">
+          <input id="adb-code" placeholder="kod 6 digit" maxlength="6" inputmode="numeric"
+                 style="width:140px;background:#0a1210;border:1px solid var(--line);border-radius:7px;padding:8px 10px;color:var(--ink)">
+          <input id="adb-conn" placeholder="IP:port connect (pilihan)"
+                 style="flex:1;min-width:180px;background:#0a1210;border:1px solid var(--line);border-radius:7px;padding:8px 10px;color:var(--ink)">
+          <button class="btn primary" id="adb-go">PASANGKAN</button>
+        </div>
+        <div class="hint" style="margin-top:8px">
+          Di telefon: Seting → Pilihan pembangun → Nyahpepijat wayarles →
+          “Pasangkan peranti dengan kod”. Salin IP:port + kod ke kotak atas.
+        </div>
+        <div id="adb-log" class="bodytext" style="max-height:170px;margin-top:8px"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-svc">
+      <div class="ph"><h2>SERVIS (RUNIT)</h2><span class="hint" id="svc-meta">–</span></div>
+      <div class="pbody">
+        <div class="hint" style="margin-bottom:8px">
+          Butang di bawah menjalankan <code>sv up</code> / <code>sv restart</code> / <code>sv down</code>
+          pada servis yang dibenarkan sahaja. <b>MATI</b> pada <code>hermes-console</code> akan
+          menutup konsol ini — hidupkan semula dari terminal: <code>sv up hermes-console</code>.
+          <b>MULA SEMULA</b> ambil ~10 saat (port 8787 dilepas dan diikat semula) — muat semula
+          halaman selepas itu.
+        </div>
+        <div id="svc-list" class="svc-list">memuat…</div>
+        <div class="workbar" style="margin-top:8px">
+          <button class="btn" id="svc-refresh">SEMAK SEMULA</button>
+          <span class="hint">log 80 baris terakhir muncul di bawah</span>
+        </div>
+        <pre class="log" id="svc-log" style="margin-top:8px"></pre>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>EJEN BERTUGAS</h2><span class="hint" id="sys-ejen-masa">–</span></div>
+      <div class="pbody" id="sys-ejen"></div>
+    </div>
+    <div class="grid2" id="sys-homes"></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>CRON</h2></div>
+        <div class="pbody" id="sys-cron"></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>PROSES</h2></div>
+        <div class="pbody" id="sys-procs"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>LOG</h2><span class="hint">40 baris terakhir</span></div>
+      <div class="pbody" id="sys-logs"></div>
+    </div>
+  </section>
+
+  <section id="tab-web" class="pane">
+    <div class="hero-live">
+      <div class="hero-overlay">
+        <div class="hl-kicker">RUANG KERJA · LUAR</div>
+        <div class="hl-title">DASHBOARD WEB</div>
+        <div class="hl-sub">UI penuh Hermes pada telefon ini (port 9119) · login diperlukan</div>
+        <div class="hl-chips" id="web-chips"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>URL PUBLIK</h2><span class="hint" id="web-updated">–</span></div>
+      <div class="pbody">
+        <div class="copybox" id="web-url" style="font-size:13px;word-break:break-all">memuat…</div>
+        <div class="workbar" style="flex-wrap:wrap;margin-top:10px">
+          <button class="btn primary" id="web-open">BUKA DALAM TAB BAHARU</button>
+          <button class="btn" id="web-copy">SALIN URL</button>
+          <button class="btn gold" id="web-verify">UJI PENUH</button>
+          <span class="hint" id="web-msg"></span>
+        </div>
+        <div class="kv"><span class="k">LAN (WiFi sama)</span><span class="v" id="web-lan">–</span></div>
+        <div class="kv"><span class="k">Pengguna</span><span class="v" id="web-user">–</span></div>
+        <div class="kv"><span class="k">Kata laluan</span><span class="v mono" id="web-secret">–</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>SERVIS</h2><span class="hint">hidup semula sendiri (runit)</span></div>
+      <div class="pbody"><div class="svc-list" id="web-svc"></div></div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>TANGGUH MATI</h2><span class="hint">semak selepas telefon dihidupkan semula</span></div>
+      <div class="pbody">
+        <div class="steps">
+          <div class="step"><span class="idx">01</span><span class="nm">Termux:Boot dipasang — servis runit mula sendiri</span></div>
+          <div class="step"><span class="idx">02</span><span class="nm">Lihat status di atas: dua-dua mesti <b>run</b></span></div>
+          <div class="step"><span class="idx">03</span><span class="nm">URL bertukar → tekan UJI PENUH, salin URL baharu</span></div>
+          <div class="step"><span class="idx">04</span><span class="nm">Bateri: Tetapan → Aplikasi → Termux → Tanpa had</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>LOG UJIAN</h2><span class="hint" id="web-logmeta">tekan UJI PENUH</span></div>
+      <div class="pbody"><pre class="bot-log" id="web-log" style="max-height:300px;overflow:auto">–</pre></div>
+    </div>
+  </section>
+
+  <section id="tab-buka" class="pane">
+    <div class="panel">
+      <div class="ph"><h2>LANCAR APP</h2><span class="hint" id="buka-bin">–</span></div>
+      <div class="pbody">
+        <div class="workbar" style="flex-wrap:wrap">
+          <input id="buka-url" type="text" placeholder="https://…" style="flex:1;min-width:200px;padding:10px;border-radius:8px;border:1px solid #2a3550;background:#0e1526;color:#e6edf7">
+          <button class="btn primary" id="buka-url-go">BUKA URL</button>
+        </div>
+        <div class="workbar" style="flex-wrap:wrap;margin-top:10px" id="buka-fixed"></div>
+        <div class="hint" style="margin-top:12px">App pihak ketiga pada telefon ini:</div>
+        <div class="workbar" style="flex-wrap:wrap;margin-top:8px" id="buka-apps">memuat…</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>LOG</h2><span class="hint" id="buka-meta">tekan butang</span></div>
+      <div class="pbody"><pre class="bot-log" id="buka-log" style="max-height:300px;overflow:auto">–</pre></div>
+    </div>
+  </section>
+
+  <section id="tab-watak" class="pane">
+    <div class="panel">
+      <div class="ph"><h2>WATAK · KATALOG EJEN</h2><span class="hint" id="wt-meta">–</span></div>
+      <div class="pbody">
+        <div class="workbar" style="gap:10px;flex-wrap:wrap">
+          <input id="wt-cari" placeholder="Cari nama / slug / divisi…" style="flex:1;min-width:180px">
+          <button class="btn primary" id="wt-tambah">+ TAMBAH WATAK</button>
+          <span class="hint mono" id="wt-count">–</span>
+        </div>
+        <div id="wt-form" class="panel" style="display:none;margin-top:12px">
+          <div class="ph"><h2 id="wt-form-title">TAMBAH WATAK BAHARU</h2><button class="btn" id="wt-batal">BATAL</button></div>
+          <div class="pbody">
+            <div class="workbar" style="flex-wrap:wrap;gap:8px">
+              <input id="wtf-name" placeholder="Nama watak (wajib)" style="flex:1;min-width:200px">
+              <input id="wtf-emoji" placeholder="Emoji" style="width:90px" maxlength="4">
+              <input id="wtf-division" placeholder="Divisi" style="width:150px">
+              <input id="wtf-tier" placeholder="Tier A/B/C" style="width:110px" maxlength="1">
+            </div>
+            <div class="workbar" style="flex-wrap:wrap;gap:8px;margin-top:8px">
+              <input id="wtf-vibe" placeholder="Vibe / gaya kerja" style="flex:1;min-width:200px">
+              <label class="hint" style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="wtf-ketua" style="width:auto"> Jadikan KETUA</label>
+            </div>
+            <textarea id="wtf-desc" placeholder="Keterangan ringkas (peranan watak)" rows="2" style="width:100%;margin-top:8px"></textarea>
+            <textarea id="wtf-body" placeholder="Persona penuh (arahan sistem watak) — pilihan" rows="4" style="width:100%;margin-top:8px"></textarea>
+            <div class="workbar" style="margin-top:10px;gap:8px">
+              <button class="btn primary" id="wt-simpan">SIMPAN WATAK</button>
+              <span class="hint" id="wt-form-msg"></span>
+            </div>
+          </div>
+        </div>
+        <div id="wt-list" style="margin-top:12px"><div class="empty">memuat…</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-skill" class="pane">
+    <div class="panel">
+      <div class="ph"><h2>SKILL</h2><span class="hint" id="sk-meta">–</span></div>
+      <div class="pbody">
+        <div class="workbar" style="gap:10px">
+          <input id="sk-cari" placeholder="Cari skill (nama / kategori / keterangan)…" style="flex:1">
+          <span class="hint mono" id="sk-count">–</span>
+        </div>
+        <div id="sk-list" style="margin-top:12px"><div class="empty">memuat…</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-mcp" class="pane">
+    <div class="panel">
+      <div class="ph"><h2>MCP · PELAYAN ALAT</h2><span class="hint" id="mcp-meta">–</span></div>
+      <div class="pbody">
+        <div class="hint" style="margin-bottom:8px">MCP = Model Context Protocol. Setiap pelayan MCP menambah alat baharu kepada ejen (contoh: n8n, GitHub, browser, database).</div>
+        <div class="workbar" style="flex-wrap:wrap;gap:8px">
+          <input id="mcp-name" placeholder="nama (cth: n8n)" style="flex:1;min-width:120px">
+          <input id="mcp-url" placeholder="URL pelayan (http/sse) — atau guna command" style="flex:2;min-width:180px">
+          <button class="btn primary" id="mcp-add">+ TAMBAH MCP</button>
+        </div>
+        <div class="workbar" style="flex-wrap:wrap;gap:8px;margin-top:8px">
+          <input id="mcp-cmd" placeholder="command (cth: npx) — untuk stdio" style="flex:1;min-width:140px">
+          <input id="mcp-args" placeholder="args (cth: -y @modelcontextprotocol/server-filesystem /sdcard)" style="flex:2;min-width:180px">
+          <button class="btn" id="mcp-catalog">SENARAI MCP DISYORKAN</button>
+        </div>
+        <div class="hint" id="mcp-status" style="margin-top:8px"></div>
+        <div id="mcp-list" style="margin-top:12px"><div class="empty">memuat…</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-cron" class="pane">
+    <div class="panel">
+      <div class="ph"><h2>CRON</h2><span class="hint" id="cr-meta">–</span></div>
+      <div class="pbody"><div id="cr-list"><div class="empty">memuat…</div></div></div>
+    </div>
+  </section>
+
+  <section id="tab-email" class="pane">
+    <div class="panel">
+      <div class="ph"><h2>EMAIL</h2><span class="hint" id="em-meta">–</span></div>
+      <div class="pbody">
+        <div class="workbar" style="flex-wrap:wrap;gap:8px" id="em-chips"></div>
+        <div class="kv"><span class="k">Folder</span><span class="v mono" id="em-inbox">–</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>LOG SUSUNAN</h2><span class="hint">12 baris terakhir</span></div>
+      <div class="pbody"><pre class="bot-log" id="em-log" style="max-height:280px;overflow:auto">–</pre></div>
+    </div>
+  </section>
+
+  <section id="tab-gudang" class="pane">
+    <div class="panel">
+      <div class="ph"><h2>GUDANG — HANTAR KE TELEFON</h2><span class="hint" id="gd-meta">Documents → UIM</span></div>
+      <div class="pbody">
+        <ol style="margin:0 0 12px;padding-left:22px;line-height:1.75;font-size:13px">
+          <li><b>Pilih fail</b> daripada senarai calon di bawah (fail .md dalam docs / outbox).</li>
+          <li><b>Tekan HANTAR KE TELEFON</b> — atau HANTAR SEBAGAI PDF untuk fail .md.</li>
+          <li><b>Tunggu perkataan SIAP</b> muncul dalam kotak hasil (salinan disahkan sha256).</li>
+          <li><b>Buka app Files → Documents → UIM</b> dan lihat folder kategori.</li>
+        </ol>
+        <div class="workbar">
+          <select id="gd-calon" style="flex:1;min-width:240px">
+            <option value="">memuat calon…</option>
+          </select>
+          <input id="gd-kategori" list="gd-kat-list" placeholder="kategori (kosong = auto)"
+                 style="max-width:220px">
+          <datalist id="gd-kat-list">
+            <option value="01-LAPORAN"></option>
+            <option value="02-GAMBAR"></option>
+            <option value="03-AUDIO"></option>
+            <option value="04-VIDEO"></option>
+            <option value="05-HANTAR"></option>
+          </datalist>
+          <button class="btn" id="gd-refresh" title="imbas semula gudang + calon">MUAT SEMULA</button>
+        </div>
+        <div class="workbar">
+          <button class="btn primary" id="gd-hantar">HANTAR KE TELEFON</button>
+          <button class="btn gold" id="gd-pdf" disabled title="pilih fail .md dahulu">HANTAR SEBAGAI PDF</button>
+          <span class="hint" id="gd-msg">sedia</span>
+        </div>
+        <pre class="log" id="gd-out" style="min-height:70px">belum ada tindakan.</pre>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>FAIL DALAM GUDANG</h2><span class="hint" id="gd-ringkas">–</span></div>
+      <div class="pbody">
+        <div id="gd-senarai" class="bodytext" style="max-height:260px">memuat…</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><h2>LOG SALINAN</h2><span class="hint">20 baris terakhir · uim_hantar.log</span></div>
+      <div class="pbody">
+        <pre class="log" id="gd-log">memuat…</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-sofia" class="pane">
+    <div class="workbar">
+      <button class="btn primary" id="sf-refresh">MUAT SEMULA</button>
+      <span class="hint" id="sf-msg">–</span>
+      <span class="hint" style="margin-left:auto">sumber: repo relay <code>sofia-status</code> · telefon tarik tiap 5 min</span>
+    </div>
+    <div class="cards" id="sf-cards"></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="ph"><h2>AMARAN</h2><span class="hint" id="sf-alert-meta">–</span></div>
+        <div class="pbody" id="sf-alerts"><div class="empty">memuat…</div></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h2>BUTIRAN PC</h2><span class="hint" id="sf-detail-meta">–</span></div>
+        <div class="pbody bodytext" id="sf-detail"><div class="empty">memuat…</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>LOG TARIKAN</h2><span class="hint">8 baris terakhir · ~/sofia-status/tarik.log</span></div>
+      <div class="pbody"><pre class="log" id="sf-log">memuat…</pre></div>
+    </div>
+  </section>
+  <section id="tab-sandaran" class="pane">
+    <div class="workbar">
+      <button class="btn primary" id="sd-refresh">MUAT SEMULA</button>
+      <span class="hint" id="sd-msg">–</span>
+      <span class="hint" style="margin-left:auto">sandaran GitHub · 2:00 pagi setiap hari</span>
+    </div>
+
+    <div id="sd-kandungan">
+      <div class="cards" id="sd-cards"></div>
+
+      <div class="grid2">
+        <div class="panel">
+          <div class="ph"><h2>JOB SANDARAN 2:00 PAGI</h2><span class="hint">cron 43c3baafa834</span></div>
+          <div class="pbody"><div class="cards" id="sd-cron" style="margin:0"></div></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><h2>MUAT TURUN FAIL DATA</h2><span class="hint">tekan untuk simpan</span></div>
+          <div class="pbody"><div id="sd-fail">memuat…</div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="ph"><h2>20 COMMIT TERAKHIR</h2><span class="hint" id="sd-commits-meta">–</span></div>
+        <div class="pbody" id="sd-commits">memuat…</div>
+      </div>
+
+      <div class="panel">
+        <div class="ph"><h2>SEJARAH LARIAN SANDARAN</h2><span class="hint" id="sd-larian-meta">–</span></div>
+        <div class="pbody" id="sd-larian">memuat…</div>
+      </div>
+
+      <div class="panel">
+        <div class="ph"><h2>INSIDEN 18 NOVEMBER 2026</h2><span class="hint">ringkasan + pembetulan + bukti ujian</span></div>
+        <div class="pbody"><pre class="log" id="sd-insiden" style="max-height:360px;overflow:auto">memuat…</pre></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="/static/tab-sandaran.js"></script>
+<script src="/static/app.js?v=16"></script>
+</body>
+</html>

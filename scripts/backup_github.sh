@@ -119,6 +119,11 @@ REAL_VALUE() {
     *REDACTED*|*DIMASK*|*PLACEHOLDER*|*CHANGEME*|*YOUR_*|*example*|*contoh*)
       return 1 ;;
   esac
+  # Bacaan pemboleh ubah persekitaran — bukan rahsia (cth LAN_TOKEN = os.environ.get(...))
+  case "$v" in
+    os.environ*|os.getenv*|process.env*|getenv*|ENV\[*|secrets.*|getpass*)
+      return 1 ;;
+  esac
   first="${v:0:1}"
   rest="${v//"$first"/}"
   [ -z "$rest" ] && return 1                       # satu aksara berulang (xxxx, ****)
