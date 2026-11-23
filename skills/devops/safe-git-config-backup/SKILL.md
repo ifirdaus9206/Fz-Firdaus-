@@ -312,6 +312,42 @@ Doc prose can still trip tier 1 by accident: a filename that ends in `task` + hy
 word matches the `sk-` rule (a real occurrence was a concurrency-diagnosis note).
 Don't "fix" that by weakening `sk-`; reword or accept the hit.
 
+### Tier-2 false positive: persona JSON and env-var reads block the backup
+
+Two more measured offenders, both structural rather than prose:
+
+1. **Agent persona catalogs** (`plugins/agency-agents-router/data/agents.json`) embed whole code
+   samples — `token = data.tenant_access_token`, `apiKey: 'YOUR_...'`, `app_token: appToken`,
+   `password = "..."`. Tier 2 fires on dozens of them and the night job exits 3 with
+   `agents.json (peringkat 2)`.
+2. **Env-var reads in the app source** (`app.py`):
+   `LAN_TOKEN = os.environ.get("CONSOLE_LAN_TOKEN", "")` — the value is 20+ chars and contains no
+   `$()`/`<…>`, so `REAL_VALUE` accepts it as a real assignment.
+
+Fix, both narrower than weakening the regex:
+
+```bash
+# 1) exempt the persona data file from TIER 2 only (tier 1 still scans it — real keys still block)
+IS_DOC() {
+  case "$1" in
+    *.md|docs/*|*/docs/*|references/*|*/references/*|templates/*|*/templates/*|*.example|*.sample|*.dist)
+      return 0 ;;
+    plugins/agency-agents-router/data/agents.json|*/plugins/agency-agents-router/data/agents.json)
+      return 0 ;;
+  esac
+  return 1
+}
+
+# 2) treat env lookups as non-secrets inside REAL_VALUE, next to the placeholder case
+case "$v" in
+  os.environ*|os.getenv*|process.env*|getenv*|ENV\[*|secrets.*|getpass*) return 1 ;;
+esac
+```
+
+Do **not** special-case the app file by name — env reads recur in every service module, so the
+value filter is the durable fix. After patching, prove it: `bash scripts/backup_github.sh` must
+exit 0 and `git rev-parse HEAD` must match `git ls-remote origin main`.
+
 ### Fixing false positives mints new false positives — budget three rounds
 
 Measured case: the guard blocked the night job three runs in a row, each time on **text written

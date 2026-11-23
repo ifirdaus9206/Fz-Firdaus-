@@ -32,6 +32,51 @@ Read the answer like this:
 Confirm with the *current* session itself: if your own context starts cold with the user's latest
 message and holds no earlier turns, the session key changed between messages.
 
+## "Terputus" / bot mati sekejap — proses dibunuh, bukan routing
+
+Symptom words: *"kenapa jadi macam terputus"*, *"buat semakan dulu terputus atau sedang bekerja agen"*.
+Split the claim into three read-only questions **before** touching anything:
+
+```bash
+curl -s 127.0.0.1:8787/api/agency/health                 # 1) any agent actually running?
+curl -s 127.0.0.1:8787/api/health \
+  | jq '.homes[0].gateway|{gateway_state,pid_alive,platforms,updated_at}'   # 2) alive now?
+grep -nE "UNCLEAN|SIGKILL|Starting Hermes Gateway|Connected to Telegram" logs/gateway.log | tail -25
+grep -c "Starting Hermes Gateway" logs/gateway.log
+grep -c "All connection attempts failed" logs/gateway.log
+sv status hermes-gateway hermes-console; uptime; free -m | head -3
+```
+
+Reading the evidence:
+
+| Evidence | Meaning |
+|---|---|
+| `runs.aktif` > 0 but the entries are old `planned`/`cancelled` | No agent is running — say "0 aktif" plainly; do not imply work in progress |
+| `gateway.platforms.telegram.state=connected` but `updated_at` only minutes old | The gateway just restarted — the cut the user saw is real, not a routing artefact |
+| `exited UNCLEANLY … SIGKILL / OOM` + `last_heartbeat_at` | Android killed the process. `suspected_oom=False` does **not** mean no kill — only that the log could not prove OOM |
+| gap last_heartbeat → next `Starting Hermes Gateway` = **10–30 s** | runsv restarted a killed child; Telegram reconnects; only messages sent inside that window are lost |
+| gap of **tens of minutes to hours** | the whole Termux tree died (Android killed Termux); runsv cannot restart it until Termux is reopened — this is the long "terputus" |
+
+Causes measured on this phone: RAM/swap exhaustion (`mem_available` ~3 GB while swap has 7+ GB used,
+load average ~20) plus hundreds of `All connection attempts failed` escalating to
+`Fatal telegram adapter error (telegram_network_error)`.
+
+Prove direction separately, never by assumption:
+- outbound: `hermes send -t telegram "…"` → `Sent to telegram home channel` proves token + network **out** only;
+- inbound: `grep -n "inbound message" logs/gateway.log | tail -5`. **No** inbound line after the restart
+  timestamp means the message was sent while the process was dead, or never reached the gateway.
+
+Report in this user's shape: plain-Malay evidence board — numbered lines, exact log quotes with
+timestamps, an explicit "Agen: 0 aktif" line, a one-line conclusion, then a numbered 3–4 option list
+(he answers by number). No prose paragraphs, and no fix installed without his approval.
+
+Check the console in the same pass: `sv status hermes-console` is usually restarted by the same kill,
+and `hermes-console/app.py → _size_worker()` runs `du -sk` over the entire ~17 GB home every 300 s —
+measurable CPU/IO on a phone, and a prime suspect whenever load average is high.
+
+See `references/gateway-killed-by-android.md` for the worked numbers (two kills in one night, 36
+restarts, 610 connect errors) and the exact log lines to quote.
+
 ## Where session keys are built
 
 - `gateway/session.py → build_session_key()` — the DM branch appends `source.thread_id` whenever
@@ -272,3 +317,6 @@ of the work conversation.
 - `references/telegram-busy-input-interrupt.md` — worked case "tak habis satu-satu mesej": the
   interrupt-vs-queue diagnosis, the evidence lines, the restart sequence and the honest answer
   about auto-topic routing.
+- `references/gateway-killed-by-android.md` — worked case "kenapa jadi macam terputus": SIGKILL
+  lifecycles, the 24 s vs 73 min downtime comparison, RAM/swap/load numbers, the `du -sk` console
+  worker, direction-proof commands, and the evidence-board report shape.

@@ -1109,7 +1109,42 @@ async function loadWork() {
   }
 }
 
+/* butang RESET GERBANG di tab PUSAT (dipasang sekali sahaja) */
+function wireGwReset() {
+  const b = $("#gw-reset");
+  if (!b || b.dataset.wired) return;
+  b.dataset.wired = "1";
+  b.addEventListener("click", async () => {
+    if (!confirm("Mula semula gerbang Telegram sekarang?")) return;
+    const msg = $("#gw-reset-msg");
+    const asal = b.textContent;
+    b.disabled = true;
+    b.textContent = "…";
+    if (msg) msg.textContent = "menghantar arahan restart…";
+    try {
+      const r = await api("/api/svc/hermes-gateway", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "restart" }),
+      });
+      const st = (r.status && r.status.state) || "?";
+      toast(`hermes-gateway: restart → ${st}`, r.ok ? "ok" : "bad");
+      if (msg) {
+        msg.textContent = `restart dihantar · status ${st} · ${new Date().toLocaleTimeString()}`;
+      }
+      loadFleet();
+    } catch (e) {
+      toast("gagal reset gerbang: " + e.message, "bad");
+      if (msg) msg.textContent = "GAGAL: " + e.message;
+    } finally {
+      b.disabled = false;
+      b.textContent = asal;
+    }
+  });
+}
+
 async function loadFleet() {
+  wireGwReset();
   try {
     const d = await api("/api/fleet");
     $("#fl-meta").textContent = "dikemas kini " + d.now;

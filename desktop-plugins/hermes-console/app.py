@@ -2152,12 +2152,14 @@ def api_fleet():
     except Exception:
         pass
 
+    _gw = [gateway("hermes20 · Ketua", h20, "hermes-source.*gateway|hermes gateway")]
+    # hermes19 sudah dipadam — jangan papar jika home tiada
+    if h19.is_dir() and any(h19.iterdir()):
+        _gw.append(gateway("hermes19 · Trading", h19, "HERMES_HOME=.*hermes19|hermes19"))
     return {
-        "gateways": [
-            gateway("hermes20 · Ketua", h20, "hermes-source.*gateway|hermes gateway"),
-            gateway("hermes19 · Trading", h19, "HERMES_HOME=.*hermes19|hermes19"),
-        ],
-        "skills": {"hermes20": skills(h20 / "skills"), "hermes19": skills(h19 / "skills")},
+        "gateways": _gw,
+        "skills": {"hermes20": skills(h20 / "skills"),
+                   "hermes19": skills(h19 / "skills") if h19.is_dir() else 0},
         "atc": {"running": _alive("atc|ATC"), "state": atc_state},
         "mem_mb": mem, "disk": disk, "now": time.strftime("%H:%M:%S"),
     }
@@ -3566,7 +3568,7 @@ threading.Thread(target=_stale_janitor, daemon=True, name="stale-janitor").start
 if __name__ == "__main__":
     import uvicorn
 
-    # Satu fail pid IKUT PORT — dua instance (8787 hermes20 / 8790 hermes19)
+    # Satu fail pid IKUT PORT — 8787 sahaja (8790/hermes19 dibersarakan 2026-11-24)
     # tidak boleh berkongsi fail pid yang sama, jika tidak stop_server akan
     # mematikan instance yang salah.
     pidf = Path(__file__).resolve().parent / f"server-{CONSOLE_PORT}.pid"

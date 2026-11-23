@@ -22,15 +22,15 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 3327
+        "completed": 3349
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-03T21:00:32.277446+08:00",
-      "next_run_at": "2026-11-24T00:00:00+08:00",
-      "last_run_at": "2026-11-23T23:55:50.941041+08:00",
+      "next_run_at": "2026-11-24T01:50:00+08:00",
+      "last_run_at": "2026-11-24T01:45:06.393577+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -206,18 +206,18 @@
       "schedule_display": "*/15 * * * *",
       "repeat": {
         "times": null,
-        "completed": 402
+        "completed": 409
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T05:17:20.325319+08:00",
-      "next_run_at": "2026-11-24T00:00:00+08:00",
-      "last_run_at": "2026-11-23T23:48:55.150101+08:00",
+      "next_run_at": "2026-11-24T02:00:00+08:00",
+      "last_run_at": "2026-11-24T01:36:12.295820+08:00",
       "last_status": "ok",
       "last_error": null,
-      "last_delivery_error": "live adapter send failed: send_path_degraded; live adapter delivery to telegram:1312929583 failed: send_path_degraded; delivery error: Telegram send failed: httpx.ConnectError: [Errno 7] No address associated with hostname",
+      "last_delivery_error": null,
       "deliver": "origin",
       "origin": {
         "platform": "telegram",
@@ -252,15 +252,15 @@
       "schedule_display": "*/10 * * * *",
       "repeat": {
         "times": null,
-        "completed": 1058
+        "completed": 1069
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T05:31:08.418161+08:00",
-      "next_run_at": "2026-11-24T00:00:00+08:00",
-      "last_run_at": "2026-11-23T23:51:03.492365+08:00",
+      "next_run_at": "2026-11-24T01:50:00+08:00",
+      "last_run_at": "2026-11-24T01:40:24.500258+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -344,15 +344,15 @@
       "schedule_display": "0 */6 * * *",
       "repeat": {
         "times": null,
-        "completed": 33
+        "completed": 34
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T16:28:49.170357+08:00",
-      "next_run_at": "2026-11-24T00:00:00+08:00",
-      "last_run_at": "2026-11-23T18:01:03.607012+08:00",
+      "next_run_at": "2026-11-24T06:00:00+08:00",
+      "last_run_at": "2026-11-24T00:01:41.652327+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -437,15 +437,15 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 1030
+        "completed": 1052
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-18T10:24:38.919382+08:00",
-      "next_run_at": "2026-11-24T00:00:00+08:00",
-      "last_run_at": "2026-11-23T23:55:47.472001+08:00",
+      "next_run_at": "2026-11-24T01:50:00+08:00",
+      "last_run_at": "2026-11-24T01:45:06.329858+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -623,15 +623,15 @@
       "schedule_display": "*/15 * * * *",
       "repeat": {
         "times": null,
-        "completed": 1
+        "completed": 9
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-23T23:45:38.089417+08:00",
-      "next_run_at": "2026-11-24T00:00:00+08:00",
-      "last_run_at": "2026-11-23T23:46:09.724132+08:00",
+      "next_run_at": "2026-11-24T02:00:00+08:00",
+      "last_run_at": "2026-11-24T01:45:06.511924+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -646,7 +646,87 @@
       "enabled_toolsets": null,
       "workdir": null,
       "fire_claim": null
+    },
+    {
+      "id": "2980c094cd43",
+      "name": "Amaran gerbang Telegram mati",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "provider_snapshot": null,
+      "model_snapshot": null,
+      "base_url": null,
+      "script": "gw_alert.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/5 * * * *",
+        "display": "*/5 * * * *"
+      },
+      "schedule_display": "*/5 * * * *",
+      "repeat": {
+        "times": null,
+        "completed": 9
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-11-24T01:13:36.611619+08:00",
+      "next_run_at": "2026-11-24T01:50:00+08:00",
+      "last_run_at": "2026-11-24T01:45:06.568094+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "telegram:1312929583",
+      "origin": null,
+      "enabled_toolsets": null,
+      "workdir": null,
+      "fire_claim": null
+    },
+    {
+      "id": "baba6c5bc215",
+      "name": "Amaran laluan masuk Telegram",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "provider_snapshot": null,
+      "model_snapshot": null,
+      "base_url": null,
+      "script": "tg_watch.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/5 * * * *",
+        "display": "*/5 * * * *"
+      },
+      "schedule_display": "*/5 * * * *",
+      "repeat": {
+        "times": null,
+        "completed": 6
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-11-24T01:22:11.862898+08:00",
+      "next_run_at": "2026-11-24T01:50:00+08:00",
+      "last_run_at": "2026-11-24T01:45:08.938786+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "telegram:1312929583",
+      "origin": null,
+      "enabled_toolsets": null,
+      "workdir": null,
+      "fire_claim": null
     }
   ],
-  "updated_at": "2026-11-23T23:55:50.945330+08:00"
+  "updated_at": "2026-11-24T01:45:08.939908+08:00"
 }

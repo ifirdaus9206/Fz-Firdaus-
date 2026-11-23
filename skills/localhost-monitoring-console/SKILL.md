@@ -18,8 +18,9 @@ publishes THIS console's port and that the app's Host allowlist accepts `*.trycl
 A light theme also needs its background reset in the same `!important` layer that sets the text.
 Full diagnosis + verification: `references/contrast-and-tunnel-exposure.md`.
 
-**Theme still dark?** Version the storage key (`console_theme_v2`); for repeated "still black" rounds see `references/light-theme-full-sweep.md`.
-Version the localStorage key (`console_theme_v2`) instead of only bumping the CSS `?v=`.
+**Theme still dark?** Version the storage key (`console_theme_v2`/`_v3`), not just the CSS;
+repeated rounds → `references/light-theme-full-sweep.md`. Named palettes (krim/biru/kelabu) →
+`references/multi-theme-palettes.md` (`!important` literals defeat variable-only classes). the CSS `?v=`.
 
 **One block still black after the light theme landed?** Stop guessing selectors — sweep the base
 stylesheet for every rule with a near-black `background`, then add the missing `body.light`

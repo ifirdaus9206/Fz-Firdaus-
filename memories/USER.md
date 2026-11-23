@@ -1,6 +1,6 @@
 Prefers Malay. Demands exact compliance: case-sensitive names/paths, precise placement, no deviations; values structured docs.
 §
-Prefers running/verifying from the web console (8787) with buttons + numbered steps, not terminal; misreads technical terms (asked 'GitLab' when form wanted IP:port + ADB code). Wants plain Malay, no jargon, proof in files.
+Prefers verifying from web console 8787 via buttons + numbered steps, not terminal; misreads technical terms; plain Malay, no jargon, proof in files.
 §
 For deliverable handoffs, wants files packed as ONE FORMAT PER FOLDER (not a single zip), a plain-Malay "BACA DULU" doc with a recipient matrix, and a numbered 3–4 option list at the end of every reply (answers by number).
 §
@@ -13,3 +13,5 @@ Wants each new work in its OWN console tab + data folder; gives the tunnel URL a
 Asks why not LAN instead of tunnels; pastes output lines as commands — give exact one-line commands, label output vs command.
 §
 Says "test" = fire it now. Wants one exact step per message during phone setup, no multi-option lists to merge.
+§
+Challenges redundancy: asks if each port/service is really needed; prefers one of each (one console, one keeper).

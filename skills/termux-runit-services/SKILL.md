@@ -14,7 +14,7 @@ session; a runit service restarts itself and comes back after reboot.
 - A server/tunnel must keep running after the chat turn, after a crash, and after reboot.
 - You need to replace an ad-hoc `setsid … &` / `nohup` launch with a supervised service.
 - Existing services live at `$PREFIX/var/service/<name>/` (on this device: `hermes-console`,
-  `hermes-gateway`, `jobboard-*`, `code-server`, `httpd`).
+  `hermes-gateway`, `hermes-sshd`… — retired ones now sit in `$PREFIX/var/service-off/`).
 - You need a stable, always-publishable URL/endpoint file that other tools can read.
 
 ## Anatomy of a service
@@ -159,7 +159,10 @@ the mail channel for the value. Full recipe, security posture and IP-reading com
 2. **`pkill -f "<pattern>"` kills the agent's own shell.** Each terminal call runs inside a
    `bash -c` wrapper whose command line contains your pattern, so `pkill -f "hermes dashboard"`
    terminates the calling session (exit `-15`) mid-command. Kill by PID (`kill <pid>`) or
-   `pkill -x <binary>`.
+   `pkill -x <binary>`. Same trap with pgrep: `kill -9 $(pgrep -f "hermes gateway run")` matches
+   the wrapper itself, so the call dies with exit `-9` and no output — the target may or may not
+   have been hit. Re-check with `sv status` and use the bracket trick
+   `pgrep -f "[h]ermes gateway run"`.
 3. **Orphan holds the port → supervised copy crash-loops.** A manually started process keeps the
    port; runit's instance dies on bind and restarts every second, so `sv status` shows a fresh pid
    while `curl` still answers from the orphan. Find the oldest PID via
@@ -213,6 +216,41 @@ Then prove it: run the keeper by hand while everything is healthy and re-read th
 must still print `HELD`. Also keep `wake_ctl.sh auto` in `~/.termux/boot/*.sh` so a reboot
 restores the lock.
 
+### Re-acquiring every keeper cycle is the OTHER half of the storm
+
+Second confirmed cause on this device: a keeper running `while true; sleep 60` called
+`termux-wake-lock` unconditionally each iteration. Android re-posts the notification on *every*
+call, so the user reports it "tak henti buka" — every 60 s, forever. The lock is held per app
+process; if the app dies the keeper (a child of it) dies too, so re-acquiring each cycle protects
+nothing.
+
+```bash
+HELD="$HOME/.hermes20/.wake_held"
+if [ -f "$FLAG" ] && [ ! -f "$HELD" ]; then    # sekali sahaja, bukan setiap 60s
+  termux-wake-lock >/dev/null 2>&1 || true
+  touch "$HELD"
+fi
+```
+
+Audit **every** caller, not only the one you suspect: service `run` scripts, the console keeper
+(cron `*/5`), and one-shot fix scripts that were flipped back to recurring (`cronjob list` —
+check `enabled=false` / `completed`). Verification recipe (instrumented copy — a PATH stub does
+NOT work for the hermes keeper because it rewrites PATH), the three failed instrumentation
+attempts, and the cheaper `grep -c` proof: `references/wake-lock-notification-storm.md`.
+
+## Health check to run before saying "sihat"
+
+`scripts/termux-health-check.sh` (install as `~/bin/sihat`): wake-lock auto-mode, exactly one
+`runsvdir`, zero orphan `runsv`, core services `run:`, process count vs the Android ~32 limit,
+zombies, console HTTP, gateway process, available RAM. It finds runit processes via
+`/proc/PID/exe`, never `pgrep -x`/`pgrep -f` (pitfall 9). Every line must read `[OK]` before a
+health claim is delivered — a `[GAGAL]` line is the finding, not a footnote.
+
+Threshold note: the raw count includes 2–3 transient `bash`/`ps` wrappers created by the very
+tool call that runs the check, so a steady tree of ~26 processes reports 29–31. Set the FAIL
+threshold at the real Android limit (32), not at a comfortable-looking 30, or the check cries wolf
+on every run.
+
 ### Never call `wake_ctl.sh` from a service `run` script (notification storm)
 
 Symptom the user reports: Termux notification **`3 sessions (wake lock held)` keeps popping up
@@ -253,6 +291,73 @@ that is correct and required while the lock is held; only the repeated popping i
 "N sessions" count is the number of open Termux terminal sessions, not a leak.
 
 
+## Pitfalls lanjutan: proses, supervisor, had Android
+
+9. **Jangan percaya `pgrep -x` atau `pgrep -f` untuk kira proses runit.** Binari Termux
+   dilancarkan melalui `linker64`, jadi `/proc/PID/comm` = `linker64` → `pgrep -x runsv` sentiasa
+   **0** walaupun runsv hidup. `pgrep -f "<path>"` pula menangkap shell yang cuma **menyebut**
+   corak itu dalam argv (termasuk shell agent sendiri) → kiraan berganda dan `kill` boleh
+   membunuh sesi pemanggil. Kesan melalui symlink exe — tepat, tiada positif palsu:
+
+   ```bash
+   for p in /proc/[0-9]*; do
+     [ "$(readlink "$p/exe" 2>/dev/null)" = "$PREFIX/bin/runsv" ] || continue
+     [ "$(awk '{print $4}' "$p/stat")" = 1 ] && echo "runsv YATIM pid=${p#/proc/}"
+   done
+   ```
+
+10. **Dua pokok runit = konsol/gerbang bergaduh.** Selepas runsvdir dibunuh (phantom killer /
+    OOM), anak `runsv`-nya kekal dengan `PPID 1`; bila termux-services dihidupkan semula, runsvdir
+    **baharu** lahir dan melahirkan runsv sendiri untuk servis yang sama → dua pengawas satu
+    servis, `app.py` yatim memegang port, `sv status` tak lagi mewakili realiti. Bunuh hanya runsv
+    `PPID 1` (jangan sentuh anak runsvdir yang sah), kemudian semak `sv status` + `curl` port.
+11. **Fail bernama literal `*.down` dalam `$PREFIX/var/service/` = zombie setiap detik.** Tercipta
+    bila `touch $PREFIX/var/service/*.down` dijalankan tanpa glob yang sepadan. runsvdir cuba
+    menghidupkannya, gagal (`not a directory`), dan mengulanginya — bertambah satu `<defunct>`
+    [linker64] setiap kitaran sehingga had proses Android dicapai dan sistem mula membunuh app.
+    `rm -f "$PREFIX/var/service/*.down"` (sebut dalam petikan) dan sahkan zombie berhenti bertambah.
+12. **Had proses Android ~32 (phantom process killer).** App boleh "tutup sendiri" walaupun semua
+    servis sihat bila anak proses melebihi had. Servis yang `down` **tetap** memakan satu proses
+    `runsv`; servis tak terpakai patut dipindah keluar
+    (`mv $PREFIX/var/service/<x> $PREFIX/var/service-off/`), bukan sekadar ditanda `down`.
+    Sasar < 30 proses: `ls /proc | grep -c '^[0-9]'`. Semakan pantas seharian:
+    `~/bin/sihat` (wake-lock / satu runsvdir / zombie / proses / konsol / gerbang / RAM).
+13. **Memindahkan direktori servis keluar turut mematikan apa yang ia bawa — termasuk tunnel.**
+    Selepas `mv … service-off/`, URL tunnel Cloudflare **quick** menjawab `000` manakala
+    `127.0.0.1:8787` masih `200`, kerana setiap start menghasilkan hostname baharu. Selepas
+    pemangkasan, baca semula `cat ~/.hermes20/dashboard_url.txt`, `curl` URL itu, dan beri bos URL
+    **baharu** — jangan ulang hostname lama yang belum diuji dalam larian yang sama.
+
+## Watchdog: alert on unclean gateway death, then self-recover
+
+runit restarts a killed child, but nobody is told — the owner discovers a silent bot hours later.
+A `no_agent` cron closes both halves (`references/gateway-death-watchdog.md` has the full design):
+
+- **Signals**, all token-free: `state/gateway.lifecycle.json` (`phase`, `pid`),
+  `state/gateway.heartbeat` (`updated_at`, refreshed every 60 s), `sv status hermes-gateway`, and a
+  **counter** of `exited UNCLEANLY` lines in `logs/gateway.log` compared against a stored offset.
+  The offset is what turns "31 historical deaths" into "1 new death".
+- **Anti-spam:** one stamp holding `problems|pid|heartbeat_ts|last_unclean`; the same incident never
+  reports twice, and a healthy tick truncates the stamp so the next incident does report.
+- **Action:** `sv restart hermes-gateway` once, `sleep 10`, re-read `sv status`, and put the outcome
+  in the message (`sv restart dihantar → sekarang RUN`).
+- **Testability:** `GW_ALERT_ROOT=<tmpdir>` relocates state/logs/stamp/offset and
+  `GW_ALERT_NO_ACTION=1` skips the restart, so all four branches (healthy / down / repeat / new
+  unclean death) are provable without touching the live gateway.
+- **Wiring:** `hermes cron create "*/5 * * * *" --script gw_alert.sh --no-agent --deliver
+  telegram:<chat_id>`. Empty stdout = silent. Baseline the counter at install or the first tick
+  alerts on the whole history.
+- **Second watchdog, separate failure mode:** `tg_watch.sh` watches the *inbound* path, not the
+  process — `getWebhookInfo.pending_update_count` > 0 on **two consecutive ticks** (one tick can
+  just be a busy gateway) and/or gateway dead. Test hook `TG_WATCH_FAKE_PEND=<n>` +
+  `TG_WATCH_ROOT=<tmpdir>` + `TG_WATCH_NO_EMAIL=1` so both branches are provable without touching
+  the live API.
+- **Always add a second delivery channel when the alarm is about the alarm.** If Telegram is the
+  broken thing, a Telegram-only alert stays silent exactly when it matters most. Reuse the Gmail
+  credentials already in `.env` (`GMAIL_USER`, `GMAIL_APP_PASSWORD`) over `smtplib.SMTP_SSL`
+  port 465, and verify by reading the message back over IMAP — SMTP returning without an
+  exception only proves the server accepted it, not that it arrived.
+
 ## Restarting the gateway from inside a gateway session
 
 The terminal tool refuses any command that could restart or stop the gateway while the agent
@@ -262,10 +367,26 @@ this is a guard, not a missing tool.
 
 Two working paths, both external to the agent process:
 
-1. **The console's service API** (same thing the UI button calls):
-   `curl -s -X POST http://127.0.0.1:8787/api/svc/hermes-gateway -H 'Content-Type: application/json' -d '{"action":"restart"}'`
+1. **The console's service API** (same thing the UI button calls). It needs the LAN token **and** a
+   CSRF header — a bare curl answers `{"error":"token konsol tiada atau salah"}`, which is auth,
+   not a broken endpoint:
+
+   ```bash
+   C=$(curl -s 127.0.0.1:8787/api/meta | python3 -c 'import sys,json;print(json.load(sys.stdin)["csrf"])')
+   curl -s -X POST http://127.0.0.1:8787/api/svc/hermes-gateway \
+     -H "Content-Type: application/json" -H "X-Console-Token: $C" -d '{"action":"restart"}'
+   # → {"ok":true,"deferred":true,"out":"gateway dihentikan — runit menghidupkan semula dalam ~5s"}
+   ```
+
+   `deferred:true` = the reply is written **before** runit re-ups the child; wait ~20 s, then accept
+   only `sv status` `run:` **plus** a fresh `Connected to Telegram (polling mode)` line as proof.
    Allowed names: `hermes-console`, `hermes-gateway`, `hermes-dashboard`, `hermes-dash-tunnel`,
-   `web-server`; actions `up|down|restart|status`.
+   `web-server`; actions `up|down|restart|status`; also `GET /api/svc/{name}/log`.
+
+   To give the owner a one-click **RESET GERBANG**: markup in `static/index.html`, handler wired
+   **once** from the existing poller (`function wireGwReset()` guarded by `b.dataset.wired`, called
+   at the top of `loadFleet()`), because `loadFleet` runs every 60 s and would otherwise stack
+   duplicate listeners. Static files are served `cache-control: no-store` — no cache-busting needed.
 2. **A one-shot `no_agent` cron** that curls that API a few minutes out — the right pattern when
    a code patch must be loaded but the current turn still has to deliver its answer. Empty stdout
    keeps it silent; log the API response to a file for evidence:
@@ -285,6 +406,8 @@ nothing. Tell the user when it will happen and confirm the new PID/uptime afterw
   an evidence block (status codes, PIDs, log tail).
 - A re-runnable verify script in `~/.hermes20/scripts/` printing PASS/FAIL lines.
 - Secrets in a `chmod 600` file; the doc names the path, never the value.
+- For anything that is *supposed* to survive Android, say plainly which part is proven now and
+  which part only time can prove — a restart policy is not evidence against the OEM killer.
 
 ## References / templates
 - `references/hermes-dashboard-cloudflare-tunnel.md` — worked example: Hermes web dashboard on
@@ -299,3 +422,18 @@ nothing. Tell the user when it will happen and confirm the new PID/uptime afterw
 - `references/termux-sshd-8022-provisioning.md` — enabling the `down`-flagged `sshd` service,
   verifying 8022 without `ss`/`netstat`, key auth vs. pty-driven `passwd`, LAN-IP reading, and the
   "anyone on the WiFi can try to log in" warning to state plainly.
+- `references/wake-lock-notification-storm.md` — "wake lock held" popping non-stop: keeper
+  re-acquiring every 60 s, the one-shot guard that fixes it, and how to prove it without spamming
+  the user (instrumented copy; a PATH stub fails because the keeper rewrites PATH).
+- `references/bot-silent-while-gateway-alive.md` — Telegram silent while `sv status` says `run`:
+  heartbeat/lifecycle probe order, `getMe`/`getWebhookInfo`/`getUpdates?offset=-1` interpretation
+  (webhook vs pending vs no active poll), fallback-IP reachability test, and the rule that
+  outbound proof (`hermes send`) is **not** inbound proof.
+- `references/gateway-death-watchdog.md` — the `gw_alert.sh` design: heartbeat + unclean-counter
+  signals, stamp anti-spam, `GW_ALERT_ROOT`/`GW_ALERT_NO_ACTION` test overrides, the message shape
+  the owner accepted, cron wiring, and the shell-test traps hit while building it
+  (`grep -c || echo 0` double output, sed quoting, nested `"$( … "$( … )" … )"` false FAIL,
+  decoys that expire mid-test).
+- `scripts/termux-health-check.sh` — install as `~/bin/sihat`: one-shot PASS/FAIL health report
+  (wake-lock, single runsvdir, orphans, services, Android process limit, zombies, console,
+  gateway, RAM).

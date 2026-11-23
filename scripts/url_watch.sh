@@ -7,6 +7,12 @@ LAST="$H/.url_last_seen"
 CUR="$(grep -o 'https://[^ ]*trycloudflare.com' "$CUR_FILE" 2>/dev/null | head -1)"
 [ -z "$CUR" ] && CUR="$(grep -o 'https://[^ ]*' "$CUR_FILE" 2>/dev/null | head -1)"
 [ -z "$CUR" ] && exit 0
+
+# sentiasa salin URL semasa ke storan telefon supaya bos boleh buka tanpa cari
+SD="/sdcard/Documents/UIM"
+if [ -d "$SD" ] && [ -w "$SD" ]; then
+  printf '%s/?tab=pusat\n' "$CUR" > "$SD/KONSOL-URL.txt" 2>/dev/null || true
+fi
 LASTV="$(cat "$LAST" 2>/dev/null)"
 if [ "$CUR" != "$LASTV" ]; then
   printf '%s' "$CUR" > "$LAST"

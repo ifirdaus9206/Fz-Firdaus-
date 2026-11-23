@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HERMES CONSOLE</title>
 <link rel="stylesheet" href="/static/style.css?v=20261123b">
-<link rel="stylesheet" href="/static/theme.css?v=16">
+<link rel="stylesheet" href="/static/theme.css?v=17">
 </head>
 <body class="light">
 <nav class="side" id="side">
@@ -69,7 +69,6 @@
 </div>
 <div class="hud">
   <span class="pill">HERMES20 <b id="hud-gw1">–</b></span>
-  <span class="pill">HERMES19 <b id="hud-gw2">–</b></span>
   <span class="pill">SKILL <b id="hud-sk">–</b></span>
   <span class="pill">RAM <b id="hud-mem">–</b></span>
   <span class="spacer"></span>
@@ -121,6 +120,10 @@
       <div class="ph"><h2>GERBANG · SKILL · ENAJIN</h2><span class="hint" id="fl-meta">–</span></div>
       <div class="pbody">
         <div class="svc-list" id="fl-gw">memuat…</div>
+        <div class="workbar" style="flex-wrap:wrap;margin-top:10px;gap:8px">
+          <button class="btn" id="gw-reset" title="sv restart hermes-gateway">RESET GERBANG</button>
+          <span class="hint" id="gw-reset-msg">tekan jika bot Telegram tidak menjawab</span>
+        </div>
         <div class="workbar" style="flex-wrap:wrap;margin-top:12px;gap:8px" id="fl-chips"></div>
         <div class="kv"><span class="k">Skill</span><span class="v" id="fl-skills">–</span></div>
         <div class="kv"><span class="k">ATC (trading)</span><span class="v" id="fl-atc">–</span></div>
@@ -1009,6 +1012,6 @@
 </main>
 
 <script src="/static/tab-sandaran.js"></script>
-<script src="/static/app.js?v=16"></script>
+<script src="/static/app.js?v=17"></script>
 </body>
 </html>

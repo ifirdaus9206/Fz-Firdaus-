@@ -36,6 +36,11 @@ A real team is 4–6 roles, each with its **own** Hermes profile/home, short-ter
 Layer-by-layer checklist and how to score an existing setup against it:
 `references/ai-team-layers.md`.
 
+**"Bagi kau memori masa pendek dan masa panjang supaya belajar setiap hari"** — that is a separate,
+durable tier *outside* `memories/`: a daily append-only log plus a nightly distillation cron that
+rewrites one categorised long-term file. Layout, scripts, cron prompt and the
+`hermes cron create` parameter-drop workaround: `references/memory-tiers.md`.
+
 ## Lead-agent doctrine (write it into SOUL.md, not into a reminder)
 
 1. **The lead does not execute.** Handiwork (code, scans, tests, documents) belongs to agents.
