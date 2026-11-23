@@ -265,6 +265,9 @@ it, then read one log line proving the new value is in force.
 
 - `references/config-recipes.md` — copy-paste recipes: fallback chain, model swap, plugin enable,
   one-shot smoke tests.
+- `references/mcp-servers-config.md` — `mcp_servers:` in config.yaml: why `hermes mcp add` is
+  interactive and silently saves nothing when scripted, the python+YAML write path, `config
+  unset` for removal, and the missing `streamable_http` transport limit.
 - `references/hermes-home-consolidation.md` — worked legacy-home merge: what to merge vs archive vs
   drop, secrets check, manifest shape, stale-path rewrite, the unaccounted-file traps.
 - `references/runtime-vs-file-config.md` — file-vs-runtime config: which keys need a process

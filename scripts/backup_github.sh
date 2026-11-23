@@ -92,6 +92,10 @@ IS_DOC() {
   case "$1" in
     *.md|docs/*|*/docs/*|references/*|*/references/*|templates/*|*/templates/*|*.example|*.sample|*.dist)
       return 0 ;;
+    # Persona ejen mengandungi contoh kod (token=..., apiKey: ...) — bukan rahsia.
+    # Peringkat 1 (corak keras) TETAP memindai fail ini; hanya peringkat 2 dikecualikan.
+    plugins/agency-agents-router/data/agents.json|*/plugins/agency-agents-router/data/agents.json)
+      return 0 ;;
   esac
   return 1
 }

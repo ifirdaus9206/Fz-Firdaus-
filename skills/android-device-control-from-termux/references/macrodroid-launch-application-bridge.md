@@ -73,6 +73,34 @@ Two failures seen live with the AI macro builder, both invisible in its chat rep
 Rule: after any AI build, screenshot the macro and confirm the literal row text. If it says
 `null`, the problem is not the trigger.
 
+## Faster rebuild: duplicate a proven macro, do not regenerate
+
+When one macro works and its twin will not (measured 2026-11-22: `BUKA NOTA` fired, a freshly
+AI-built `BUKA CLAUDE` with identical shape stayed silent even though `▶ Test` inside it opened
+Claude), stop regenerating and **copy the working one**:
+
+1. Macro list → long-press the working macro → **Salin / Copy**
+2. Rename the copy (`BUKA CLAUDE`)
+3. Change only two values: trigger Action string (`com.ketua.OPEN.CLAUDE`) and the
+   `Lancar Aplikasi` target app
+4. Save, confirm the toggle is green, then broadcast
+
+The AI rebuild can produce a macro whose saved trigger does not actually match while looking
+correct on screen; a copy inherits a trigger that is already known to fire.
+
+## Prove the transport with a control broadcast, not by retrying the suspect macro
+
+```bash
+am broadcast -a com.ketua.OPEN.NOTES   # known-good macro  → app appears?
+sleep 10
+am broadcast -a com.ketua.OPEN.CLAUDE  # suspect macro     → app appears?
+```
+
+"Control opens, suspect silent" ⇒ transport healthy, fault is per-macro (trigger text, toggle off,
+null app, app hibernated). Two facts worth quoting to the owner: a manual `▶ Test` runs a macro
+whose toggle is **off**, while an external broadcast does not; and HyperOS pauses unused apps, so
+opening the target app once un-freezes it.
+
 ## Picker tips (Malay UI)
 
 - The application chooser is searchable; clearing the box and scrolling to the letter of the app

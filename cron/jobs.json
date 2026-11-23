@@ -22,15 +22,15 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 3081
+        "completed": 3325
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-03T21:00:32.277446+08:00",
-      "next_run_at": "2026-11-23T02:05:00+08:00",
-      "last_run_at": "2026-11-23T02:00:43.890907+08:00",
+      "next_run_at": "2026-11-23T23:50:00+08:00",
+      "last_run_at": "2026-11-23T23:45:47.208791+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -68,15 +68,15 @@
       "schedule_display": "0 9 * * 1",
       "repeat": {
         "times": null,
-        "completed": 4
+        "completed": 5
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-05T01:57:46.304848+08:00",
-      "next_run_at": "2026-11-23T09:00:00+08:00",
-      "last_run_at": "2026-11-16T13:00:23.752972+08:00",
+      "next_run_at": "2026-11-30T09:00:00+08:00",
+      "last_run_at": "2026-11-23T09:03:55.448672+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -114,15 +114,15 @@
       "schedule_display": "0 9,21 * * *",
       "repeat": {
         "times": null,
-        "completed": 25
+        "completed": 27
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-05T11:01:10.777993+08:00",
-      "next_run_at": "2026-11-23T09:00:00+08:00",
-      "last_run_at": "2026-11-22T21:01:16.652785+08:00",
+      "next_run_at": "2026-11-24T09:00:00+08:00",
+      "last_run_at": "2026-11-23T21:01:35.284759+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -160,7 +160,7 @@
       "schedule_display": "0 2 * * *",
       "repeat": {
         "times": null,
-        "completed": 15
+        "completed": 16
       },
       "enabled": true,
       "state": "scheduled",
@@ -168,7 +168,7 @@
       "paused_reason": null,
       "created_at": "2026-11-06T02:10:20.344219+08:00",
       "next_run_at": "2026-11-24T02:00:00+08:00",
-      "last_run_at": "2026-11-22T02:00:56.282870+08:00",
+      "last_run_at": "2026-11-23T02:00:54.377998+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -206,18 +206,18 @@
       "schedule_display": "*/15 * * * *",
       "repeat": {
         "times": null,
-        "completed": 321
+        "completed": 402
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T05:17:20.325319+08:00",
-      "next_run_at": "2026-11-23T02:15:00+08:00",
-      "last_run_at": "2026-11-23T01:51:26.890433+08:00",
+      "next_run_at": "2026-11-24T00:00:00+08:00",
+      "last_run_at": "2026-11-23T23:48:55.150101+08:00",
       "last_status": "ok",
       "last_error": null,
-      "last_delivery_error": null,
+      "last_delivery_error": "live adapter send failed: send_path_degraded; live adapter delivery to telegram:1312929583 failed: send_path_degraded; delivery error: Telegram send failed: httpx.ConnectError: [Errno 7] No address associated with hostname",
       "deliver": "origin",
       "origin": {
         "platform": "telegram",
@@ -252,15 +252,15 @@
       "schedule_display": "*/10 * * * *",
       "repeat": {
         "times": null,
-        "completed": 937
+        "completed": 1057
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T05:31:08.418161+08:00",
-      "next_run_at": "2026-11-23T02:10:00+08:00",
-      "last_run_at": "2026-11-23T01:51:01.156445+08:00",
+      "next_run_at": "2026-11-23T23:50:00+08:00",
+      "last_run_at": "2026-11-23T23:41:03.593871+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -298,15 +298,15 @@
       "schedule_display": "0 8 * * *",
       "repeat": {
         "times": null,
-        "completed": 10
+        "completed": 11
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T13:38:54.292325+08:00",
-      "next_run_at": "2026-11-23T08:00:00+08:00",
-      "last_run_at": "2026-11-22T08:00:11.860626+08:00",
+      "next_run_at": "2026-11-24T08:00:00+08:00",
+      "last_run_at": "2026-11-23T08:00:09.965316+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -344,15 +344,15 @@
       "schedule_display": "0 */6 * * *",
       "repeat": {
         "times": null,
-        "completed": 30
+        "completed": 33
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-12T16:28:49.170357+08:00",
-      "next_run_at": "2026-11-23T06:00:00+08:00",
-      "last_run_at": "2026-11-23T00:01:38.947411+08:00",
+      "next_run_at": "2026-11-24T00:00:00+08:00",
+      "last_run_at": "2026-11-23T18:01:03.607012+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -362,52 +362,6 @@
         "chat_id": "1312929583",
         "chat_name": "firdaus ismail",
         "thread_id": "24647",
-        "user_id": "1312929583"
-      },
-      "enabled_toolsets": null,
-      "workdir": null,
-      "fire_claim": null
-    },
-    {
-      "id": "b3aa5823840f",
-      "name": "URL dashboard berubah",
-      "prompt": "",
-      "skills": [],
-      "skill": null,
-      "model": null,
-      "provider": null,
-      "provider_snapshot": null,
-      "model_snapshot": null,
-      "base_url": null,
-      "script": "dash_url_notify.sh",
-      "no_agent": true,
-      "context_from": null,
-      "schedule": {
-        "kind": "cron",
-        "expr": "*/15 * * * *",
-        "display": "*/15 * * * *"
-      },
-      "schedule_display": "*/15 * * * *",
-      "repeat": {
-        "times": null,
-        "completed": 327
-      },
-      "enabled": true,
-      "state": "scheduled",
-      "paused_at": null,
-      "paused_reason": null,
-      "created_at": "2026-11-17T19:29:45.619482+08:00",
-      "next_run_at": "2026-11-23T02:15:00+08:00",
-      "last_run_at": "2026-11-23T02:00:43.796097+08:00",
-      "last_status": "ok",
-      "last_error": null,
-      "last_delivery_error": null,
-      "deliver": "telegram",
-      "origin": {
-        "platform": "telegram",
-        "chat_id": "1312929583",
-        "chat_name": "firdaus ismail",
-        "thread_id": "26054",
         "user_id": "1312929583"
       },
       "enabled_toolsets": null,
@@ -483,15 +437,15 @@
       "schedule_display": "*/5 * * * *",
       "repeat": {
         "times": null,
-        "completed": 784
+        "completed": 1028
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-18T10:24:38.919382+08:00",
-      "next_run_at": "2026-11-23T02:05:00+08:00",
-      "last_run_at": "2026-11-23T02:00:43.709555+08:00",
+      "next_run_at": "2026-11-23T23:50:00+08:00",
+      "last_run_at": "2026-11-23T23:45:47.051286+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -529,15 +483,15 @@
       "schedule_display": "0 3 * * *",
       "repeat": {
         "times": null,
-        "completed": 3
+        "completed": 4
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-20T16:25:58.773457+08:00",
-      "next_run_at": "2026-11-23T03:00:00+08:00",
-      "last_run_at": "2026-11-22T03:00:50.729703+08:00",
+      "next_run_at": "2026-11-24T03:00:00+08:00",
+      "last_run_at": "2026-11-23T03:00:48.035618+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -575,15 +529,109 @@
       "schedule_display": "0 21 * * *",
       "repeat": {
         "times": null,
-        "completed": 3
+        "completed": 4
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-11-20T18:15:42.105304+08:00",
-      "next_run_at": "2026-11-23T21:00:00+08:00",
-      "last_run_at": "2026-11-22T21:00:39.724207+08:00",
+      "next_run_at": "2026-11-24T21:00:00+08:00",
+      "last_run_at": "2026-11-23T21:00:57.417443+08:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "1312929583",
+        "chat_name": "firdaus ismail",
+        "thread_id": null,
+        "user_id": "1312929583"
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "fire_claim": null
+    },
+    {
+      "id": "fc19cac13505",
+      "name": "Suling memori pendek ke panjang",
+      "prompt": "Jalankan: python3 ~/.hermes20/scripts/memori_panjang.py 7. Baca output. Kemudian tulis semula ~/vault/memori/02-panjang/MEMORI-PANJANG.md: gabungkan fakta penting, buang duplikasi, kekalkan di bawah 4000 aksara, susun ikut kategori (sistem, bos, projek, pelajaran). Tulis juga ~/vault/memori/03-pelajaran/YYYY-MM.md dengan 3-5 pelajaran bulan ini. Jangan hantar mesej; kerja senyap.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "provider_snapshot": "openrouter",
+      "model_snapshot": "deepseek/deepseek-v4.1-flash-1017",
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 23 * * *",
+        "display": "30 23 * * *"
+      },
+      "schedule_display": "30 23 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-11-23T23:41:14.486041+08:00",
+      "next_run_at": "2026-11-24T23:30:00+08:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "1312929583",
+        "chat_name": "firdaus ismail",
+        "thread_id": null,
+        "user_id": "1312929583"
+      },
+      "enabled_toolsets": [
+        "terminal",
+        "file"
+      ],
+      "workdir": null
+    },
+    {
+      "id": "16fe332e1797",
+      "name": "Jalankan: bash ~/.hermes20/scripts/url_watch.sh \u2014",
+      "prompt": "Jalankan: bash ~/.hermes20/scripts/url_watch.sh \u2014 jika output ada URL baharu, ia akan dihantar. Jika kosong, jangan hantar apa-apa.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "provider_snapshot": null,
+      "model_snapshot": null,
+      "base_url": null,
+      "script": "url_watch.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/15 * * * *",
+        "display": "*/15 * * * *"
+      },
+      "schedule_display": "*/15 * * * *",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-11-23T23:45:38.089417+08:00",
+      "next_run_at": "2026-11-24T00:00:00+08:00",
+      "last_run_at": "2026-11-23T23:46:09.724132+08:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -600,5 +648,5 @@
       "fire_claim": null
     }
   ],
-  "updated_at": "2026-11-23T02:00:43.892507+08:00"
+  "updated_at": "2026-11-23T23:48:55.153994+08:00"
 }

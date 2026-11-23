@@ -141,6 +141,14 @@ the mail channel for the value. Full recipe, security posture and IP-reading com
 
 ## Pitfalls
 
+0. **Check the tunnel's target port before debugging the UI.** A tunnel publishing port A while the
+   app was edited on port B gives "my new tabs are missing / text is invisible" — the app is fine,
+   the URL points at a different application. `grep -n "cloudflared tunnel" …/run`, then compare the
+   served `<title>` and a tab marker with the app you changed. Fix the port, not the CSS. A tunnel
+   host also hits Host allowlists as `403` while `127.0.0.1` returns `200` — allow
+   `*.trycloudflare.com` (see `localhost-monitoring-console`,
+   `references/contrast-and-tunnel-exposure.md`).
+
 1. **svlogd refuses to start for newly created services** on this device: `sv status` prints
    `warning: <name>/log: unable to open supervise/ok: file does not exist` and no `svlogd` process
    appears, while pre-existing services still log fine. Creating `log/supervise`, `chmod 755`,

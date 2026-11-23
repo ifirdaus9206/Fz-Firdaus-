@@ -215,6 +215,12 @@ working launcher is one MacroDroid macro per app plus a broadcast from Termux:
 3. **Control-test before blaming a macro**: fire the app you know works, then the suspect one, 8–10 s
    apart, and ask which screens changed. Result table: control opens + suspect doesn't → the suspect
    macro (trigger text / toggle), not the delivery path. Both open → success. Neither → activation.
+3b. **To separate "bad action" from "bad macro", repoint the working macro instead of building a new
+   one.** Verified 2026-11-22: `BUKA NOTA` had its action switched from Nota to Claude, and the
+   *working* action string `com.ketua.OPEN.NOTES` then opened **Claude** — proving the launch path and
+   the accessibility grant, and indicting the freshly AI-built `BUKA CLAUDE` macro (correct-looking
+   `Intent Diterima` row, still never fired). Repoint back afterwards so the original macro is
+   restored, and prefer duplicating a verified macro over letting the app's AI generate a new one.
 4. Manual "Uji" inside the editor runs a macro **even when it is disabled**, so "it works when I test
    it here" never proves the broadcast path — only the control test does.
 5. One macro per app; several `Lancar Aplikasi` rows in ONE macro run in sequence and only the last
@@ -251,6 +257,13 @@ device" - it is not root.
   Enabled-state cannot be read from the shell (`settings get secure enabled_accessibility_services`
   → INTERACT_ACROSS_USERS, `cmd accessibility get-bindings` → empty, `pm dump` → DUMP denied), so ask
   for a screenshot of that list instead of "is it on".
+- **Do not send the human hunting for `Paparan di atas apl lain` (SYSTEM_ALERT_WINDOW) on Termux.**
+  Chasing the overlay-permission exemption for background activity starts costs many round-trips and
+  ends nowhere: on HyperOS the Termux `Info apl` page shows Notifikasi / Storan / Kebenaran (and
+  `Kebenaran lain` inside it) but **no overlay toggle**, so the exemption cannot be granted from the
+  Termux side. Every extra round of "scroll further, maybe under Kebenaran khas" is wasted user
+  patience — after one check, switch to Recipe 6b (automation app + accessibility), which is the
+  verified path for launching apps while `am start` keeps reporting success and changing nothing.
 - **Never build the macro with the automation app's own AI generator.** Asked for an intent trigger +
   toast + UI tap at 540/1200, MacroDroid's AI chat claimed the tap was added while the saved action
   rows were `1. Mesej Popup` and `2. Jalankan Makro → <the same macro>` — a self-call, so no tap ever

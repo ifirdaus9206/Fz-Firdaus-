@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# Cloudflare quick tunnel → Hermes dashboard pada 127.0.0.1:9119.
+# Cloudflare quick tunnel → konsol SATU PUSAT pada 127.0.0.1:8787.
 # URL publik ditulis ke ~/.hermes20/dashboard_url.txt setiap kali tunnel dibuat semula.
 # Dijalankan oleh runit (hermes-dash-tunnel) — jangan jalankan dua kali.
 set -u
@@ -22,7 +22,7 @@ publish() {
 : > "$LOG"
 trap publish EXIT
 
-cloudflared tunnel --url http://127.0.0.1:9119 --no-autoupdate 2>&1 | while IFS= read -r line; do
+cloudflared tunnel --url http://127.0.0.1:8787 --no-autoupdate 2>&1 | while IFS= read -r line; do
   printf '%s\n' "$line" >> "$LOG"
   case "$line" in
     *trycloudflare.com*)

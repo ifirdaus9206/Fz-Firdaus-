@@ -13,6 +13,57 @@ metadata:
 
 # Localhost Monitoring Console
 
+**Public URL shows the wrong page / invisible text?** Before touching CSS, confirm the tunnel
+publishes THIS console's port and that the app's Host allowlist accepts `*.trycloudflare.com`.
+A light theme also needs its background reset in the same `!important` layer that sets the text.
+Full diagnosis + verification: `references/contrast-and-tunnel-exposure.md`.
+
+**Theme still dark?** Version the storage key (`console_theme_v2`); for repeated "still black" rounds see `references/light-theme-full-sweep.md`.
+Version the localStorage key (`console_theme_v2`) instead of only bumping the CSS `?v=`.
+
+**One block still black after the light theme landed?** Stop guessing selectors — sweep the base
+stylesheet for every rule with a near-black `background`, then add the missing `body.light`
+override for each. Status pills, inline-SVG charts and `pre`/`.bodytext` previews are the usual
+survivors. Script + pitfalls: `references/contrast-and-tunnel-exposure.md` §6.
+
+**Light page but ONE block still black?** That block's colours are hardcoded in a second layer —
+the original `style.css`, or inline SVG fills emitted by JS. Convert the chart to CSS variables and
+append one light-mode override block for the old classes. The same reference covers LAN binding
+(`CONSOLE_BIND=0.0.0.0`), the `x-console-token` write header, and adding an MCP panel without
+calling the interactive `hermes mcp add`: `references/theme-layers-and-new-panels.md`.
+
+**One chart still renders as black blocks in light mode?** Inline SVG colours are hardcoded in
+the JS template literal and a `body.light svg text{fill:...}` rule kills the labels. Move chart
+colours to CSS custom properties applied through `style="fill:var(--oc-*)"` and delete the
+blanket text rule. Recipe + verification: `references/svg-theme-tokens.md`.
+
+**One block still black in light mode?** A dark raster hero image (`<img>` + absolute overlay)
+is not a CSS background — hide the image and make the overlay static. Write endpoints also need
+the `X-Console-Token` header from `GET /api/meta`, or they return
+`{"error":"token konsol tiada atau salah"}`. Hero-image fix, roster CRUD pattern, and
+quick-vs-named tunnel limits: `references/light-theme-dark-blocks-and-csrf.md`.
+Same for a dead tunnel URL: read the *current* URL from the tunnel log, not a cached file.
+
+**Write-side controls (the console is not read-only any more):** three endpoint shapes that turned a
+watch page into a working control panel, all proven on this device — `POST /api/task
+{instruction, max_agents, start}` → `agency_runner.plan_run()` then `start_run()` (returns `{id,
+status, plan.ejen[]}`; guard with a plan lock and reject instructions < 12 chars), `POST
+/api/cron/{job_id} {action: run|pause|resume}` → shell out to `hermes cron <action> <id>` with
+`HERMES_HOME` set (never edit `cron/jobs.json` while the gateway is running), and `GET /api/watak`
+→ read the 282-agent catalog JSON once per mtime, annotate `active` from `/api/live/state`. Two
+data traps that make a panel look broken: `cron.jobs[].schedule` is a **dict** (`{kind, expr,
+display}`) so stringify it server-side, and `SOUL.md` may no longer contain the `ENJIN` table the
+org chart parsed — fall back to a static 8-system list rather than rendering `0 SISTEM`.
+
+**Repo-specific playbook:** `references/hermes-console-8787-patching.md` — adding a tab/panel to the
+in-repo Hermes console at 127.0.0.1:8787: idempotent patch-script anchors, the CSRF header POST needs,
+the four verification commands, and the `0 SISTEM` / phantom-`planned`-run data bugs.
+
+**Restyle / "one place only":** `references/theme-adoption-and-consolidation.md` — lifting design
+tokens from the built Hermes dashboard CSS, retro-fitting a sidebar + HUD without rewriting the tabbed
+DOM, cache-busting both stylesheets, and the consolidation checklist (stop the loser services with
+runit `down` files, remove the URL-churn cron, keep the survivor's panels).
+
 Build a single-page, **read-only** console that answers "what is running, what got done, how is it
 organised" for one or more app homes (e.g. several `HERMES_HOME` state directories), then optionally
 extend it into a **control panel** that dispatches agents from a large roster.
@@ -658,6 +709,19 @@ holds **local directories** cannot see a PC by adding an entry. Full recipe:
    asked to avoid. State the ceiling: 5-minute staleness answers "is the PC alive", not "what is on
    its screen now".
 
+**"Gabungkan dua-dua jadi satu tempat" when the second system is a LOCAL service** — do not build a
+second console and do not scrape. If the console already exposes the other service's state (here
+`GET /api/web` → `{url, url_updated, lan, port_open, user, secret_file, services[]}`), the whole job is
+one panel in the tab the owner already opens (`?tab=pusat`), placed **above** the chart so it is the
+first thing seen: copybox for the URL, `BUKA DASHBOARD` / `SALIN URL` buttons, then rows for LAN,
+Tailscale (the address that never changes), `port_open`, service states, and the path of the
+credentials file. Render it from one `loadPusatWeb()` called in the tab loader behind a
+`S.<tab>.webInit` guard (so the 60 s `setInterval` is created once, not per tab switch). Prove with
+`node --check static/app.js`, `curl -s -o /dev/null -w '%{http_code}' '…/?tab=pusat'` → 200, and
+`grep -c '<new-id>' index.html` ≥ 1 — the same three checks as any other tab addition, no new endpoint.
+State plainly which of the two links is durable: the quick-tunnel URL rotates on every restart (that
+is the *cause* of the "URL berubah" alerts, not a fault of Termux), the tailnet address does not.
+
 **Answering "is the console still alive?"** — quote uptime, never a promise: `sv status hermes-console`
 (`run: … (pid N) 13389s`) plus `curl /api/meta` (`version`, `now`), then convert `13389s → 3j 43m` and
 add that runit restarts it in seconds and after a reboot. `Invalid HTTP request received` in the log is
@@ -735,6 +799,15 @@ no delivered message) before calling the relay done (§11).
   delete the stray copy (one copy only), then **two** proofs: `cronjob(action='run')` → `last_status:
   ok` *and* the next scheduled tick in `cron/jobs.json` (`last_run_at` advanced on its own,
   `last_status: ok`, `last_delivery_error: None`). Manual-run-only is not proof of the scheduler.
+- **A `no_agent` job that alarms on the first network blip trains the owner to ignore it.** Measured
+  2026-11-23: the Gmail sorting job delivered `socket.gaierror: [Errno 7] No address associated with
+  hostname` — DNS was momentarily absent; minutes later `imap.gmail.com` resolved and `ping 8.8.8.8`
+  was clean. Retry inside the wrapper instead of reporting: `for i in 1 2 3`, break on exit 0, and
+  `sleep 60; continue` **only** when the output matches
+  `gaierror|No address associated|Temporary failure|timed out|Connection reset`; any other failure
+  breaks immediately. Put `(cubaan $i/3)` in both the log line and the message so a real outage is
+  distinguishable from a blip. Verify the branch you added, not just the happy path:
+  `bash -n script.sh` plus one forced run — a retry loop that can never exit is worse than the alarm.
 - **A soft finding in a cron script must not exit non-zero.** A weekly check that exits 1
   because a report lacked a `lulus` key — or because the QA verdict was the default
   `NEEDS_WORK` — makes the job report `error` and alarms the user while the pipeline ran
@@ -1122,6 +1195,7 @@ no delivered message) before calling the relay done (§11).
   `X-Console-Token`, `--data-binary @file` for >9 MB base64 bodies, the lying-extension bug
   (HEIC→`.png`) and its Pillow→JPEG fix (7.2 MB → 734 KB), a dedicated upload panel with a
   `count`-based confirmation, and script-file cleanup of test steps.
+- `references/ui-theme-contrast-and-cache-bust.md` — "aku dah tukar tema tapi nampak sama": the `?v=` bump on the stylesheet link (not just Ctrl+Shift+R), an appended contrast layer that fixes dark-mode light text and light-mode dark text without rewriting the theme, the `select`/`option`/`::placeholder` colour traps, hiding a duplicated panel (`display:none`) instead of deleting it so the poll loop's `getElementById` keeps working, and the five-step UI verification order.
 - `references/adding-a-console-tab.md` — adding a tab to the live console without breaking the
   others: six touch points (nav, pane, `loadTab`, `TABS`, listeners, renderers), subprocess endpoint
   shape with `timeout`/`kod`, the `realpath(strict=True)` + `Path.parents` + `is_file()` path guard

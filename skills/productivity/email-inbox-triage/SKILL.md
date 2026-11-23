@@ -162,6 +162,14 @@ right after, and the revoke path: `references/gmail-app-password-setup.md`.
   `(dari, subjek, tarikh)` keeping the highest-priority folder (`1-PENTING > 2-KERJA > 3-PROMOSI >
   0-LAIN`), and treat the delete as destructive: run the dedupe in dry-run, show the count, and
   **wait for explicit approval** — a timed-out confirmation prompt is not consent.
+- **A cron wrapper that shouts on the first transient DNS error teaches the user to ignore it.**
+  Verified 2026-11-23: one 15-minute tick died with
+  `socket.gaierror: [Errno 7] No address associated with hostname` from `imaplib` (Wi-Fi/VPN flip);
+  the next manual run was clean and `imap.gmail.com` resolved fine. Put the work inside a retry loop
+  (3 attempts, 60 s apart) that treats `gaierror` / `No address associated` / `Temporary failure` /
+  `timed out` / `Connection reset` as retryable, break out on any other error, and only send the
+  Telegram alert after the last attempt — log line carries `(cubaan N/3)`. Success stays silent; the
+  single 21:00 digest is the only routine message the user wants.
 - **Hermes cron scripts must be a real file directly inside `~/.hermes20/scripts/`.** An absolute
   path and even a symlink are rejected (`Script path escapes the scripts directory via traversal`).
   Put a two-line wrapper there (`exec bash "$HOME/vault/email-inbox/auto.sh"`) and keep the logic
