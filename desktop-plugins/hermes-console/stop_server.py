@@ -12,6 +12,11 @@ port yang betul melalui /proc/<pid>/environ.
 
 TIDAK menggunakan `pkill -f` — corak itu memadankan shell pemanggil sendiri
 dan boleh membunuh sesi terminal.
+
+PENTING (runit): konsol diselia oleh servis runit `hermes-console`. Selepas
+skrip ini membunuh proses, runsv akan menghidupkannya semula dalam ~2 saat —
+jadi kesan bersihnya ialah **restart**, bukan berhenti. Untuk benar-benar
+hentikan, jalankan `sv down hermes-console` dahulu.
 """
 import os
 import signal
