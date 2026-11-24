@@ -38,8 +38,8 @@
 
 | Folder | Status |
 |---|---|
-| `archive/` | Snapshot lama → dipindah ke `/sdcard/Documents/UIM/arkib-h20/` |
-| `legacy-ultimate/` | Projek lama — calon arkib |
+| `archive/` | 714 MB — kandungan kerja sahaja (cache dibuang 2026-11-24) |
+| `legacy-ultimate/` | 539 MB — kod projek lama tanpa `node_modules`/`venv` |
 | `ULTIMATE_AI_PROJECT/` | Kosong — calon buang |
 | `platforms/pairing/` | Dicipta runtime, kekal kosong |
 

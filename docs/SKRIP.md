@@ -49,7 +49,7 @@ Kelas: **AUTO** = dijalankan cron/servis · **MANUAL** = guna bila perlu · **SE
 | `translate_agency_ms.py` | Terjemah korpus persona → `agency-agents-ms/` (boleh sambung) |
 | `gh_login_driver.py` | Pemandu PTY untuk `gh auth login --web` |
 
-## 4. SEKALI — calon arkib (6)
+## 4. SEKALI — SUDAH DIPINDAH ke arkib (6)
 
 | Skrip | Kerja | Sebab calon arkib |
 |---|---|---|
@@ -60,7 +60,10 @@ Kelas: **AUTO** = dijalankan cron/servis · **MANUAL** = guna bila perlu · **SE
 | `probe_dm_thread_gate.py` | Uji laluan topik DM Telegram | Diagnostik sekali |
 | `repro_runner.py` | Ulang satu ujian tertentu | Diagnostik sekali |
 
-**Belum dipadam** — ikut arahan bos: susun dahulu, padam hanya selepas disahkan.
+**Status 2026-11-24:** keenam-enamnya disahkan **tiada rujukan** dalam cron, runit,
+servis atau skrip lain. Dipindahkan ke
+`/sdcard/Documents/UIM/arkib-h20/skrip-sekali/` (boleh pulih jika perlu).
+`scripts/` kini **29 fail**, sintaks 29/29 lulus.
 
 ## 5. Peraturan skrip
 

@@ -4,7 +4,7 @@ OpenRouter :free timeout; guna deepseek-v4.1-flash.
 §
 ~/.hermes20 = home utama; ULTIMATE_AI_PROJECT=tools/hermes-source.
 §
-Long-poll (poller kedua=409); log logs/gateway.log. Amaran auto: scripts/gw_alert.sh (gerbang mati/tidak bersih) + tg_watch.sh (mesej menunggu) — cron 5 min, Telegram + e-mel Gmail.
+Long-poll poller kedua=409; log logs/gateway.log. Amaran auto gw_alert.sh + tg_watch.sh (cron 5 min).
 §
 Runbook OPERASI.md + docs/KETUA.md. workspaces/<ejen>, ~/vault (memori), knowledge_base (SOP). Roster 282 = teks; kerja fail guna delegate_task. /api/agency/health.
 §
@@ -20,6 +20,8 @@ Gudang = /sdcard/Documents/UIM (akar /sdcard RO). uim_hantar (sha256) sehala; au
 §
 Konsol 8787 (?tab=pusat), bind 0.0.0.0 → LAN 192.168.0.41:8787. Butang RESET GERBANG di tab pusat (POST /api/svc/hermes-gateway restart). URL awam disalin ke /sdcard/Documents/UIM/KONSOL-URL.txt (quick tunnel bertukar setiap mula).
 §
-Panduan bos: hantar PDF ke ifirdaus9206@gmail.com (txt tak boleh dibuka); perubahan sistem → Telegram. Cron: SENYAP bila sihat, satu laporan 21:00, ralat beritahu segera.
+Panduan bos: PDF ke ifirdaus9206@gmail.com (txt tak terbuka); perubahan sistem → Telegram. Cron senyap bila sihat, 1 laporan 21:00, ralat segera.
 §
-~/.hermes19 dipadam; port 8790 (konsol lama) MATI — guna 8787 sahaja. Skill aktif=114 dalam 30 kategori ≠ 282 ejen/watak (bos keliru). Memori 2 lapis ~/vault/memori, suling cron 23:30; konsol 6 tema (console_theme_v3); url_watch 15min. Keeper = wake-lock + auto-up servis 8787. Status servis: arahan `hermes-status`|`hs` (nama servis bukan arahan).
+~/.hermes19 dipadam; 8790 mati — hanya 8787. Skill=114/30 ≠ 282 ejen. Memori 2 lapis ~/vault/memori (cron 23:30); 6 tema. Arahan: hermes-status|hs, hermes-up, hermes-down, hermes-restart (nama servis BUKAN arahan; guna sv atau hs). Keeper=wake-lock+auto-up.
+§
+Bos kerja berfasa: setiap fasa = baca fail satu-satu → senarai fail dibaca untuk dia semak → bina/isi/kemas → cadang penambahbaikan; padam hanya selepas disahkan tidak diguna. Mahu plan dulu, jangan bertindak sebelum plan siap.
