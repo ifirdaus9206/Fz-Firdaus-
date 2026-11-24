@@ -22,7 +22,7 @@
 
 | Folder | Fungsi |
 |---|---|
-| `backups/` | Semua `*.bak` + `state.db` lama dikumpul di sini |
+| `backups/` | Semua `*.bak` + `state.db` lama + `profiles-skills-lama-2026-11-24.tar.gz` |
 | `docs/` | Manual + `arkib/` untuk laporan bukti lama |
 | `agency-agents/` | Sumber persona ejen (329 dokumen, 21 divisi) |
 | `agency-agents-app/` | Aplikasi paparan persona |

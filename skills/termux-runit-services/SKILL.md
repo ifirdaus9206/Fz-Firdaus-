@@ -201,6 +201,10 @@ rm -f ~/hermes-console/server-<oldport>.pid          # stale pid of the retired 
   `STATUS <date> — SEJARAH SAHAJA. <home> dipadam; port <N> dibersarakan.`
 - Keep grep hits that are *comments documenting the retirement* (audit trail); delete only live
   code paths.
+- **The cron job title is a reference too.** `grep` over code will not find the scheduled job whose
+  *name* still says `(8787 + 8790)`; the owner keeps seeing the dead port in the console after the
+  retirement. Rename it (`cronjob update <job_id> name="Penjaga Hermes Console (8787)"`) in the same
+  pass as the code edits.
 - Prove it: `curl -s /api/fleet | python3 -m json.tool` shows one gateway, HUD renders no old pill,
   retired port answers `000`.
 - Retiring one home is the narrow case. When the owner asks to "susun semua fail" in a home that has

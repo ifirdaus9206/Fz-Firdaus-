@@ -126,9 +126,16 @@ md5sum skills/software-development/plan/SKILL.md \
 ```
 
 Measured: `cline-repo`/`cline-install`, `bun-repo`/`bun-install`, `openhands-main`/`OpenHands-main`
-were byte-identical trees (~1.3 GB of waste), and all 7 profiles carried a 71-file copy of the
-default `skills/` (121 MB). Profile copies are **not** junk — each profile needs them — so symlink
-dedupe is a *decision to offer*, not an action to take.
+were byte-identical trees (~1.3 GB of waste).
+
+**Profile `skills/` copies are a different verdict — check before calling them duplicates.** They
+are not junk (each profile needs its own tree), and on this home they were **not** copies at all:
+the default tree held **115** skills while every profile held **71**, with **45 files differing**
+and newer skills (`localhost-monitoring-console`) missing entirely. They were a *stale snapshot*,
+so symlinking would not dedupe — it would silently upgrade seven profiles' behaviour. Compare
+relative-path sets plus hashes (`references/runtime-tidy-and-profile-dedupe.md`), then present it as
+a **decision for the owner** (`symlink = 115 skills terkini + 57 MB`, `refresh copies`,
+`leave as-is`), never as housekeeping you perform on your own.
 
 ### Finding stubs (what "banyak fail kosong" usually means)
 
@@ -162,6 +169,13 @@ mv SOUL.md.bak* config.yaml.bak* state.db.bak-* backups/     # root stops lookin
 mkdir -p docs/arkib && mv docs/LAPORAN-*.md docs/INSIDEN-*.md docs/arkib/
 mv plugins/*/data/*.bak* backups/plugins/ 2>/dev/null
 rm -rf scripts/__pycache__ plugins/*/__pycache__            # regenerable
+
+# runtime logs: truncate the big ones, drop the rotated ones — 27 MB → 4.6 MB
+cd logs && rm -f *.log.1
+for f in web-server.log agent.log hermes-dash-tunnel.log dashboard-tunnel.log; do
+  [ -f "$f" ] && : > "$f"
+done
+# NEVER touch logs/<service>/ — svlogd owns lock/current there
 ```
 
 Keep a `README-SUSUNAN.md` (or `docs/README.md`) that names every folder's job and every path
@@ -252,8 +266,25 @@ comparison would have kept both. Script and per-pair evidence:
    the dead path** (`cd: …/root-cleanup: No such file or directory`, exit `126`) even though the
    target exists — the shell's cwd is gone. Start the next command with `cd ~ && …`.
 10. **A retired port lives in cron job *names* too.** Code grep finds `app.py`/`PLAN.md`/pids but not
-   the scheduled-job title; rename it (`cronjob update <id> name="Penjaga … (8787)"`) so the owner
-   does not keep seeing `(8787 + 8790)` in the console after 8790 is gone.
+    the scheduled-job title; rename it (`cronjob update <id> name="Penjaga … (8787)"`) so the owner
+    does not keep seeing `(8787 + 8790)` in the console after 8790 is gone.
+11. **`npm prune` does not shrink a real app's `node_modules`.** Offered as a tidy-up, it printed
+    notice text and left `node_modules` at **91 MB** — zero extraneous packages, because every
+    package is reachable from `npm run build`/`dev`. Never quote `npm prune` as a saving; the only
+    things that free that space are `rm -rf node_modules` (then the app cannot build until
+    `npm install`) or deleting the whole unused app. Say which, and measure before/after with `du`.
+12. **A FUSE phantom directory survives `rm -rf`, and retrying is the wrong move.** After clearing
+    `/sdcard/.../ultimate-2026-10` the parent still existed with **0 files and 6 empty dirs (26 KB)**;
+    `rm -rf` failed again and `rmdir` answered *"Directory not empty"* on an apparently empty path.
+    That is an Android FUSE artifact. State three facts and stop: it holds **no files**, it lives on
+    **external storage** (so the home's `du` is unaffected), and the owner can remove it from the
+    Files app. Do **not** loop destructive variants — the approval layer can block the retry
+    (`BLOCKED: … Silence is not consent`) and the turn ends with an unrelated stall. One retry after
+    `chmod -R u+w`, then hand it over.
+13. **The `du` total is only publishable from a completed process.** Corollary of pitfall 7 that
+    caught this session twice: `du -sh <home>` during a background `rm` reported 8.2 G, then 3.7 G,
+    then the true 6.2 G. Quote the number from the completion notification only, and when a figure
+    escaped early, correct it in the next reply in one line rather than quietly restating it.
 
 ## References
 
@@ -264,3 +295,14 @@ comparison would have kept both. Script and per-pair evidence:
   that separates stubs from prose, script-usage cross-reference (cron + runit + callers), FastAPI
   route inventory, the `LAPORAN-FASA-N.md` skeleton the owner audits, and the doc baseline
   (`ARKITEKTUR` / `SERVIS` / `SUSUNAN` / `RUNBOOK-INSIDEN` / `API-KONSOL` / `SKRIP` / `AGENTS.md`).
+- `references/deletion-phase-measured.md` — the deletion phase with real numbers: 17 GB → 6.4 GB
+  breakdown, the hidden-dir scan that exposed a 4.9 GB snapshot of pure build cache, the
+  identical/subset/disjoint duplicate comparator (Python, copy-paste) with the `cline-install`
+  subset case that saved 962 MB, the `node_modules`-prune one-liner (2.1 GB → 539 MB), and the four
+  traps (du mid-delete lies, killed cross-FS `mv` → FUSE `Directory not empty`, cwd inside a deleted
+  dir, 180 s timeouts).
+- `references/runtime-tidy-and-profile-dedupe.md` — the small leftovers phase: log truncation
+  (27 M → 4.6 M, and why `logs/<service>/` is off-limits), the measured `npm prune` no-op (91 M
+  before *and* after), the hash-set script that proved the 7 profiles were **stale (71) not
+  duplicated (115)** with the three verdicts and the three options to offer, the FUSE phantom-dir
+  signature (0 files / 6 dirs / 26 K, retry gets `BLOCKED`), and the end-of-pass number block.

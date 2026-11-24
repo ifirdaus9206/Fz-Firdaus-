@@ -429,6 +429,19 @@ Copy `templates/backup_github.sh` and adapt. Contract that matters:
   `main` silently strands the whole backup on a branch nobody looks at (PITFALL #5).
 - stdout only on problems.
 
+**`last_status: error` on the cron job does not mean the backup failed.** A `no_agent` backup job
+reports the *delivery* result, so a transient network outage during the Telegram send shows up as
+`last_delivery_error: httpx.ConnectError … No address associated with hostname` while the commit and
+push both succeeded. Read the two fields separately before alarming the owner:
+
+```bash
+hermes cron list | grep -A3 'Sandaran malam'      # last_status vs last_delivery_error
+cd ~/.hermes20 && git log --oneline -2 && git status -sb | head -2
+```
+
+Only `git rev-parse HEAD` ≠ `git ls-remote origin main` is a real backup failure. State it that way
+("commit tetap berlaku; hanya mesej laporan gagal") instead of reporting the backup as broken.
+
 `templates/backup_github.sh` is the tested implementation (guards, tiers, exit codes) —
 start from it instead of re-deriving the regexes. **Its scan block is the older single-layer
 version**; when docs live in the repo, replace it with the two-tier block in
