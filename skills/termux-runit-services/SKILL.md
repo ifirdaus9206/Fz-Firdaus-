@@ -83,7 +83,15 @@ hermes cron run <job-id>      # run twice: first prints, second MUST be silent
 ```
 
 Create the job through the CLI when the `cronjob` tool call is rejected for a missing field; the
-script must live in `<hermes home>/scripts/`. Prove **both** branches (message, then silence) — a
+script must live in `<hermes home>/scripts/`.
+
+When a `create` keeps answering *"schedule is required"* even though you passed `schedule`, stop
+reordering the same call. What worked: create with the **minimum** set (`action`, `prompt`,
+`schedule`), then add the rest in **separate sequential `update` calls** on the returned
+`job_id` — first `script`, then `no_agent`. Each `update` succeeds on its own and the job ends up
+`script: url_watch.sh, no_agent: true`. `no_agent=true` is rejected unless `script` is already set
+(*"Cannot set no_agent=True on a job without a script"*), which is why `script` must come first.
+Then prove both branches with `action=run`: first run prints, second must be silent. Prove **both** branches (message, then silence) — a
 watcher seen only in its silent state is unverified — and never announce a URL you have not curled
 in the same run.
 
@@ -138,6 +146,66 @@ entry absent), and `passwd` has no non-interactive mode: it must be driven over 
 written straight into a `chmod 600` secrets file, never into the chat. Send the user to the file or
 the mail channel for the value. Full recipe, security posture and IP-reading commands:
 `references/termux-sshd-8022-provisioning.md`.
+
+## Service names are NOT commands (the "command not found" loop)
+
+The owner will eventually type the service name into a shell:
+
+```
+hermes-console: command not found
+hermes-gateway: command not found
+hermes-dash-tunnel: command not found
+HELD: command not found        ← this one was copied out of a log line, not a command
+```
+
+Three separate causes, all real, none of them a broken install:
+
+1. **`hermes-console` etc. are directory names under `$PREFIX/var/service/`**, not binaries.
+   The verb is `sv`: `sv status <name>` / `sv up` / `sv down` / `sv restart`.
+2. **The typed word was log *output*.** `HELD`, `run:`, `down:` come from `sv status` and keeper
+   output. Never paste a status word back as a command.
+3. **Wrong shell.** A prompt reading `[root]` means a root/proot session where Termux's
+   `$PREFIX/bin` is not on `PATH`, so even `sv` is "not found". Answer: `exit` back to the Termux
+   shell, or call `/data/data/com.termux/files/usr/bin/sv status <name>`.
+
+Don't explain the theory first — hand over **one** command that works for all services, then teach
+the `sv` verbs one at a time (this owner wants one numbered step per message):
+
+```bash
+hermes-status          # semua servis + kod konsol + URL tunnel
+hs                     # alias pendek
+hermes-status up | restart | log
+```
+
+`scripts/svc-status.sh` is the generic implementation — copy to `$PREFIX/bin/hermes-status`,
+`chmod +x`, set `SVCS=` to the services that actually exist. It prints `HIDUP/MATI/TIADA` per
+service plus the health URL, so one word replaces four failed guesses. Install beside it:
+`hermes-up` (sv up each, then status), `hermes-down` (`sv down` console+gateway),
+`hermes-restart` (`sv restart` both) — and warn in the same breath that **`hermes-restart` kills
+the Telegram gateway and drops the running session**; expected, not damage.
+
+## Retiring a home/port is a code-wide grep, not one `rm`
+
+Deleting `~/.hermes19` did not remove the *references*: the console still showed a dead
+`HERMES19 MATI` pill and `/api/fleet` still listed that gateway, because both are hardcoded.
+Checklist that actually finished the job:
+
+```bash
+grep -rn '<oldport>\|<oldhome>' ~/hermes-console/{app.py,PLAN.md,tools/,static/} | head -40
+rm -f ~/hermes-console/server-<oldport>.pid          # stale pid of the retired port
+```
+
+- `/api/fleet`: only append the gateway entry **if its home dir exists and is non-empty**.
+- `static/index.html`: delete the `<span class="pill">` for the retired home.
+- Historical docs (`PLAN.md`): keep the text, stamp it —
+  `STATUS <date> — SEJARAH SAHAJA. <home> dipadam; port <N> dibersarakan.`
+- Keep grep hits that are *comments documenting the retirement* (audit trail); delete only live
+  code paths.
+- Prove it: `curl -s /api/fleet | python3 -m json.tool` shows one gateway, HUD renders no old pill,
+  retired port answers `000`.
+- Retiring one home is the narrow case. When the owner asks to "susun semua fail" in a home that has
+  grown to tens of GB, use `agent-home-audit-and-tidy`: plan first, organise before deleting, and
+  re-run `hermes-status` after every step.
 
 ## Pitfalls
 
@@ -328,6 +396,26 @@ that is correct and required while the lock is held; only the repeated popping i
     pemangkasan, baca semula `cat ~/.hermes20/dashboard_url.txt`, `curl` URL itu, dan beri bos URL
     **baharu** — jangan ulang hostname lama yang belum diuji dalam larian yang sama.
 
+14. **Killing the supervised child is NOT "stopping the service".** A `stop_server.py`-style script
+    that `kill`s the app PID looks broken under runit: runsv respawns the child in ~2 s, so
+    `curl` never leaves `200` and the owner concludes "arahan tak jalan". Proven here:
+    `8787 dihentikan: [10530, 10530]` → `8787 selepas kill = 200`. The *net* effect of such a
+    script is a **restart**. To really stop: `sv down <name>` **first** (that drops the `down`
+    flag on runsv and stops respawning), then kill if anything survives. Document this in the
+    script's own docstring so the next reader doesn't chase a phantom bug.
+15. **A `setsid ./run.sh &` launcher bypasses the supervisor and creates the orphan that
+    pitfall 3 describes.** `start_all.sh` worked (dead `000` → `200`) but left an unsupervised
+    process holding the port, while `sv status` still said `down`. Always return to the supervised
+    state after using such an emergency launcher: kill the setsid PID, `rm -f server.pid`, then
+    `sv up <name>` and confirm exactly one process + one growing uptime. Prefer `sv up` as the
+    normal path; keep the setsid script only for the case where runit itself is broken.
+16. **Killing the gateway to "test a restart" also kills the conversation that asked for the
+    test.** `sv restart hermes-gateway` from inside a gateway session triggers the in-process
+    guard or, via a wrapper script, actually drops the turn mid-reply (`Operation interrupted`).
+    Either way the owner sees a truncated answer. Say so *before* running it, run it as the last
+    action of the turn, and on reconnect state plainly that the session was restored and the old
+    command was **not** re-executed.
+
 ## Watchdog: alert on unclean gateway death, then self-recover
 
 runit restarts a killed child, but nobody is told — the owner discovers a silent bot hours later.
@@ -437,3 +525,6 @@ nothing. Tell the user when it will happen and confirm the new PID/uptime afterw
 - `scripts/termux-health-check.sh` — install as `~/bin/sihat`: one-shot PASS/FAIL health report
   (wake-lock, single runsvdir, orphans, services, Android process limit, zombies, console,
   gateway, RAM).
+- `scripts/svc-status.sh` — install as `$PREFIX/bin/hermes-status` (+ `hs` alias): one-word
+  HIDUP/MATI/TIADA report for a service set plus health URL and current tunnel. The answer to
+  "kenapa semua command not found" — service names are not commands.

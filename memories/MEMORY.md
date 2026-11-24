@@ -22,4 +22,4 @@ Konsol 8787 (?tab=pusat), bind 0.0.0.0 → LAN 192.168.0.41:8787. Butang RESET G
 §
 Panduan bos: hantar PDF ke ifirdaus9206@gmail.com (txt tak boleh dibuka); perubahan sistem → Telegram. Cron: SENYAP bila sihat, satu laporan 21:00, ralat beritahu segera.
 §
-~/.hermes19 dipadam; port 8790 (konsol lama) MATI — guna 8787 sahaja. Skill aktif=114 dalam 30 kategori ≠ 282 ejen/watak (bos keliru). Memori 2 lapis ~/vault/memori, suling cron 23:30; konsol 6 tema (console_theme_v3); url_watch 15min. Keeper = wake-lock + auto-up servis 8787.
+~/.hermes19 dipadam; port 8790 (konsol lama) MATI — guna 8787 sahaja. Skill aktif=114 dalam 30 kategori ≠ 282 ejen/watak (bos keliru). Memori 2 lapis ~/vault/memori, suling cron 23:30; konsol 6 tema (console_theme_v3); url_watch 15min. Keeper = wake-lock + auto-up servis 8787. Status servis: arahan `hermes-status`|`hs` (nama servis bukan arahan).

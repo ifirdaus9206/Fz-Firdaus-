@@ -1,2 +1,5 @@
 #!/usr/bin/env bash
-HERMES_HOME="$HOME/.hermes19" HERMES_TERMUX_DISABLE_FAST_CLI=1 "$HOME/.hermes_venvs/hermes19/bin/hermes" "$@"
+# hermes19 — DIBERSARAKAN 2026-11-24.
+# Home ~/.hermes19 sudah dipadam. Arahan ini kini menghala ke hermes20.
+echo "⚠  hermes19 sudah dipadam. Menggunakan hermes20." >&2
+exec env HERMES_HOME="$HOME/.hermes20" hermes "$@"
