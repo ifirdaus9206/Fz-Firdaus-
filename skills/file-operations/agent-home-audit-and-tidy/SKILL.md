@@ -181,6 +181,61 @@ done
 Keep a `README-SUSUNAN.md` (or `docs/README.md`) that names every folder's job and every path
 that must never be moved. The next session needs the map more than it needs the space.
 
+## Pruning `backups/` — the folder you just filled
+
+`backups/` becomes the next 90 MB problem if nothing ever leaves it (measured: 94 MB → 26 MB in one
+pass). Three removals are safe, and each needs its own proof:
+
+| Target | Proof required before `rm` | Measured |
+|---|---|---|
+| Database backup (`state.db.bak-*`) | the **live** DB answers: `PRAGMA integrity_check` → `ok`, plus a row count that matches reality (23 tables, 12,301 messages) | 56 MB |
+| Config/persona twin (`SOUL.md.agency-backup`) | `md5sum` proves it is byte-identical to the copy being kept | 57 KB |
+| Middle members of a backup series (`agents.json.bak-<date>` ×5) | keep **oldest + newest** — they bracket the history; the middles add nothing | 12.3 MB |
+
+```bash
+python3 -c "
+import sqlite3
+c=sqlite3.connect('state.db')
+print('integrity:', c.execute('PRAGMA integrity_check').fetchone()[0])
+print('jadual:', c.execute(\"select count(*) from sqlite_master where type='table'\").fetchone()[0])
+"
+md5sum backups/SOUL.md.bak backups/SOUL.md.agency-backup   # identical → drop one, keep one
+```
+
+Never delete a DB backup on a hunch — `integrity_check` plus a plausible row count is one command
+and it is the only thing that makes the deletion defensible. Quote the check output in the report;
+"database nampak ok" is not evidence.
+
+## Executing the profile symlink (only after the owner approves)
+
+The framing above says present it as a decision — this is the executed, verified recipe once the
+answer is "ya". Measured 121 MB → 54 MB.
+
+```bash
+cd ~/.hermes20
+# 1) keep the stale tree recoverable — 121 MB of markdown compresses to 17 MB
+tar czf "backups/profiles-skills-lama-$(date +%F).tar.gz" profiles/*/skills
+
+# 2) swap each profile's copy for a symlink to the single shared set
+for p in profiles/*/; do
+  [ -d "$p/skills" ] && [ ! -L "$p/skills" ] || continue
+  rm -rf "$p/skills"
+  ln -s "$HOME/.hermes20/skills" "$p/skills"
+done
+
+# 3) prove the tree resolves, then prove Hermes itself agrees
+for p in profiles/*/; do
+  printf '%-24s %s skill\n' "$p" "$(find -L "$p/skills" -name SKILL.md | wc -l)"
+done
+HERMES_PROFILE=finance hermes skills list | tail -1     # → 67 builtin, 44 local — 111 enabled
+```
+
+- Use an **absolute** link target; a relative one breaks the moment a profile moves.
+- `find` needs `-L`, otherwise the symlinked tree reports **0** skills and looks like a failure.
+- The loader check is mandatory: the file count proves the link resolves, `hermes skills list`
+  proves the *agent* sees it. That profile printed 71 skills before the swap, 111 enabled after.
+- Keep the tarball about a week, then delete it with the usual proof habit.
+
 ## Verify after every organising step
 
 ```bash
@@ -306,3 +361,9 @@ comparison would have kept both. Script and per-pair evidence:
   before *and* after), the hash-set script that proved the 7 profiles were **stale (71) not
   duplicated (115)** with the three verdicts and the three options to offer, the FUSE phantom-dir
   signature (0 files / 6 dirs / 26 K, retry gets `BLOCKED`), and the end-of-pass number block.
+- `references/backups-prune-and-profile-symlink.md` — the two closing phases: pruning `backups/`
+  itself (94 M → 26 M) with the three verdicts and their proofs — `PRAGMA integrity_check` + table
+  and row counts before deleting a `state.db.bak-*`, `md5sum` twins, and the "keep oldest + newest"
+  rule for `*.bak-<date>` series — plus the executed profile-symlink recipe (tar the stale tree
+  first, absolute link target, `find -L`, and the mandatory `HERMES_PROFILE=<p> hermes skills list`
+  acceptance check, 71 → 111 enabled).

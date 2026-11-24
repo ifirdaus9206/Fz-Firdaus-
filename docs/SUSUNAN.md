@@ -30,7 +30,7 @@
 | `tools/others/` | Alat pihak ketiga (semak sebelum simpan) |
 | `desktop-plugins/hermes-console/` | Salinan kod konsol untuk GitHub |
 | `profiles/` | 7 profil kerja; `skills/` setiap satu ialah **symlink** ke `~/.hermes20/skills` (115 skill). Jangan tukar balik kepada salinan — jimat 67 MB. |
-| `legacy-ultimate/` | Kod projek lama (tanpa `node_modules`), 539 MB |
+| `arkib-ketua/` | **1.3 GB** - semua projek lama di bawah nama Ketua (ultimate-2026-10, projek-ultimate-aina, legacy-*, system-backup). Baca sahaja. |
 | `bin/` | Binari besar + pembungkus `hermes20` |
 | `lsp/` | Language server |
 | `sandboxes/` | venv sandbox |
@@ -40,7 +40,7 @@
 
 | Folder | Status |
 |---|---|
-| `archive/` | 714 MB — kandungan kerja sahaja (cache dibuang 2026-11-24) |
+| (arkib) | `archive/` dan `legacy-ultimate/` telah digabung ke `arkib-ketua/` |
 | `legacy-ultimate/` | 539 MB — kod projek lama tanpa `node_modules`/`venv` |
 | `ULTIMATE_AI_PROJECT/` | Kosong — calon buang |
 | `platforms/pairing/` | Dicipta runtime, kekal kosong |

@@ -153,3 +153,9 @@ email-inbox/
 secrets/
 dashboard_login.txt
 .dash_url_last
+
+# Arkib projek lama — besar & ada repo git bersarang
+arkib-ketua/
+tools/others/
+legacy-ultimate/
+archive/

@@ -1,7 +1,7 @@
 # docs/SKRIP.md — Daftar 35 Skrip
 
 **Dikemas kini:** 2026-11-24 · **Lokasi:** `~/.hermes20/scripts/`
-**Semakan sintaks:** 35/35 lulus (0 rosak)
+**Semakan sintaks:** 30/30 lulus (0 rosak)
 
 Kelas: **AUTO** = dijalankan cron/servis · **MANUAL** = guna bila perlu · **SEKALI** = satu kali sahaja, calon arkib.
 
@@ -23,6 +23,7 @@ Kelas: **AUTO** = dijalankan cron/servis · **MANUAL** = guna bila perlu · **SE
 | `uim_sync.sh` | 03:00 harian | Salin nota/laporan baharu ke storan kongsi |
 | `radar_kerja.sh` | 09:00 & 21:00 | Pembalut freelance-radar |
 | `ketua_weekly.py` | Isnin 09:00 | Pembalut `~/hermes-console/tools/weekly_check.py` |
+| `rotate_logs.sh` | Ahad 04:00 | Potong `*.log` > 5 MB, buang arkib `*.log.N` > 7 hari |
 
 ## 2. AUTO — dijalankan servis runit (2)
 
