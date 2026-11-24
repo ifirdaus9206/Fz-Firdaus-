@@ -29,6 +29,8 @@
 | `tools/hermes-source/` | Sumber enjin Hermes (hidup) |
 | `tools/others/` | Alat pihak ketiga (semak sebelum simpan) |
 | `desktop-plugins/hermes-console/` | Salinan kod konsol untuk GitHub |
+| `profiles/` | 7 profil kerja; `skills/` setiap satu ialah **symlink** ke `~/.hermes20/skills` (115 skill). Jangan tukar balik kepada salinan — jimat 67 MB. |
+| `legacy-ultimate/` | Kod projek lama (tanpa `node_modules`), 539 MB |
 | `bin/` | Binari besar + pembungkus `hermes20` |
 | `lsp/` | Language server |
 | `sandboxes/` | venv sandbox |
