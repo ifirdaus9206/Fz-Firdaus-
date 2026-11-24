@@ -149,16 +149,34 @@ GitHub             commit terakhir selepas push
 
 ## 6. Apa yang MASIH TINGGAL
 
-| # | Perkara | Saiz | Cadangan |
+| # | Perkara | Saiz | Status 2026-11-24 |
 |---|---|---|---|
-| 1 | `legacy-ultimate/` | 539 MB | Bos mahu kekal dulu — semak bila ada masa |
-| 2 | `archive/ultimate-2026-10/projects-repo` | 572 MB | Kekal — kod projek lama |
-| 3 | `tools/others/delphitools-cli` | 784 MB | Semak sama ada masih dipakai |
-| 4 | `tools/others/cline-repo` + `bun-repo` | 1.0 GB | Alat pihak ketiga — buang jika tidak dipakai |
-| 5 | `backups/profiles-skills-lama-*.tar.gz` | 17 MB | Boleh dibuang selepas 1 minggu stabil |
-| 6 | Folder hantu `/sdcard/.../ultimate-2026-10` | 26 KB, 0 fail | Bos akan padam sendiri dari aplikasi Fail |
-| 7 | Log tidak berputar automatik | — | Cadang cron rotate mingguan (simpan 7 hari) |
-| 8 | `sessions/` + `cache/` | 5 MB | Kecil — biarkan |
+| 1 | `arkib-ketua/projek-ultimate-aina` | 539 MB | KEKAL (arahan bos) |
+| 2 | `arkib-ketua/ultimate-2026-10` | 659 MB | KEKAL (arahan bos) |
+| 3 | `tools/others/delphitools-cli` | **1.9 MB** | `target/` 782 MB dibuang — bina semula dengan `cargo build` |
+| 4 | `tools/others/cline-repo` + `bun-repo` | 1.0 GB | KEKAL (arahan bos) |
+| 5 | `profiles-skills-lama.tar.gz` | — | **DIBUANG** |
+| 6 | Folder hantu `/sdcard` | 26 KB, 0 fail | Bos padam sendiri |
+| 7 | Putaran log | — | **SELESAI** — `rotate_logs.sh` + cron Ahad 04:00 |
+| 8 | `sessions/` + `cache/` | 5 MB | Biarkan (arahan bos) |
+
+### Penyusunan semula nama (arahan bos)
+
+Semua projek lama kini di bawah satu folder bernama **Ketua**:
+
+```
+arkib-ketua/
+├── README.md                    ← penerangan + peraturan
+├── ultimate-2026-10/            659 MB
+├── projek-ultimate-aina/        539 MB
+├── legacy-hermes-2026-10-21/     31 MB
+├── legacy-AINA-2026-10-17/       24 MB
+├── legacy-hermes19-2026-10-21/  291 KB
+└── system-backup-2026-10-27/     64 KB
+```
+
+`archive/` dan `legacy-ultimate/` tidak lagi wujud di peringkat atas.
+`arkib-ketua/` dikecualikan daripada sandaran GitHub (besar + ada repo git bersarang).
 
 ---
 
