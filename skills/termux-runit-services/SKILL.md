@@ -104,6 +104,38 @@ the user. Probe order: `ps | grep cloudflared` (how many tunnels, to which port)
 `curl` new URL → `curl` local port → `grep -c "Registered tunnel connection"` in the tunnel log.
 One `cloudflared` = one web app; two on the same port is the real "dua web" bug.
 
+### `sv status` says `run:` but the hostname answers `000` — remint, don't debug the app
+
+A tunnel can be *supervised and alive* while its edge connection is dead. The log shows the shape:
+
+```bash
+sv status hermes-dash-tunnel          # run: … (pid N) 52229s   ← looks perfectly healthy
+tail -6 ~/.hermes20/logs/dashboard-tunnel.log
+# ERR failed to run the datagram handler error="context canceled"
+# ERR failed to serve tunnel connection error="control stream encountered a failure while serving"
+# INF Retrying connection in up to 1m4s
+grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' …/dashboard-tunnel.log | tail -1   # prints nothing
+```
+
+`run:` + `000` + a retry loop = cloudflared is up but has no working edge; the hostname in
+`dashboard_url.txt` is now unreachable. There is nothing to fix in the app. Restart the service and
+take the **new** hostname from the log in the same command, because a quick tunnel mints a fresh one:
+
+```bash
+sv restart hermes-dash-tunnel; sleep 20
+NEW=$(grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' ~/.hermes20/logs/dashboard-tunnel.log | tail -1)
+[ -n "$NEW" ] && echo "$NEW" > ~/.hermes20/dashboard_url.txt
+curl -s -o /dev/null -m 15 -w "tunnel=%{http_code}\n" "$NEW"
+curl -s -o /dev/null -m 15 -w "docs=%{http_code}\n"   "$NEW/docs"   # 200/200 before announcing
+```
+
+- `sleep 20` matters: the hostname line lands only after the edge handshake.
+- Probe **two** paths (root + `/docs`) — a single `200` on `/` can come from a cached edge response.
+- Scope the grep to that log and take `tail -1`: a long-lived log holds every old hostname, so an
+  unqualified match hands the owner a URL that died hours ago. (Same reason the publisher should
+  append outgoing URLs to a history file before truncating.)
+- Announce it as a change, unprompted — the owner asked to be told every time the key/URL moves.
+
 Two durable traps: (a) `: > "$LOG"` in the publisher erases every previous hostname, so append the
 outgoing URL to a `*_url_history.txt` before truncating or a stale bookmark can never be dated;
 (b) reconnects *inside* one process keep the same hostname, so repeated `Registered tunnel
@@ -419,6 +451,30 @@ that is correct and required while the lock is held; only the repeated popping i
     Either way the owner sees a truncated answer. Say so *before* running it, run it as the last
     action of the turn, and on reconnect state plainly that the session was restored and the old
     command was **not** re-executed.
+
+## "Kita masih guna port ini ke?" — verify the port the owner names
+
+The owner will quote a URL from memory or from a browser tab that is days old:
+`http://127.0.0.1:9120/docs?profile=default — aku tengok berjalan lagi`. Do not start or stop
+anything first; establish **which of the ports is real** and answer with that:
+
+```bash
+for p in 9120 9119 8787; do
+  printf '%s=%s  ' "$p" "$(curl -s -o /dev/null -m 3 -w '%{http_code}' http://127.0.0.1:$p/)"
+done; echo
+grep -rn '9120' ~/.hermes20 --include='*.yaml' --include='*.sh' --include='*.json' \
+     --exclude-dir=tools --exclude-dir=arkib-ketua | head -5      # config/code references
+ps aux | grep -E 'dashboard|serve|uvicorn' | grep -v grep          # is a server even running?
+hermes dashboard --help | grep -i port      # default is 9119 for both dashboard and serve
+```
+
+Readings from this device: **9120 → `000`** (no listener, nothing in config — a stale tab),
+**9119 → `000`** (retired on purpose), **8787 → `200`** — and `8787/docs` returns **200** because the
+console is FastAPI, so the Swagger UI the owner remembered lives on the surviving port.
+
+Answer shape: one table (`port | semakan | keputusan`), then the single live URL
+(`http://127.0.0.1:8787/docs`), then "bos mungkin masih buka tab lama". Never resurrect the port they
+named just because they mentioned it — 9119/9120 are retired, 8787 is the one console.
 
 ## Watchdog: alert on unclean gateway death, then self-recover
 

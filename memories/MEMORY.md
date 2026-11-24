@@ -8,7 +8,7 @@ Long-poll poller kedua=409; log logs/gateway.log. Amaran auto gw_alert.sh + tg_w
 §
 Runbook OPERASI.md + docs/KETUA.md. workspaces/<ejen>, ~/vault (memori), knowledge_base (SOP). Roster 282 = teks; kerja fail guna delegate_task. /api/agency/health.
 §
-Android 25080RABDG (HyperOS): `am start`/broadcast lapor OK tapi app pihak ketiga tak terbuka (BAL) — guna macro MacroDroid `Intent Diterima com.ketua.OPEN.<APP>` + `Lancar Aplikasi` (app mesti dipilih; AI MacroDroid kerap self-run/null). Alat: ~/bin/buka + tab BUKA.
+Android 25080RABDG (HyperOS): am start lapor OK tapi app pihak ketiga tak terbuka (BAL); input tap disekat INJECT_EVENTS. RUN_COMMAND diuji gagal (Termux mungkin build Play Store; allow-external-apps=true set); ADB belum paired. Jalan berkesan: macro MacroDroid + ~/bin/buka.
 §
 Persona ejen 3 salinan; skill agency-roster-curation.
 §
@@ -22,6 +22,6 @@ Konsol 8787 (?tab=pusat), bind 0.0.0.0 → LAN 192.168.0.41:8787. Butang RESET G
 §
 Panduan bos: PDF ke ifirdaus9206@gmail.com (txt tak terbuka); perubahan sistem → Telegram. Cron senyap bila sihat, 1 laporan 21:00, ralat segera.
 §
-~/.hermes19 dipadam; 8790 mati — hanya 8787. Skill=114/30 ≠ 282 ejen. Memori 2 lapis ~/vault/memori (cron 23:30); 6 tema. Arahan: hermes-status|hs, hermes-up, hermes-down, hermes-restart (nama servis BUKAN arahan; guna sv atau hs). Keeper=wake-lock+auto-up.
+~/.hermes19 dipadam; 9119/9120/8790 mati — hanya 8787 (/docs=Swagger). Skill=115≠282 ejen. Memori 2 lapis ~/vault (23:30); 6 tema. Arahan: hermes-status|hs, hermes-up/down/restart (nama servis BUKAN arahan). Projek lama → arkib-ketua/ (+SENARAI-PROJEK.md, bukan git); profil skills=symlink.
 §
-Bos kerja berfasa: setiap fasa = baca fail satu-satu → senarai fail dibaca untuk dia semak → bina/isi/kemas → cadang penambahbaikan; padam hanya selepas disahkan tidak diguna. Mahu plan dulu, jangan bertindak sebelum plan siap.
+Bos kerja berfasa: baca fail satu-satu → senarai fail dibaca untuk disemak → bina/isi/kemas → cadang penambahbaikan; padam hanya selepas disahkan tidak diguna. Repo luar: lapor dulu, dia setuju baru ambil.

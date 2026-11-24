@@ -526,6 +526,42 @@ settles it in two rounds instead of ten:
 
 Report the split ("pencetus berfungsi, app X sahaja gagal") instead of restating "tak jalan".
 
+## `RUN_COMMAND` intent — verify build provenance before promising it
+
+`RUN_COMMAND` is Termux's official "another app asks Termux to run a shell command" channel — the
+tempting BAL bypass (MacroDroid/our own APK triggers it, Termux runs `~/bin/buka <app>`). It has
+**four** preconditions, and three of them are invisible when missing:
+
+1. `~/.termux/termux.properties` contains `allow-external-apps = true` **on its own line**.
+2. `termux-reload-settings` is called afterwards (the running app caches properties).
+3. The sending app holds `com.termux.permission.RUN_COMMAND`.
+4. **The installed Termux build permits it** — Play-Store builds disable the receiver; F-Droid/GitHub
+   builds enable it.
+
+Probe the build *first*, because a silent failure looks identical to a mis-typed extras bundle:
+
+```bash
+pm list packages -i | grep com.termux      # installer=com.android.vending → Play build → give up
+grep -n 'allow-external-apps' ~/.termux/termux.properties && tail -3 ~/.termux/termux.properties
+```
+
+Shape of the broadcast (use a **side effect** as the proof, never the command's own output):
+
+```bash
+am broadcast --user 0 -a com.termux.RUN_COMMAND \
+  --es com.termux.RUN_COMMAND_PATH /data/data/com.termux/files/usr/bin/touch \
+  --esa com.termux.RUN_COMMAND_ARGUMENTS '/data/data/com.termux/files/home/rc_probe' \
+  --ez com.termux.RUN_COMMAND_BACKGROUND true
+sleep 4; ls -l ~/rc_probe        # the ONLY evidence it ran
+```
+
+`Broadcast sent without waiting for result` is printed by the wrapper regardless of whether anything
+received it — treat it as "nothing proven". Measured 2026-11-24 on this Play-signed build: property
+set, reload sent, three broadcast variants (plain, `-p com.termux`, `touch`), **no probe file** →
+the receiver never acted. Report that as "belum berjaya, punca paling mungkin build Play" and check
+provenance before spending more rounds. Do not present RUN_COMMAND as a working BAL workaround until
+a probe file appears; MacroDroid `Lancar Aplikasi` remains the verified actuator (Step 7).
+
 ## Pitfalls
 
 1. **Exit 0 is not evidence of a UI action.** `termux-open` on an APK and `am start` with a bad
@@ -640,6 +676,22 @@ Report the split ("pencetus berfungsi, app X sahaja gagal") instead of restating
     returns empty output even when the package is installed. Do the shell step with the `terminal`
     tool, then feed the resulting literal path to the Python parser (that combination read
     MacroDroid's 91 MB APK fine).
+
+26. **`>>`-appending to `~/.termux/termux.properties` can silently corrupt the last line.** The file
+    often ends without a trailing newline, so `echo 'allow-external-apps = true' >> …` produced
+    `extra-keys = [[…]]allow-external-apps = true` — one broken line, and the setting never existed.
+    Fix by writing through Python with an explicit `\n`, then read `tail -3` back before trusting it:
+    ```bash
+    python3 - <<'EOF'
+    p='/data/data/com.termux/files/home/.termux/termux.properties'
+    s=open(p).read().replace("]]allow-external-apps", "]]\nallow-external-apps")
+    if 'allow-external-apps' not in s: s = s.rstrip()+"\nallow-external-apps = true\n"
+    open(p,'w').write(s)
+    EOF
+    termux-reload-settings
+    ```
+    Same habit applies to any Termux config the app parses line-by-line (`.bashrc`, `boot/*.sh`): a
+    merged line is accepted silently and the feature just never turns on.
 
 ## Verification before reporting
 

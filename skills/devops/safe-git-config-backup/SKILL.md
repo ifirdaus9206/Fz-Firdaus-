@@ -197,6 +197,33 @@ run. See "Discovering unknown churn" under Verification.
 `git status --short` non-empty forever and their content is *not* backed up either way.
 Drop the gitlink (`git rm --cached <dir>`) and ignore the directory — it has its own remote.
 
+### PITFALL #4b — a nested repo with no checkout aborts the whole run (`git add` *fatal*)
+
+The nasty variant appears the moment you **consolidate old projects into the backed-up home**
+(e.g. gathering `archive/` + `legacy-*` into one `arkib-<owner>/`). Their nested `.git` directories
+travel with them, and the run dies *before* any commit:
+
+```
+error: 'arkib-ketua/projek-ultimate-aina/projects/agent-factory/' does not have a commit checked out
+error: unable to index file '…/projects/agent-factory/'
+fatal: adding files failed
+2026-11-24 23:34 GAGAL: git add
+```
+
+`git rm --cached` cannot help — the tree was never tracked. Exclude the archive root and prove the
+next run advances:
+
+```bash
+printf '\n# Arkib projek lama — besar & ada repo git bersarang\narkib-ketua/\ntools/others/\n' >> .gitignore
+git check-ignore -v --no-index arkib-ketua/projek-ultimate-aina    # must name the rule
+bash scripts/backup_github.sh 2>&1 | tail -3
+git log --oneline -1        # a NEW hash is the only proof; exit 0 alone is not
+```
+
+An archive is not config history: it is large, it holds foreign remotes, and it is exactly the
+payload you do not want in a secrets-scanned backup. Excluding it also cuts push time noticeably
+(1.3 GB in the measured case).
+
 ## What to exclude, by category (annotate every line)
 
 | Category | Examples | Reason |

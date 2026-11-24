@@ -111,7 +111,7 @@ find . -type f -size +100M -not -path './.git/*' -printf '%s %p\n' | sort -nr | 
 | **LIVE** | Hermes/service reads it by fixed path (`skills/`, `plugins/`, `sessions/`, `cron/`, `memories/`, `state.db`, `config.yaml`, `SOUL.md`, `scripts/`, `knowledge_base/`, `workspaces/`, `system/`, `secrets/`) | never move |
 | **SNAPSHOT** | `archive/<name>-YYYY-MM`, `legacy-*`, `*-backup-*` | move to external storage first |
 | **DUPLICATE** | same md5 / same git pack hash / identical dir size | keep one, defer the rest |
-| **DERIVED** | `node_modules/`, `__pycache__/`, `venv/`, `.pyc`, `*.tar.gz` | safe to remove, regenerable |
+| **DERIVED** | `node_modules/`, `__pycache__/`, `venv/`, `.pyc`, `target/` (Rust), `.next/`, `dist/`, `*.tar.gz` | safe to remove, regenerable |
 | **STUB** | file < 200 B holding a title only, or a wrapper pointing at a deleted path | **rebuild it** |
 | **NOISE** | `*.lock`, `.wake_held`, `.stamp`, empty `__init__.py`, `py.typed` | leave alone (see pitfall 1) |
 
@@ -236,7 +236,75 @@ HERMES_PROFILE=finance hermes skills list | tail -1     # → 67 builtin, 44 loc
   proves the *agent* sees it. That profile printed 71 skills before the swap, 111 enabled after.
 - Keep the tarball about a week, then delete it with the usual proof habit.
 
-## Verify after every organising step
+## Close-out: one archive root, and make the fix stick
+
+Two things finish a tidy pass; skipping either means the owner re-opens the same conversation.
+
+### 1. Consolidate every snapshot under one owner-named root
+
+The owner's phrasing: *"semua projek lama tukar nama pada nama kau"* — old projects get gathered
+under one clearly-named archive root, not left scattered as `archive/` + `legacy-*` + `*-2026-10`.
+
+```bash
+cd ~/.hermes20
+mkdir -p arkib-ketua                      # or <owner>-arkib; name belongs to the owner, not the task
+mv legacy-ultimate arkib-ketua/projek-ultimate-aina
+mv archive/* arkib-ketua/ && rmdir archive
+```
+
+- Rename each moved tree to say **what it was** (`projek-ultimate-aina`), not just its date.
+- Write `arkib-ketua/README.md`: a table of every folder (size · where it came from · state) plus
+  four rules — read-only, dependencies were removed and are rebuildable, to revive copy it out and
+  re-install, deleting a folder here has no effect on the live system.
+- Rewrite the archived project's own `README.md` header to say `ARKIB` + where it now lives +
+  how to revive it. Otherwise a future session finds "# ULTIMATE AI PROJECT" and treats it as live.
+- Update `docs/SUSUNAN.md` in the same pass — a folder map that still lists deleted paths is worse
+  than no map.
+
+### 1b. One searchable catalog, written in the owner's words
+
+The owner's follow-up after the archive root existed:
+
+> "ke semuanya letak tepi dulu bina satu fail mudah untuk kita cari nanti … perojek lama ada projek
+> apa aku sudah lupa bagi tahu"
+
+`arkib-ketua/README.md` lists *folders*; that is not enough once there are 19 projects. They asked
+for **one file** that answers "what was this project, and is it worth reviving?" — so read each
+project's own `README.md` and write the catalog from it:
+
+```bash
+cd ~/.hermes20/arkib-ketua/projek-<x>/projects
+for d in */; do
+  printf '%-22s %-7s %s\n' "$(basename "$d")" "$(du -sh "$d" | cut -f1)" \
+    "$(head -6 "$d/README.md" 2>/dev/null | grep -v '^$' | grep -v '^#' | head -1 | cut -c1-60)"
+done
+```
+
+Each row: **name · size · one plain sentence of what it does · tech** — then a section per archive
+layer (application projects / dated snapshots / system legacy) and a "cara hidupkan semula" block
+(`npm install` / `venv` / `cargo build`). Template to copy: `templates/arkib-catalog.md`.
+
+Two rules that made it useful:
+
+- Describe the project in **its own terms** ("SaaS tempahan katering untuk kafeteria sekolah"), not
+  the folder name — the folder name is what the owner already forgot.
+- End with a **shortlist recommendation** ("these two are closest to finished") instead of a flat
+  list of 19. The owner asked what they had forgotten; a ranked answer is what they can act on.
+
+### 2. Automate the thing you just cleaned by hand
+
+Manual truncation is a one-off; logs refill in weeks. Ship the rotation with the tidy:
+
+```bash
+# scripts/rotate_logs.sh — truncate *.log > 5 MB, drop *.log.N older than 7 days,
+# never touch logs/<service>/ (svlogd owns it), stay silent when nothing was done
+bash scripts/rotate_logs.sh --dry-run     # must print nothing right after a manual clean
+```
+
+`--dry-run` first is the cheap proof the thresholds are sane. Then register a silent weekly job
+(Sunday 04:00). Creating it needs a specific call order — see pitfall 15.
+
+
 
 ```bash
 hermes-status                                   # every service HIDUP, console 200
@@ -268,8 +336,15 @@ rules:
 ```bash
 # one pass: drop every regenerable tree in a legacy project, keep the source
 find . -type d \( -name node_modules -o -name .venv -o -name venv \
-                 -o -name __pycache__ -o -name .next \) -prune -exec rm -rf {} + 2>/dev/null
+                 -o -name __pycache__ -o -name .next \
+                 -o -name target -o -name dist \) -prune -exec rm -rf {} + 2>/dev/null
 ```
+
+**`target/` is the Rust equivalent of `node_modules` and it hides in tool vendors.** A checked-out
+CLI under `tools/others/` measured **784 MB**, of which `target/` was **782 MB** and `src/` only
+656 KB — deleting the build tree took the tool to 1.9 MB with nothing lost (`cargo build` restores
+it). Before declaring a vendored tool "784 MB, too big to keep", run `du -sh .[!.]* * | sort -hr`
+inside it.
 
 ### Duplicate verdicts: identical, subset, disjoint
 
@@ -340,9 +415,51 @@ comparison would have kept both. Script and per-pair evidence:
     caught this session twice: `du -sh <home>` during a background `rm` reported 8.2 G, then 3.7 G,
     then the true 6.2 G. Quote the number from the completion notification only, and when a figure
     escaped early, correct it in the next reply in one line rather than quietly restating it.
+14. **Old projects carry their own `.git` — moving them into the backed-up home breaks the nightly
+    `git add`.** After consolidating snapshots, the backup script failed with
+    `error: '<archive>/projects/agent-factory/' does not have a commit checked out` /
+    `fatal: adding files failed` (nested repos and submodule-looking paths). Archival trees are
+    never part of the config history, so exclude them and re-run:
+    ```bash
+    printf '\n# Arkib projek lama — besar & ada repo git bersarang\narkib-ketua/\ntools/others/\n' >> .gitignore
+    bash scripts/backup_github.sh && git log --oneline -1   # timestamp MUST advance
+    ```
+    The script only writes its failure into `logs/backup.log`, so a tidy pass is not finished until
+    you have seen a **new commit hash**. Excluding 1.3 GB of archive also makes the push fast again.
+15. **Creating a silent `no_agent` cron job takes three calls, not one.** The scheduler rejects
+    `no_agent=True` while the job has no script (`Cannot set no_agent=True on a job without a
+    script`), and a create call that passes many fields at once can silently drop `script`. Reliable
+    order: `create(schedule + prompt)` → `update(job_id, script=<name>.sh)` →
+    `update(job_id, no_agent=True)`, then `cronjob list` and confirm `"script"` and `"no_agent"` are
+    both what you meant. Scripts must already live in `scripts/` — the scheduler resolves them there.
+
+16. **Assess an upstream repo before it lands in the home — the clone is never the expensive part,
+    the build tree is.** Asked whether to "ambil" `termux/termux-app`, the useful answer came from
+    one API call, not from cloning:
+    ```bash
+    curl -s https://api.github.com/repos/<owner>/<repo> | python3 -c "import sys,json;d=json.load(sys.stdin);\
+    print(d['full_name'], d['stargazers_count'], round(d['size']/1024,1),'MB', d['language'], \
+    (d.get('license') or {}).get('spdx_id'), d['pushed_at'], 'archived=',d['archived'])"
+    ```
+    Report **four** things before touching disk: repo size (source), licence (GPL means publishing
+    source if you distribute a build), activity (`pushed_at`, `archived`), and the real build cost
+    (Android SDK+NDK+Gradle ≈ 8–10 GB, plus your own signing keys). Then offer source-only clone
+    (a 5.2 MB reference copy) as the default and building as the exception, and wait for approval —
+    this owner's rule is "lapor dulu, setuju baru ambik". A vendored tool's `target/`/`node_modules`
+    is what turns a 5 MB repo into a GB problem later (see the `target/` note above).
+
+    **Skill-library repos are the exception that proves the rule.** A 50k-star "3,000+ agent skills"
+    repo measured **484 MB** with a **1 MB `CATALOG.md`** and 1,000+ directories under `skills/`.
+    Cloning it would swamp a 115-skill library and make search worse, not better. Recommend and
+    offer, in this order: (1) fetch `CATALOG.md` only (`raw.githubusercontent.com/.../CATALOG.md`,
+    ~1 MB) as a searchable index, (2) cherry-pick individual skill folders later (each is a few KB),
+    (3) clone everything — flag it as *not* recommended. Same "lapor dulu, setuju baru ambik" gate.
 
 ## References
 
+- `templates/arkib-catalog.md` — starter `SENARAI-PROJEK.md`: one row per archived project
+  (name · size · what it does · tech), per-layer sections, revive commands, and the closing notes
+  (dependencies removed/rebuildable, archive excluded from backup, deleting a folder is harmless).
 - `references/hermes20-audit-2026-11.md` — measured inventory of a 17 GB / 215k-file Termux agent
   home: per-folder sizes, the three duplicate vendors, the 7×71 profile copies, the stub list, and
   the exact commands that produced each number.
@@ -367,3 +484,8 @@ comparison would have kept both. Script and per-pair evidence:
   rule for `*.bak-<date>` series — plus the executed profile-symlink recipe (tar the stale tree
   first, absolute link target, `find -L`, and the mandatory `HERMES_PROFILE=<p> hermes skills list`
   acceptance check, 71 → 111 enabled).
+- `references/archive-consolidation-and-backup-hygiene.md` — the close-out: gathering every old
+  project under one owner-named archive root (with the README + archived-project header rewrite and
+  the `docs/SUSUNAN.md` update), the **nested `.git` that breaks the nightly `git add`** and the
+  `.gitignore` fix, `target/` as 782 MB of a 784 MB vendored tool, the tested `rotate_logs.sh` plus
+  the three-call cron registration order, and the 17 GB → 5.4 GB final table.

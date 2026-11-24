@@ -267,6 +267,41 @@ If the user is typing inside a DM topic while topic mode is OFF, say so plainly 
 send in the **root** chat for the test — an unmanaged topic lane is the first thing to rule out,
 not the model.
 
+## "Kau ada baca mesej <nama>?" — prove which humans the bot can actually see
+
+Symptom words: *"tadi kau ada baca mesej Aina dan Irfan?"* / *"kau baca tak mesej orang tu?"*.
+The honest answer needs evidence, not memory: the agent only ever sees chats that reached **this**
+gateway. Prove the visible set in one pass (read-only, no token printed):
+
+```bash
+cd <hermes home>
+grep -o 'chat=[0-9-]*' logs/gateway.log | sort -u          # which chats ever wrote in
+grep -o 'user=[^ ]*'  logs/gateway.log | sort -u          # which humans
+grep -c 'inbound message' logs/gateway.log                # denominator for "how much have I seen"
+python -c "import json;d=json.load(open('channel_directory.json'));\
+print(json.dumps(d.get('platforms',{}),indent=1)[:800])"
+grep -rE 'TELEGRAM_HOME_CHANNEL(_NAME)?' .env | sed 's/=.*/=<hidden>/'
+grep -ril '<name>' --include='*.md' --include='*.json' --include='*.yaml' . \
+  --exclude-dir=node_modules --exclude-dir=tools | head
+```
+
+Then classify the name instead of assuming it is a person:
+
+| What the name turned out to be | Evidence | What to tell the user |
+|---|---|---|
+| **The bot/home channel's own display name** | `TELEGRAM_HOME_CHANNEL_NAME` in `.env` equals the name, and its id equals the owner's own DM chat id | "That is this bot's display name, not another contact — it is this very chat" |
+| **A retired local folder / old project** | `grep -ril` finds only archive paths and docs | "It exists only as an old folder/project, no messages" |
+| **A real second human** | a second distinct `chat=`/`user=` value in `gateway.log` | Quote the chat id + message count, then act on it |
+| **Nothing at all** | zero hits in logs, `channel_directory.json`, sessions and files | Say plainly: no such conversation reached this bot |
+
+Report the numbers ("296 inbound messages, **one** chat, **one** user") and never imply you read a
+conversation that has no log line. If the messages live on another platform (WhatsApp/SMS) or a
+different bot token, say the bot has no access and ask for a forward — that is the only honest path.
+`session_search` alone is not proof of absence for *external* chats; pair it with the gateway log.
+
+Worked case (name that looked like a person but was the home-channel label, plus a 0-hit second
+name): `references/telegram-contact-visibility-proof.md`.
+
 ## Don't promise an auto-topic router — it does not exist
 
 When the user asks for *"mesej 1 masuk topik 1, mesej 2 masuk topik 2, dia auto letak di mana
@@ -304,6 +339,10 @@ of the work conversation.
   comparing the topic ids in `gateway.log` against the session key before touching token limits.
 
 ## References
+- `references/telegram-contact-visibility-proof.md` — "kau ada baca mesej <nama>?": the four-command
+  proof (distinct `chat=`/`user=`, inbound count, channel directory, filesystem grep), the name that
+  turned out to be the bot's own `TELEGRAM_HOME_CHANNEL_NAME`, the profiles-have-keys-but-no-gateway
+  check, and the reporting shape.
 - `references/telegram-dm-thread-fragmentation.md` — worked case with measured numbers, the exact
   diff, test output and the evidence table used in the report.
 - `references/telegram-dm-topics-mode.md` — "inside the topic I only see my own messages": `/topic`
